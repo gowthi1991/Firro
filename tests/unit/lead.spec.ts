@@ -11,6 +11,7 @@ import {
   type StoredLead,
 } from '../../src/server/lead-handler';
 import { buildLeadEmail } from '../../src/server/lead-email';
+import { neonRegion } from '../../src/server/neon-region';
 import { demo } from '../../src/content/site';
 
 const valid = {
@@ -268,5 +269,18 @@ test.describe('notification email', () => {
     expect(html).not.toContain('<script>');
     expect(html).toContain('&lt;script&gt;');
     expect(html).toContain('Tiffin &amp; Co');
+  });
+});
+
+test.describe('neonRegion', () => {
+  test('reads the region from a Neon host, never returning credentials', () => {
+    expect(
+      neonRegion(
+        'postgresql://user:pw@ep-cool-name-a1b2c3-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require',
+      ),
+    ).toBe('ap-southeast-1');
+    expect(neonRegion('postgres://u:p@ep-x.us-east-2.aws.neon.tech:5432/db')).toBe('us-east-2');
+    expect(neonRegion('postgres://u:p@localhost:5432/db')).toBe('unknown');
+    expect(neonRegion('')).toBe('unknown');
   });
 });

@@ -91,6 +91,7 @@ export function createLeadHandler(deps: LeadDeps) {
       const user_agent = request.headers.get('user-agent')?.slice(0, 400) ?? null;
       const ip_hash = clientAddress ? await deps.hashIp(clientAddress) : null;
       const saved = await deps.store.insert({ ...lead, user_agent, ip_hash });
+      deps.log.info('[lead] stored', saved.id); // id only — no personal data in logs
 
       try {
         await deps.notify({ ...lead, ...saved, user_agent });

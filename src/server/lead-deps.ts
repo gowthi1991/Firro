@@ -3,11 +3,13 @@
 import { neon } from '@neondatabase/serverless';
 import migration from '../../migrations/001_leads.sql?raw';
 import { buildLeadEmail } from './lead-email';
+import { neonRegion } from './neon-region';
 import { sha256Hex, type LeadDeps, type LeadStore, type StoredLead } from './lead-handler';
 
 const env = (k: string) => process.env[k]?.trim() || undefined;
 
 function createStore(url: string): LeadStore {
+  console.info('[lead] database region:', neonRegion(url));
   const sql = neon(url);
   let ready: Promise<void> | null = null;
   // Create the table on first use (idempotent); migrations/001_leads.sql is the single source.
@@ -80,6 +82,7 @@ async function sendEmail(lead: StoredLead): Promise<void> {
     signal: AbortSignal.timeout(8000),
   });
   if (!res.ok) throw new Error(`Resend ${res.status}: ${(await res.text()).slice(0, 300)}`);
+  console.info('[lead] notified', lead.id);
 }
 
 let deps: LeadDeps | null = null;

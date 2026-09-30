@@ -68,3 +68,11 @@ One line each: **what** — why — how to change.
 47. **Unit tests use the Playwright runner** (`tests/unit/`, no browser) instead of adding Vitest — one runner, one CI step. — `tests/unit/lead.spec.ts`.
 48. **Tests and `npm run preview` serve `.vercel/output/static` with http-server** — the Vercel adapter doesn't support `astro preview`. Form tests mock `/api/lead` with `page.route()`. Use `npm run dev` (or `vercel dev`) to exercise the real function locally. — `playwright.config.ts`, `package.json`.
 49. **Privacy draft names the processors** (Vercel, Neon, Resend), the hashed IP and browser type, possible processing outside India, and deletion of notification emails at the 12-month limit. Still a draft pending legal review. — `src/content/privacy.ts`.
+
+## Vercel project `getfirro`
+
+50. **Project Node.js version set to 22.x** (it was 24.x) to match CI, `.nvmrc` and `engines`. Changed through the Vercel API (`PATCH /v9/projects/getfirro`). — Vercel → Settings → General.
+51. **Functions pinned to Mumbai (`bom1`)** in `vercel.json`, next to the Coimbatore audience. — `vercel.json`.
+52. **`IP_HASH_SALT` is a different random value for Production and Preview.** Production was added first and is sensitive, so it can't be read back to reuse. Separate salts also keep preview hashes unlinkable to production ones. Both values were generated with `openssl rand -hex 32` and passed on stdin (Preview through the Vercel API), never on the command line or in output. — Vercel env.
+53. **`LEAD_FROM_EMAIL` is not marked sensitive** (it's an address, not a secret), so it stays readable in the dashboard. — Vercel env.
+54. **The function logs a lead's id on insert (`[lead] stored <id>`), `[lead] notified <id>` after an email, and the Neon region once per cold start.** The Neon integration's variables are sensitive, so their values can't be read by the CLI, API or `vercel env run`; function logs are the only place to confirm storage and region from outside. No personal data is logged. — `lead-handler.ts`, `lead-deps.ts`, `neon-region.ts`.
