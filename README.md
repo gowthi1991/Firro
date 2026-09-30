@@ -11,7 +11,7 @@ design in `handoff/design/reference/firro-home-v3.html` ("Heritage light v3").
 
 ## Run it
 
-Requires Node 22.12+ (Astro 7). `.nvmrc` pins 22.
+Requires Node 22 (`engines.node` is `22.x` so Vercel uses the project’s Node 22 setting; `.nvmrc` pins 22).
 
 ```bash
 npm install
