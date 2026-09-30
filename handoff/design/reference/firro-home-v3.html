@@ -1,0 +1,792 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Firro — The operating system for subscription kitchens</title>
+<!-- DESIGN REFERENCE ONLY (desktop, 1440px). Approved direction: "Heritage light v3". Do not ship this file. -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #FAF7F0; color: #0E3320; font-family: 'Manrope', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3, h4, p, ul, ol { margin: 0; padding: 0; list-style: none; }
+  a { color: #1F5C3A; text-decoration: none; }
+  a:hover { color: #0E3320; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; }
+  input, select { font-family: inherit; }
+  :focus-visible { outline: 2px solid #1F5C3A; outline-offset: 3px; }
+
+  .disp { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; letter-spacing: -.04em; color: #0E3320; }
+  .num { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.03em; }
+  .micro { font-size: 12px; font-weight: 800; letter-spacing: 1.4px; text-transform: uppercase; color: #6F6957; }
+  .mono { font-family: 'JetBrains Mono', monospace; font-weight: 500; }
+  .grad { color: #1F5C3A; }
+  .acc { font-style: italic; font-weight: 700; color: #1F5C3A; letter-spacing: -.03em; margin-left: -.06em; }
+  .glass { background: rgba(255,255,255,.9); border: 1px solid rgba(26,59,26,.08); border-radius: 28px; box-shadow: 0 1px 2px rgba(31,28,22,.04), 0 8px 24px rgba(31,28,22,.06); }
+  .soft { color: #3A362C; }
+
+  .btn { display: inline-flex; align-items: center; gap: 10px; white-space: nowrap; border-radius: 999px; min-height: 52px; padding: 0 26px; font-weight: 800; font-size: 16px; transition: transform 120ms cubic-bezier(.2,.7,.2,1), box-shadow 200ms cubic-bezier(.2,.7,.2,1), border-color 200ms; }
+  .btn:active { transform: scale(.97); }
+  .btn-glow { background: #1F4A33; color: #FBF1D2; box-shadow: 0 0 0 1px rgba(201,160,70,.45), 0 12px 30px -10px rgba(31,74,51,.55); }
+  .btn-glow:hover { color: #FBF1D2; background: #173D29; box-shadow: 0 0 0 1px rgba(201,160,70,.8), 0 16px 40px -10px rgba(31,74,51,.65); transform: translateY(-1px); }
+  .btn-glass { background: #FFFFFF; color: #0E3320; border: 1px solid #D6CDB7; }
+  .btn-glass:hover { color: #0E3320; border-color: #9C9583; }
+  .btn-gold { background: #F0D78A; color: #0E3320; }
+  .btn-gold:hover { color: #0E3320; box-shadow: 0 10px 40px -8px rgba(240,215,138,.6); transform: translateY(-1px); }
+  .arr { transition: transform 120ms cubic-bezier(.2,.7,.2,1); }
+  .btn:hover .arr { transform: translateX(3px); }
+
+  .tile { padding: 28px; display: flex; flex-direction: column; gap: 12px; position: relative; overflow: hidden; transition: border-color 200ms, transform 320ms cubic-bezier(.2,.7,.2,1); }
+  .tile:hover { border-color: rgba(26,59,26,.18); transform: translateY(-3px); }
+  .icon { width: 56px; height: 56px; border-radius: 18px; display: flex; align-items: center; justify-content: center; background: #EEF2EA; border: 1px solid rgba(201,160,70,.35); color: #1F5C3A; box-shadow: 0 0 30px -8px rgba(201,160,70,.45); flex: none; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+
+  .field { display: flex; flex-direction: column; gap: 8px; }
+  .field label { font-size: 14px; font-weight: 700; color: #0E3320; }
+  .field input, .field select { background: #FFFDF8; border: 1.5px solid #6F6957; border-radius: 14px; padding: 13px 14px; color: #0E3320; font-size: 16px; transition: border-color 120ms, box-shadow 120ms; }
+  .field input::placeholder { color: #9C9583; }
+  .field input:focus, .field select:focus { outline: none; border-color: #2E6B47; box-shadow: 0 0 0 3px rgba(201,160,70,.18); }
+
+  .gridbg { background-image: radial-gradient(560px 440px at 4% 0%, rgba(217,180,90,.16), transparent 60%), radial-gradient(640px 640px at 72% 40%, rgba(31,92,58,.10), transparent 60%), linear-gradient(rgba(26,59,26,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(26,59,26,.06) 1px, transparent 1px); background-size: auto, auto, 64px 64px, 64px 64px; }
+
+  /* motion — ease-out settles, spring for confirmations, linear only for live signals */
+  @keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+  @keyframes pop { from { opacity: 0; transform: translateY(14px) scale(.94); } to { opacity: 1; transform: none; } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes tk { to { transform: translateX(-50%); } }
+  @keyframes dash { to { stroke-dashoffset: -56; } }
+  @keyframes live { 0% { box-shadow: 0 0 0 0 rgba(201,160,70,.55); } 100% { box-shadow: 0 0 0 10px rgba(201,160,70,0); } }
+  @keyframes platein { from { opacity: 0; transform: scale(.86) rotate(-20deg); } to { opacity: 1; transform: none; } }
+  @property --p { syntax: '<number>'; inherits: false; initial-value: 0; }
+  @keyframes ring { from { --p: 0; } to { --p: 72; } }
+  .in { animation: rise 320ms cubic-bezier(.2,.7,.2,1) both; }
+  .pop { animation: pop 320ms cubic-bezier(.34,1.4,.64,1) both; }
+  .d1 { animation-delay: 80ms; } .d2 { animation-delay: 160ms; } .d3 { animation-delay: 240ms; } .d4 { animation-delay: 320ms; } .d5 { animation-delay: 520ms; } .d6 { animation-delay: 640ms; } .d7 { animation-delay: 760ms; } .d8 { animation-delay: 880ms; }
+  .plate { animation: platein 700ms cubic-bezier(.2,.7,.2,1) 200ms both; }
+  .spin { animation: spin 60s linear infinite; }
+  .tick { animation: tk 60s linear infinite; }
+  .path { animation: dash 2.4s linear infinite; }
+  .live { animation: live 1.4s linear infinite; }
+  .rv { animation: rise cubic-bezier(.2,.7,.2,1) both; animation-timeline: view(); animation-range: entry 0% entry 30%; }
+  .s2 { animation-range: entry 6% entry 36%; } .s3 { animation-range: entry 12% entry 42%; } .s4 { animation-range: entry 18% entry 48%; } .s5 { animation-range: entry 24% entry 54%; }
+  .ringchart { background: conic-gradient(#2E6B47 calc(var(--p) * 1%), rgba(26,59,26,.08) 0); animation: ring cubic-bezier(.2,.7,.2,1) both; animation-timeline: view(); animation-range: entry 30% cover 50%; }
+  @keyframes draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  .line-draw { transform-origin: left; animation: draw linear both; animation-timeline: view(); animation-range: entry 20% cover 45%; }
+  details { border-top: 1px solid rgba(26,59,26,.08); }
+
+  .glass-2 { background: #FFFFFF; box-shadow: 0 2px 8px rgba(31,28,22,.06); border: 1px solid rgba(26,59,26,.08); border-radius: 18px; }
+  .h2 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; letter-spacing: -.04em; color: #0E3320; font-size: 68px; line-height: .96; }
+  .lead { font-size: 18px; line-height: 1.6; color: #3A362C; }
+  .check { width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: #EEF2EA; border: 1px solid rgba(201,160,70,.35); color: #1F5C3A; flex: none; }
+  summary { list-style: none; cursor: pointer; padding: 24px 0; display: flex; justify-content: space-between; align-items: center; gap: 24px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; color: #0E3320; letter-spacing: -.02em; }
+  summary::-webkit-details-marker { display: none; }
+  summary .pm { transition: transform 200ms cubic-bezier(.2,.7,.2,1); flex: none; }
+  details[open] summary .pm { transform: rotate(45deg); }
+  details:last-child { border-bottom: 1px solid rgba(26,59,26,.08); }
+  details p { padding: 0 0 24px; font-size: 16px; line-height: 1.6; color: #3A362C; max-width: 620px; }
+  details[open] p { animation: rise 200ms cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes outUp { to { opacity: 0; transform: translateY(-10px); } }
+  @keyframes inUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes flash { 0% { background: rgba(201,160,70,0); } 30% { background: rgba(201,160,70,.16); } 100% { background: rgba(201,160,70,0); } }
+  .swap { display: inline-grid; } .swap > span { grid-area: 1 / 1; }
+  .old { animation: outUp 200ms cubic-bezier(.6,0,.8,.4) 1400ms both; }
+  .new { animation: inUp 320ms cubic-bezier(.2,.7,.2,1) 1500ms both; }
+  .flash { animation: flash 900ms cubic-bezier(.2,.7,.2,1) 1400ms both; border-radius: 8px; }
+  @keyframes springIn { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: none; } }
+  .spring { animation: springIn 320ms cubic-bezier(.34,1.4,.64,1) 1700ms both; }
+  @keyframes lit { from { background: #FFFFFF; box-shadow: 0 0 0 0 rgba(201,160,70,0); } to { background: #2E6B47; box-shadow: 0 0 0 6px rgba(201,160,70,.16), 0 0 20px rgba(201,160,70,.4); } }
+  .lit { animation: lit linear both; animation-timeline: view(); }
+  .l1 { animation-range: entry 60% cover 38%; } .l2 { animation-range: cover 38% cover 44%; } .l3 { animation-range: cover 44% cover 50%; } .l4 { animation-range: cover 50% cover 56%; }
+  @keyframes fold { from { opacity: 1; transform: none; } to { opacity: .72; transform: translateX(14px) scale(.97); } } }
+  .fold { animation: fold linear both; animation-timeline: view(); animation-range: cover 30% cover 60%; }
+  @keyframes nudge { 0%, 100% { transform: none; } 50% { transform: translateX(6px); } }
+  .nudge { animation: nudge linear both; animation-timeline: view(); animation-range: cover 35% cover 55%; }
+  @keyframes fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  .bar { transform-origin: left; animation: fill cubic-bezier(.2,.7,.2,1) both; animation-timeline: view(); animation-range: entry 30% cover 50%; }
+  .s6 { animation-range: entry 30% entry 60%; }
+  .nl { background-image: linear-gradient(#2E6B47,#2E6B47); background-size: 0 2px; background-repeat: no-repeat; background-position: 0 100%; padding-bottom: 4px; transition: background-size 200ms cubic-bezier(.2,.7,.2,1); }
+  .nl:hover { background-size: 100% 2px; color: #0E3320; }
+
+
+  .seg { stroke-dashoffset: 0; animation: segDraw 800ms cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes segDraw { from { stroke-dasharray: 0 100; } }
+  .dsh { opacity: 0; transform-box: fill-box; transform-origin: center; animation: dishPop 420ms cubic-bezier(.34,1.4,.64,1) both; }
+  @keyframes dishPop { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: none; } }
+  .stm { transform-box: fill-box; transform-origin: center; animation: steamUp 2600ms cubic-bezier(.2,.7,.2,1) infinite both; }
+  @keyframes steamUp { 0% { opacity: 0; transform: translateY(8px); } 35% { opacity: .55; } 100% { opacity: 0; transform: translateY(-14px); } }
+
+  .orbit { animation: spin 56s linear infinite; }
+  .arm { position: absolute; inset: 0; transform: rotate(var(--a)); pointer-events: none; }
+  .onode { position: absolute; left: 50%; top: 0; transform: translate(-50%,-50%); }
+  .onode > span { display: inline-flex; animation: counter 56s linear infinite; }
+  @keyframes counter { from { transform: rotate(calc(-1 * var(--a))); } to { transform: rotate(calc(-1 * var(--a) - 360deg)); } }
+  .feed { display: inline-grid; }
+  .feed > span { grid-area: 1 / 1; opacity: 0; animation: feed 15s cubic-bezier(.2,.7,.2,1) infinite both; white-space: nowrap; }
+  @keyframes feed { 0% { opacity: 0; transform: translateY(10px); } 3% { opacity: 1; transform: none; } 18% { opacity: 1; transform: none; } 21% { opacity: 0; transform: translateY(-10px); } 100% { opacity: 0; transform: translateY(-10px); } }
+
+  .htrack { position: absolute; top: 39px; left: 40px; width: calc(75% + 13.5px); height: 2px; border-radius: 2px; background: rgba(26,59,26,.10); }
+  .hfill { position: absolute; inset: 0; border-radius: 2px; transform-origin: left; transform: scaleX(0); background: linear-gradient(90deg,#2E6B47,#9DBFA5,#E5BE6E); }
+  .hmark { position: absolute; top: 50%; left: 0; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: #2E6B47; box-shadow: 0 0 0 6px rgba(201,160,70,.18), 0 0 22px rgba(201,160,70,.75); opacity: 0; }
+  .hnode { position: relative; z-index: 1; width: 24px; height: 24px; border-radius: 999px; border: 2px solid #2E6B47; background: #FFFFFF; display: block; }
+  .htime { align-self: flex-start; font-size: 14px; color: #1F5C3A; padding: 3px 10px; margin-left: -10px; border-radius: 999px; }
+  .play .hfill { animation: hfill 2700ms linear 300ms both; }
+  .play .hmark { animation: hmark 2700ms linear 300ms both; }
+  .play .hnode { animation: hnode 480ms cubic-bezier(.34,1.4,.64,1) both; }
+  .play .hcard { animation: hcard 600ms cubic-bezier(.2,.7,.2,1) var(--d) both; }
+  .play .hcard .htime { animation: htime 400ms cubic-bezier(.2,.7,.2,1) var(--d) both; }
+  @keyframes hfill { to { transform: scaleX(1); } }
+  @keyframes hmark { 0% { left: 0; opacity: 0; } 4% { opacity: 1; } 94% { opacity: 1; } 100% { left: 100%; opacity: 0; } }
+  @keyframes hnode { 0% { transform: scale(1); } 45% { transform: scale(1.4); } 100% { transform: none; background: #2E6B47; box-shadow: 0 0 0 6px rgba(201,160,70,.16), 0 0 20px rgba(201,160,70,.45); } }
+  @keyframes hcard { to { border-color: rgba(201,160,70,.45); box-shadow: 0 0 0 1px rgba(201,160,70,.2), 0 18px 44px -16px rgba(201,160,70,.45); } }
+  @keyframes htime { to { background: #EEF2EA; font-weight: 700; } }
+
+  @property --kc { syntax: '<integer>'; inherits: false; initial-value: 520; }
+  .kc { counter-reset: kc var(--kc); }
+  .kc::after { content: counter(kc); }
+  .nbar { transform-origin: left; }
+  .play .ndsh { opacity: 0; transform-box: fill-box; transform-origin: center; animation: dishPop 420ms cubic-bezier(.34,1.4,.64,1) both; }
+  .play .nlink { animation: nlink 520ms cubic-bezier(.34,1.4,.64,1) 900ms both; }
+  .play .kc { animation: kcount 1000ms cubic-bezier(.2,.7,.2,1) 1200ms both; }
+  .play .nbar { animation: nfill 700ms cubic-bezier(.2,.7,.2,1) var(--d) both; }
+  .play .nval { animation: nval 300ms cubic-bezier(.2,.7,.2,1) 1900ms both; }
+  .play .nchip { animation: dishPop 360ms cubic-bezier(.34,1.4,.64,1) var(--d) both; }
+  @keyframes kcount { from { --kc: 0; } to { --kc: 520; } }
+  @keyframes nfill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes nval { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  @keyframes nlink { 0% { opacity: 0; transform: translateY(14px) scale(.94); } 70% { box-shadow: 0 0 0 6px rgba(201,160,70,.16), 0 14px 40px -12px rgba(201,160,70,.5); } 100% { opacity: 1; transform: none; } }
+
+  .wreveal { transform-box: fill-box; transform-origin: left; }
+  .play .wreveal { animation: wrev 1600ms cubic-bezier(.2,.7,.2,1) 200ms both; }
+  @keyframes wrev { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  .play .wflag { animation: dishPop 420ms cubic-bezier(.34,1.4,.64,1) 1700ms both; }
+  .wpulse { transform-box: fill-box; transform-origin: center; animation: wpulse 2400ms cubic-bezier(.2,.7,.2,1) infinite; }
+  @keyframes wpulse { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(1.8); opacity: 0; } }
+  .wbar { transform-origin: left; }
+  .play .wbar { animation: nfill 800ms cubic-bezier(.2,.7,.2,1) 600ms both; }
+
+  .appill svg { transition: transform 320ms cubic-bezier(.2,.7,.2,1); }
+  .tile:hover .appill svg { transform: translateY(-4px) scale(1.03); }
+
+  .forest .h2, .forest h3, .forest .disp { color: #FBF1D2; }
+  .forest .lead, .forest .soft { color: #C9DBC4; }
+  .forest .micro { color: #E9C46A !important; }
+  .forest .glass { background: rgba(255,253,245,.05); border-color: rgba(240,215,138,.16); box-shadow: none; }
+  .forest .htrack { background: rgba(240,215,138,.16); }
+  .forest .hfill { background: linear-gradient(90deg,#9DBFA5,#F0D78A); }
+  .forest .hmark { background: #F0D78A; box-shadow: 0 0 0 6px rgba(240,215,138,.18), 0 0 22px rgba(240,215,138,.7); }
+  .forest .hnode { background: #16392A; border-color: #E9C46A; }
+  .forest .htime { color: #F0D78A; }
+  .forest .play .hnode { animation-name: hnodeG; }
+  .forest .play .hcard { animation-name: hcardG; }
+  .forest .play .hcard .htime { animation-name: htimeG; }
+  @keyframes hnodeG { 0% { transform: scale(1); } 45% { transform: scale(1.4); } 100% { transform: none; background: #F0D78A; box-shadow: 0 0 0 6px rgba(240,215,138,.16), 0 0 20px rgba(240,215,138,.45); } }
+  @keyframes hcardG { to { border-color: rgba(240,215,138,.5); background: rgba(255,253,245,.08); } }
+  @keyframes htimeG { to { background: rgba(240,215,138,.16); font-weight: 700; } }
+
+  .fab { transition: padding 320ms cubic-bezier(.2,.7,.2,1), gap 320ms cubic-bezier(.2,.7,.2,1), transform 120ms, box-shadow 200ms; }
+  .fab-l { display: inline-block; max-width: 180px; overflow: hidden; white-space: nowrap; transition: max-width 320ms cubic-bezier(.2,.7,.2,1), opacity 200ms; }
+  .fab.mini { padding: 0 16px; gap: 0; }
+  .fab.mini .fab-l { max-width: 0; opacity: 0; }
+  .fab.mini:hover, .fab.mini:focus-visible { padding: 0 24px; gap: 10px; }
+  .fab.mini:hover .fab-l, .fab.mini:focus-visible .fab-l { max-width: 180px; opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    .fab, .fab-l { transition: none; }
+    .forest .hnode { background: #F0D78A; } .forest .htime { background: rgba(240,215,138,.16); }
+    .appill svg { transition: none; }
+    .play .wreveal, .play .wflag, .wpulse, .play .wbar { animation: none; }
+    .play .ndsh, .play .nlink, .play .kc, .play .nbar, .play .nval, .play .nchip { animation: none; opacity: 1; }
+    .hfill { transform: none; } .hmark { display: none; }
+    .hnode, .play .hnode { animation: none; background: #2E6B47; }
+    .play .hcard, .play .hcard .htime { animation: none; } .htime { background: #EEF2EA; font-weight: 700; }
+    .orbit, .onode > span { animation: none; } .onode > span { transform: rotate(calc(-1 * var(--a))); }
+    .feed > span { animation: none; } .feed > span:first-child { opacity: 1; }
+    .dsh { animation: none; opacity: 1; } .stm, .seg { animation: none; }
+    .old { display: none; } .new, .flash, .spring, .lit, .fold, .nudge, .bar, details[open] p { animation: none; }
+    .nl, summary .pm { transition: none; }
+    .in, .pop, .plate, .spin, .tick, .path, .live, .rv, .line-draw { animation: none; }
+    .ringchart { animation: none; --p: 72; }
+    .btn, .tile, .arr { transition: none; }
+  }
+</style>
+
+</head>
+<body>
+
+
+<div style="width:100%;background:#FAF7F0;position:relative;">
+<div style="position:sticky;top:16px;z-index:60;padding:0 32px;">
+  <nav class="glass in" style="max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:28px;padding:10px 10px 10px 24px;border-radius:999px;background:rgba(255,253,248,.92);">
+    <a href="#top" aria-label="Firro home" style="display:flex;align-items:baseline;gap:10px;"><span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:24px;letter-spacing:-1px;color:#0E3320;">firro<span style="color:#1F5C3A;">.</span></span></a>
+    <div style="display:flex;gap:24px;font-size:14px;font-weight:700;">
+      <a href="#how" class="nl" style="color:#3A362C;">How it works</a>
+      <a href="#batch" class="nl" style="color:#3A362C;">Batch cooking</a>
+      <a href="#nutrition" class="nl" style="color:#3A362C;">Nutrition</a>
+      <a href="#platform" class="nl" style="color:#3A362C;">Platform</a>
+      <a href="#faq" class="nl" style="color:#3A362C;">FAQ</a>
+    </div>
+    <a href="#demo" class="btn btn-glow" style="margin-left:auto;min-height:44px;padding:0 20px;font-size:14px;">Book a demo</a>
+  </nav>
+</div>
+<header id="top" class="gridbg" style="margin-top:-76px;min-height:100vh;padding:150px 44px 80px;display:flex;align-items:center;">
+  <div style="max-width:1280px;width:100%;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:40px;align-items:center;">
+    <div style="display:flex;flex-direction:column;">
+      <span class="micro in" style="display:inline-flex;align-items:center;gap:10px;color:#3A362C;"><span class="live" style="width:8px;height:8px;border-radius:999px;background:#2E6B47;display:block;"></span>Now piloting in Coimbatore</span>
+      <h1 class="disp" style="font-size:80px;line-height:.95;margin:24px 0 28px;max-width:11ch;"><span style="display:inline-block;animation:rise 320ms cubic-bezier(.2,.7,.2,1) 80ms both;">Firro</span> <span style="display:inline-block;animation:rise 320ms cubic-bezier(.2,.7,.2,1) 125ms both;">plans</span> <span style="display:inline-block;animation:rise 320ms cubic-bezier(.2,.7,.2,1) 170ms both;">tomorrow's</span> <span style="display:inline-block;animation:rise 320ms cubic-bezier(.2,.7,.2,1) 215ms both;">prep</span> <span style="display:inline-block;animation:rise 320ms cubic-bezier(.2,.7,.2,1) 260ms both;">from</span> <em class="acc">today's subscriptions.</em></h1>
+      <p class="in d2 soft" style="font-size:19px;line-height:1.6;max-width:540px;">One operating system for subscription and tiffin kitchens. Point of sale, kitchen admin, customer app and delivery &mdash; all reading the same plan, so nobody re-types a pause.</p>
+      <div class="in d3" style="display:flex;flex-wrap:wrap;gap:12px;margin-top:34px;">
+        <a href="#demo" class="btn btn-glow">Book a demo <svg class="arr" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></a>
+        <a href="https://wa.me/911234567890" class="btn btn-glass">Chat on WhatsApp</a>
+      </div>
+      <div class="in d4" style="display:flex;gap:28px;margin-top:44px;padding-top:24px;border-top:1px solid rgba(26,59,26,.08);flex-wrap:wrap;font-size:14px;font-weight:700;color:#3A362C;">
+        <span style="display:flex;align-items:center;gap:8px;color:#3A362C;"><span style="color:#1F5C3A;display:flex;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"></polyline></svg></span>DPIIT-recognised startup</span>
+        <span style="display:flex;align-items:center;gap:8px;"><span style="color:#1F5C3A;display:flex;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"></polyline></svg></span>Nutrition on every dish</span>
+        <span style="display:flex;align-items:center;gap:8px;"><span style="color:#1F5C3A;display:flex;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"></polyline></svg></span>GST-ready billing</span>
+      </div>
+    </div>
+
+    <div style="position:relative;width:100%;max-width:560px;aspect-ratio:1;justify-self:center;">
+      <div style="position:absolute;inset:0;border-radius:50%;border:1px solid rgba(26,59,26,.14);"></div>
+      <div class="spin" style="position:absolute;inset:0;"><span style="position:absolute;width:12px;height:12px;border-radius:50%;background:#D9B45A;top:-6px;left:calc(50% - 6px);box-shadow:0 0 16px rgba(217,180,90,.8);"></span></div>
+      <div style="position:absolute;inset:11%;border-radius:50%;border:1px solid rgba(26,59,26,.14);"></div>
+      <div style="position:absolute;inset:22%;border-radius:50%;border:1px solid rgba(78,204,121,.35);"></div>
+      <svg class="plate" viewBox="0 0 300 300" role="img" aria-label="Illustration of a power bowl: rice, grilled chicken, greens, corn, tomato and egg. 520 kcal, protein 42g, carbs 48g, fat 16g, fibre 9g." style="position:absolute;inset:25%;width:50%;height:50%;border-radius:50%;box-shadow:0 30px 70px rgba(31,28,22,.18),0 0 0 10px #FFFFFF,0 0 0 11px rgba(201,160,70,.35);">
+  <defs>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="3.2"></feGaussianBlur></filter>
+  <radialGradient id="rim" cx="38%" cy="32%" r="80%"><stop offset="0%" stop-color="#FFFFFF"></stop><stop offset="78%" stop-color="#FBF8F1"></stop><stop offset="100%" stop-color="#E9E2D2"></stop></radialGradient>
+  <radialGradient id="inner" cx="42%" cy="36%" r="75%"><stop offset="0%" stop-color="#FCF9F1"></stop><stop offset="82%" stop-color="#F2ECDD"></stop><stop offset="100%" stop-color="#E2D9C4"></stop></radialGradient>
+  <linearGradient id="chk" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E2A874"></stop><stop offset="55%" stop-color="#C98450"></stop><stop offset="100%" stop-color="#B06E3E"></stop></linearGradient>
+  <radialGradient id="yolk" cx="40%" cy="35%" r="75%"><stop offset="0%" stop-color="#FBD173"></stop><stop offset="100%" stop-color="#E09E2E"></stop></radialGradient>
+  <radialGradient id="tomg" cx="38%" cy="32%" r="80%"><stop offset="0%" stop-color="#F2A3A3"></stop><stop offset="100%" stop-color="#CF5B5B"></stop></radialGradient>
+  <radialGradient id="ricem" cx="42%" cy="36%" r="80%"><stop offset="0%" stop-color="#FBF6E9"></stop><stop offset="100%" stop-color="#EDE5CF"></stop></radialGradient>
+  <linearGradient id="leafa" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#8FDCA6"></stop><stop offset="100%" stop-color="#4FAE6F"></stop></linearGradient>
+  <linearGradient id="leafb" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#6FCB8D"></stop><stop offset="100%" stop-color="#2F8A50"></stop></linearGradient>
+</defs>
+  <circle cx="150" cy="150" r="147" fill="url(#rim)"></circle>
+  <circle cx="150" cy="150" r="147" fill="none" stroke="rgba(26,59,26,.14)" stroke-width="1.6"></circle>
+  <circle cx="150" cy="150" r="124" fill="url(#inner)"></circle>
+  <circle cx="150" cy="150" r="124" fill="none" stroke="rgba(26,59,26,.10)" stroke-width="1.4"></circle>
+  <g class="dsh" style="animation-delay:650ms;"><ellipse cx="104" cy="190" rx="56" ry="30" fill="rgba(31,28,22,.12)" filter="url(#soft)"></ellipse><ellipse cx="102" cy="176" rx="58" ry="47" fill="url(#ricem)"></ellipse><ellipse cx="102" cy="176" rx="58" ry="47" fill="none" stroke="rgba(26,59,26,.10)" stroke-width="1.2"></ellipse><rect x="93.0" y="192.6" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(-58 93.0 192.6)"></rect><rect x="108.9" y="166.4" width="8.5" height="3.4" rx="1.7" fill="#EFE7D2" transform="rotate(-56 108.9 166.4)"></rect><rect x="105.4" y="190.0" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(37 105.4 190.0)"></rect><rect x="104.3" y="209.1" width="8.5" height="3.4" rx="1.7" fill="#EFE7D2" transform="rotate(-55 104.3 209.1)"></rect><rect x="119.5" y="191.9" width="8.5" height="3.4" rx="1.7" fill="#EFE7D2" transform="rotate(-55 119.5 191.9)"></rect><rect x="92.1" y="173.2" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(-14 92.1 173.2)"></rect><rect x="84.2" y="172.7" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(37 84.2 172.7)"></rect><rect x="64.0" y="170.0" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(-24 64.0 170.0)"></rect><rect x="65.8" y="161.5" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(25 65.8 161.5)"></rect><rect x="89.6" y="174.9" width="8.5" height="3.4" rx="1.7" fill="#EFE7D2" transform="rotate(-55 89.6 174.9)"></rect><rect x="113.7" y="211.3" width="8.5" height="3.4" rx="1.7" fill="#DFD4B6" transform="rotate(39 113.7 211.3)"></rect><rect x="53.2" y="186.7" width="8.5" height="3.4" rx="1.7" fill="#DFD4B6" transform="rotate(22 53.2 186.7)"></rect><rect x="102.2" y="195.8" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(-8 102.2 195.8)"></rect><rect x="68.4" y="164.3" width="8.5" height="3.4" rx="1.7" fill="#EFE7D2" transform="rotate(17 68.4 164.3)"></rect><rect x="63.5" y="188.4" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(-52 63.5 188.4)"></rect><rect x="80.9" y="176.7" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(17 80.9 176.7)"></rect><rect x="132.8" y="166.9" width="8.5" height="3.4" rx="1.7" fill="#EFE7D2" transform="rotate(-51 132.8 166.9)"></rect><rect x="58.4" y="160.6" width="8.5" height="3.4" rx="1.7" fill="#DFD4B6" transform="rotate(10 58.4 160.6)"></rect><rect x="88.5" y="147.5" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(46 88.5 147.5)"></rect><rect x="129.1" y="143.5" width="8.5" height="3.4" rx="1.7" fill="#EFE7D2" transform="rotate(51 129.1 143.5)"></rect><rect x="95.4" y="169.1" width="8.5" height="3.4" rx="1.7" fill="#EFE7D2" transform="rotate(9 95.4 169.1)"></rect><rect x="64.1" y="161.7" width="8.5" height="3.4" rx="1.7" fill="#DFD4B6" transform="rotate(44 64.1 161.7)"></rect><rect x="91.8" y="139.3" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(18 91.8 139.3)"></rect><rect x="130.9" y="168.9" width="8.5" height="3.4" rx="1.7" fill="#DFD4B6" transform="rotate(-41 130.9 168.9)"></rect><rect x="144.5" y="191.3" width="8.5" height="3.4" rx="1.7" fill="#EFE7D2" transform="rotate(-37 144.5 191.3)"></rect><rect x="102.5" y="204.3" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(57 102.5 204.3)"></rect><rect x="118.5" y="201.0" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(1 118.5 201.0)"></rect><rect x="122.4" y="142.6" width="8.5" height="3.4" rx="1.7" fill="#EFE7D2" transform="rotate(1 122.4 142.6)"></rect><rect x="75.2" y="190.8" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(27 75.2 190.8)"></rect><rect x="114.7" y="192.3" width="8.5" height="3.4" rx="1.7" fill="#EFE7D2" transform="rotate(-11 114.7 192.3)"></rect></g>
+  <g class="dsh" style="animation-delay:900ms;"><ellipse cx="178" cy="96" rx="52" ry="22" fill="rgba(31,28,22,.12)" filter="url(#soft)"></ellipse><g transform="rotate(-24 146 92)">
+      <rect x="124" y="81" width="44" height="22" rx="10" fill="url(#chk)"></rect>
+      <rect x="124" y="81" width="44" height="22" rx="10" fill="none" stroke="rgba(90,50,20,.28)" stroke-width="1"></rect>
+      <line x1="135" y1="81" x2="135" y2="103" stroke="rgba(90,50,20,.5)" stroke-width="3"></line>
+      <line x1="149" y1="81" x2="149" y2="103" stroke="rgba(90,50,20,.5)" stroke-width="3"></line>
+      <rect x="128" y="84" width="14" height="4" rx="2" fill="rgba(255,240,220,.35)"></rect>
+    </g><g transform="rotate(-6 172 84)">
+      <rect x="150" y="73" width="44" height="22" rx="10" fill="url(#chk)"></rect>
+      <rect x="150" y="73" width="44" height="22" rx="10" fill="none" stroke="rgba(90,50,20,.28)" stroke-width="1"></rect>
+      <line x1="161" y1="73" x2="161" y2="95" stroke="rgba(90,50,20,.5)" stroke-width="3"></line>
+      <line x1="175" y1="73" x2="175" y2="95" stroke="rgba(90,50,20,.5)" stroke-width="3"></line>
+      <rect x="154" y="76" width="14" height="4" rx="2" fill="rgba(255,240,220,.35)"></rect>
+    </g><g transform="rotate(14 198 92)">
+      <rect x="176" y="81" width="44" height="22" rx="10" fill="url(#chk)"></rect>
+      <rect x="176" y="81" width="44" height="22" rx="10" fill="none" stroke="rgba(90,50,20,.28)" stroke-width="1"></rect>
+      <line x1="187" y1="81" x2="187" y2="103" stroke="rgba(90,50,20,.5)" stroke-width="3"></line>
+      <line x1="201" y1="81" x2="201" y2="103" stroke="rgba(90,50,20,.5)" stroke-width="3"></line>
+      <rect x="180" y="84" width="14" height="4" rx="2" fill="rgba(255,240,220,.35)"></rect>
+    </g><g transform="rotate(34 216 110)">
+      <rect x="194" y="99" width="44" height="22" rx="10" fill="url(#chk)"></rect>
+      <rect x="194" y="99" width="44" height="22" rx="10" fill="none" stroke="rgba(90,50,20,.28)" stroke-width="1"></rect>
+      <line x1="205" y1="99" x2="205" y2="121" stroke="rgba(90,50,20,.5)" stroke-width="3"></line>
+      <line x1="219" y1="99" x2="219" y2="121" stroke="rgba(90,50,20,.5)" stroke-width="3"></line>
+      <rect x="198" y="102" width="14" height="4" rx="2" fill="rgba(255,240,220,.35)"></rect>
+    </g><g transform="rotate(-40 158 112)">
+      <rect x="136" y="101" width="44" height="22" rx="10" fill="url(#chk)"></rect>
+      <rect x="136" y="101" width="44" height="22" rx="10" fill="none" stroke="rgba(90,50,20,.28)" stroke-width="1"></rect>
+      <line x1="147" y1="101" x2="147" y2="123" stroke="rgba(90,50,20,.5)" stroke-width="3"></line>
+      <line x1="161" y1="101" x2="161" y2="123" stroke="rgba(90,50,20,.5)" stroke-width="3"></line>
+      <rect x="140" y="104" width="14" height="4" rx="2" fill="rgba(255,240,220,.35)"></rect>
+    </g></g>
+  <g class="dsh" style="animation-delay:1150ms;"><ellipse cx="216" cy="168" rx="34" ry="40" fill="rgba(31,28,22,.12)" filter="url(#soft)"></ellipse><path transform="rotate(-18 206 146) scale(1.1) translate(-18.7 -13.3)" d="M206 161 C 193 148 199 131 206 131 C 213 131 219 148 206 161z" fill="url(#leafa)"></path><path d="M206 157 L206 136" transform="rotate(-18 206 146)" stroke="rgba(255,255,255,.4)" stroke-width="1.4" stroke-linecap="round"></path><path transform="rotate(24 226 160) scale(1.0) translate(0.0 0.0)" d="M226 175 C 213 162 219 145 226 145 C 233 145 239 162 226 175z" fill="url(#leafb)"></path><path d="M226 171 L226 150" transform="rotate(24 226 160)" stroke="rgba(255,255,255,.4)" stroke-width="1.4" stroke-linecap="round"></path><path transform="rotate(60 210 182) scale(0.95) translate(11.1 9.6)" d="M210 197 C 197 184 203 167 210 167 C 217 167 223 184 210 197z" fill="url(#leafa)"></path><path d="M210 193 L210 172" transform="rotate(60 210 182)" stroke="rgba(255,255,255,.4)" stroke-width="1.4" stroke-linecap="round"></path><path transform="rotate(-30 230 192) scale(1.05) translate(-11.0 -9.1)" d="M230 207 C 217 194 223 177 230 177 C 237 177 243 194 230 207z" fill="url(#leafb)"></path><path d="M230 203 L230 182" transform="rotate(-30 230 192)" stroke="rgba(255,255,255,.4)" stroke-width="1.4" stroke-linecap="round"></path><path transform="rotate(10 214 206) scale(0.9) translate(23.8 22.9)" d="M214 221 C 201 208 207 191 214 191 C 221 191 227 208 214 221z" fill="url(#leafa)"></path><path d="M214 217 L214 196" transform="rotate(10 214 206)" stroke="rgba(255,255,255,.4)" stroke-width="1.4" stroke-linecap="round"></path><path transform="rotate(80 236 176) scale(0.85) translate(41.6 31.1)" d="M236 191 C 223 178 229 161 236 161 C 243 161 249 178 236 191z" fill="url(#leafb)"></path><path d="M236 187 L236 166" transform="rotate(80 236 176)" stroke="rgba(255,255,255,.4)" stroke-width="1.4" stroke-linecap="round"></path></g>
+  <g class="dsh" style="animation-delay:1400ms;"><ellipse cx="96" cy="106" rx="30" ry="18" fill="rgba(31,28,22,.12)" filter="url(#soft)"></ellipse><circle cx="86" cy="102" r="13" fill="url(#tomg)"></circle><circle cx="82.1" cy="97.45" r="3.6400000000000006" fill="rgba(255,255,255,.55)"></circle><path d="M82 91 Q86 86 90 91" fill="none" stroke="#2F8A50" stroke-width="2" stroke-linecap="round"></path><circle cx="110" cy="96" r="11" fill="url(#tomg)"></circle><circle cx="106.7" cy="92.15" r="3.08" fill="rgba(255,255,255,.55)"></circle><path d="M106 87 Q110 82 114 87" fill="none" stroke="#2F8A50" stroke-width="2" stroke-linecap="round"></path><circle cx="134" cy="118" r="4.6" fill="url(#yolk)"></circle><circle cx="132.6" cy="116.6" r="1.4" fill="rgba(255,255,255,.6)"></circle><circle cx="146" cy="128" r="4.6" fill="url(#yolk)"></circle><circle cx="144.6" cy="126.6" r="1.4" fill="rgba(255,255,255,.6)"></circle><circle cx="138" cy="136" r="4.6" fill="url(#yolk)"></circle><circle cx="136.6" cy="134.6" r="1.4" fill="rgba(255,255,255,.6)"></circle><circle cx="152" cy="116" r="4.6" fill="url(#yolk)"></circle><circle cx="150.6" cy="114.6" r="1.4" fill="rgba(255,255,255,.6)"></circle><circle cx="158" cy="132" r="4.6" fill="url(#yolk)"></circle><circle cx="156.6" cy="130.6" r="1.4" fill="rgba(255,255,255,.6)"></circle><circle cx="128" cy="128" r="4.6" fill="url(#yolk)"></circle><circle cx="126.6" cy="126.6" r="1.4" fill="rgba(255,255,255,.6)"></circle></g>
+  <g class="dsh" style="animation-delay:1600ms;"><ellipse cx="174" cy="214" rx="36" ry="20" fill="rgba(31,28,22,.12)" filter="url(#soft)"></ellipse><g transform="rotate(-12 162 210)"><ellipse cx="162" cy="210" rx="17" ry="21" fill="#FDFBF4"></ellipse><ellipse cx="162" cy="210" rx="17" ry="21" fill="none" stroke="rgba(26,59,26,.12)" stroke-width="1.2"></ellipse><circle cx="162" cy="211" r="8.5" fill="url(#yolk)"></circle><circle cx="159.5" cy="208" r="2.2" fill="rgba(255,255,255,.55)"></circle></g><g transform="rotate(16 192 218)"><ellipse cx="192" cy="218" rx="17" ry="21" fill="#FDFBF4"></ellipse><ellipse cx="192" cy="218" rx="17" ry="21" fill="none" stroke="rgba(26,59,26,.12)" stroke-width="1.2"></ellipse><circle cx="192" cy="219" r="8.5" fill="url(#yolk)"></circle><circle cx="189.5" cy="216" r="2.2" fill="rgba(255,255,255,.55)"></circle></g></g>
+  <g class="dsh" style="animation-delay:1800ms;"><ellipse cx="168" cy="74" rx="2.8" ry="1.5" transform="rotate(20 168 74)" fill="#FDFBF4" stroke="rgba(90,50,20,.25)" stroke-width=".6"></ellipse><ellipse cx="186" cy="70" rx="2.8" ry="1.5" transform="rotate(-25 186 70)" fill="#FDFBF4" stroke="rgba(90,50,20,.25)" stroke-width=".6"></ellipse><ellipse cx="202" cy="80" rx="2.8" ry="1.5" transform="rotate(55 202 80)" fill="#FDFBF4" stroke="rgba(90,50,20,.25)" stroke-width=".6"></ellipse><ellipse cx="154" cy="80" rx="2.8" ry="1.5" transform="rotate(0 154 80)" fill="#FDFBF4" stroke="rgba(90,50,20,.25)" stroke-width=".6"></ellipse><ellipse cx="214" cy="98" rx="2.8" ry="1.5" transform="rotate(35 214 98)" fill="#FDFBF4" stroke="rgba(90,50,20,.25)" stroke-width=".6"></ellipse><g><path d="M150 158 C 142 150 146 138 154 138" fill="none" stroke="#2F8A50" stroke-width="2"></path><circle cx="154" cy="136" r="5" fill="url(#leafa)"></circle><circle cx="146" cy="142" r="4.4" fill="url(#leafa)"></circle><circle cx="158" cy="146" r="4.4" fill="url(#leafa)"></circle><circle cx="150" cy="148" r="3.8" fill="url(#leafa)"></circle></g><g transform="rotate(-20 236 236)"><path d="M222 236 A 15 15 0 0 1 250 236 Z" fill="#DDEE9A"></path><path d="M222 236 A 15 15 0 0 1 250 236" fill="none" stroke="#9FB840" stroke-width="2.4"></path><line x1="230" y1="233" x2="228" y2="226" stroke="#B9CC66" stroke-width="1.6"></line><line x1="236" y1="232" x2="236" y2="225" stroke="#B9CC66" stroke-width="1.6"></line><line x1="242" y1="233" x2="244" y2="226" stroke="#B9CC66" stroke-width="1.6"></line></g></g>
+  <g class="dsh" style="animation-delay:2050ms;"><path class="stm" style="animation-delay:0ms;" d="M128 46 C 121 36 135 26 128 14" fill="none" stroke="rgba(120,112,92,.5)" stroke-width="2.4" stroke-linecap="round"></path><path class="stm" style="animation-delay:900ms;" d="M152 46 C 145 36 159 26 152 14" fill="none" stroke="rgba(120,112,92,.5)" stroke-width="2.4" stroke-linecap="round"></path><path class="stm" style="animation-delay:1600ms;" d="M176 46 C 169 36 183 26 176 14" fill="none" stroke="rgba(120,112,92,.5)" stroke-width="2.4" stroke-linecap="round"></path></g>
+</svg>
+      <div class="orbit" aria-hidden="true" style="position:absolute;inset:11%;"><div class="arm" style="--a:0deg;"><div class="onode"><span style="align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.95);border:1px solid rgba(26,59,26,.10);box-shadow:0 6px 18px rgba(31,28,22,.10);font-size:13px;font-weight:700;color:#0E3320;white-space:nowrap;"><span style="width:8px;height:8px;border-radius:999px;background:#2E6B47;display:block;"></span>Protein <span class="mono" style="font-weight:500;">42g</span></span></div></div><div class="arm" style="--a:72deg;"><div class="onode"><span style="align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.95);border:1px solid rgba(26,59,26,.10);box-shadow:0 6px 18px rgba(31,28,22,.10);font-size:13px;font-weight:700;color:#0E3320;white-space:nowrap;"><span style="width:8px;height:8px;border-radius:999px;background:#1F5C3A;display:block;"></span>Fibre <span class="mono" style="font-weight:500;">9g</span></span></div></div><div class="arm" style="--a:144deg;"><div class="onode"><span style="align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.95);border:1px solid rgba(26,59,26,.10);box-shadow:0 6px 18px rgba(31,28,22,.10);font-size:13px;font-weight:700;color:#0E3320;white-space:nowrap;"><span style="width:8px;height:8px;border-radius:999px;background:#9DBFA5;display:block;"></span>Carbs <span class="mono" style="font-weight:500;">48g</span></span></div></div><div class="arm" style="--a:216deg;"><div class="onode"><span style="align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.95);border:1px solid rgba(26,59,26,.10);box-shadow:0 6px 18px rgba(31,28,22,.10);font-size:13px;font-weight:700;color:#0E3320;white-space:nowrap;"><span style="width:8px;height:8px;border-radius:999px;background:#E5BE6E;display:block;"></span>Fat <span class="mono" style="font-weight:500;">16g</span></span></div></div><div class="arm" style="--a:288deg;"><div class="onode"><span style="align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.95);border:1px solid rgba(26,59,26,.10);box-shadow:0 6px 18px rgba(31,28,22,.10);font-size:13px;font-weight:700;color:#0E3320;white-space:nowrap;"><span style="width:8px;height:8px;border-radius:999px;background:#0E3320;display:block;"></span><span class="mono" style="font-weight:500;">520</span> kcal</span></div></div></div>
+      
+
+      <div class="glass pop d5" style="position:absolute;top:-4%;left:-12%;width:244px;padding:16px 18px;border-radius:20px;">
+        <div style="display:flex;justify-content:space-between;"><span class="micro" style="font-size:10px;">Subscription</span><span class="mono" style="font-size:12px;color:#6F6957;">07:12</span></div>
+        <p class="disp" style="font-size:17px;font-weight:700;letter-spacing:-.02em;margin-top:8px;">Priya paused Thursday lunch.</p>
+        <p style="font-size:13px;color:#6F6957;margin-top:4px;">Prep sheet updated. No call needed.</p>
+      </div>
+
+      <div class="glass pop d6" style="position:absolute;top:44%;right:-16%;width:236px;padding:16px;border-radius:20px;box-shadow:0 20px 60px rgba(31,28,22,.12);">
+        <div style="display:flex;justify-content:space-between;align-items:center;"><span class="micro" style="font-size:10px;color:#1F5C3A;">Tomorrow &middot; Lunch</span><span class="chip spring" style="background:#EEF2EA;color:#1F5C3A;font-size:11px;padding:3px 9px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"></polyline></svg>Ready</span></div>
+        <p class="disp" style="font-size:22px;font-weight:700;letter-spacing:-.02em;margin-top:8px;">Prep sheet</p>
+        <div style="margin-top:8px;">
+          <div class="flash" style="display:flex;justify-content:space-between;padding:8px 6px;margin:0 -6px;border-top:1px solid rgba(26,59,26,.08);font-size:14px;"><span class="soft">Chicken power bowl</span><span class="num swap"><span class="old">48</span><span class="new">47</span></span></div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid rgba(26,59,26,.08);font-size:14px;"><span class="soft">Paneer tikka bowl</span><span class="num">36</span></div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid rgba(26,59,26,.08);font-size:14px;"><span class="soft">Dal khichdi, Jain</span><span class="num">11</span></div>
+        </div>
+        <p style="font-size:12px;color:#6F6957;margin-top:6px;">Locks at <span class="mono" style="color:#0E3320;">21:00</span> tonight</p>
+      </div>
+
+      <div class="glass pop" style="animation-delay:2000ms;position:absolute;bottom:-3%;left:-10%;width:240px;padding:14px 16px;border-radius:20px;display:flex;align-items:center;gap:12px;background:#FEF6E6;border-color:rgba(245,158,11,.35);">
+        <span class="live" style="width:10px;height:10px;border-radius:999px;background:#2E6B47;display:block;flex:none;"></span>
+        <div><p class="disp" style="font-size:16px;font-weight:700;letter-spacing:-.02em;">Lunch is on the way.</p><p style="font-size:13px;color:#7B4F05;margin-top:2px;">Karthik's 12 minutes out.</p></div>
+      </div>
+      <p style="position:absolute;bottom:-30px;right:0;font-size:12px;font-weight:600;color:#6F6957;">Sample data</p>
+    </div>
+  </div>
+</header>
+<div style="border-top:1px solid rgba(26,59,26,.08);border-bottom:1px solid rgba(26,59,26,.08);background:rgba(244,239,227,.75);padding:18px 44px;">
+  <div style="max-width:1280px;margin:0 auto;display:flex;align-items:center;gap:24px;font-size:15px;">
+    <span class="micro" style="display:inline-flex;align-items:center;gap:8px;color:#1F5C3A;flex:none;"><span class="live" style="width:8px;height:8px;border-radius:999px;background:#2E6B47;display:block;"></span>A day in the kitchen</span>
+    <span style="width:1px;height:20px;background:rgba(26,59,26,.08);flex:none;"></span>
+    <span class="feed" aria-live="off"><span style="animation-delay:0s;"><span class="mono" style="color:#1F5C3A;margin-right:14px;">07:12</span><b style="font-weight:800;color:#0E3320;">Priya paused Thursday lunch</b><span style="color:#6F6957;"> &nbsp;&rarr;&nbsp; prep sheet updated</span></span><span style="animation-delay:3s;"><span class="mono" style="color:#1F5C3A;margin-right:14px;">21:00</span><b style="font-weight:800;color:#0E3320;">Tomorrow locked</b><span style="color:#6F6957;"> &nbsp;&rarr;&nbsp; counts frozen per dish, per diet</span></span><span style="animation-delay:6s;"><span class="mono" style="color:#1F5C3A;margin-right:14px;">06:00</span><b style="font-weight:800;color:#0E3320;">Prep sheet ready</b><span style="color:#6F6957;"> &nbsp;&rarr;&nbsp; lunch batch, 142 meals</span></span><span style="animation-delay:9s;"><span class="mono" style="color:#1F5C3A;margin-right:14px;">11:40</span><b style="font-weight:800;color:#0E3320;">Packing started</b><span style="color:#6F6957;"> &nbsp;&rarr;&nbsp; one ticket per parcel</span></span><span style="animation-delay:12s;"><span class="mono" style="color:#1F5C3A;margin-right:14px;">12:30</span><b style="font-weight:800;color:#0E3320;">Lunch out the door</b><span style="color:#6F6957;"> &nbsp;&rarr;&nbsp; every parcel tracked</span></span></span>
+    <span style="margin-left:auto;font-size:12px;font-weight:600;color:#6F6957;flex:none;">Sample kitchen</span>
+  </div>
+</div>
+<section style="padding:100px 44px;">
+  <div style="max-width:1280px;margin:0 auto;">
+    <div class="rv" style="display:flex;flex-direction:column;align-items:flex-start;gap:20px;margin-bottom:48px;">
+      <div><span class="micro" style="color:#6F6957;">Sound familiar?</span><h2 class="h2" style="max-width:16ch;margin-top:14px;">Your kitchen runs on WhatsApp, a register and <em class="acc">memory.</em></h2></div>
+      <p class="lead" style="max-width:560px;">It works at 40 meals a day. At 200 it starts to crack &mdash; usually at 6am.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;">
+      <div class="glass tile rv" style="padding:32px;gap:16px;">
+        <span class="num grad" style="font-size:52px;line-height:1;font-weight:800;">01</span>
+        <h3 class="disp" style="font-size:26px;font-weight:700;letter-spacing:-.02em;">Pauses arrive as messages.</h3>
+        <p class="soft" style="font-size:16px;line-height:1.6;">Skips, swaps and &quot;no rice tomorrow&quot; come in all day. Someone has to remember every one before prep starts.</p>
+      </div>
+      <div class="glass tile rv s2" style="padding:32px;gap:16px;">
+        <span class="num grad" style="font-size:52px;line-height:1;font-weight:800;">02</span>
+        <h3 class="disp" style="font-size:26px;font-weight:700;letter-spacing:-.02em;">Prep is a morning guess.</h3>
+        <p class="soft" style="font-size:16px;line-height:1.6;">Without a live count of who's eating what, you over-cook, under-cook, or find out at the packing table.</p>
+      </div>
+      <div class="glass tile rv s3" style="padding:32px;gap:16px;">
+        <span class="num grad" style="font-size:52px;line-height:1;font-weight:800;">03</span>
+        <h3 class="disp" style="font-size:26px;font-weight:700;letter-spacing:-.02em;">Your regulars pay a middleman.</h3>
+        <p class="soft" style="font-size:16px;line-height:1.6;">Every marketplace order pays a commission. The people who eat with you every week deserve a direct line.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="how" class="forest" style="background:radial-gradient(700px 500px at 85% 10%,rgba(217,180,90,.14),transparent 60%),linear-gradient(rgba(240,215,138,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(240,215,138,.05) 1px,transparent 1px),linear-gradient(160deg,#1F4A33,#0E2A1C);background-size:auto,64px 64px,64px 64px,auto;display:flex;align-items:center;padding:100px 44px;border-top:1px solid rgba(26,59,26,.08);">
+  <div style="max-width:1280px;width:100%;margin:0 auto;">
+    <div class="rv" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:56px;">
+      <div><span class="micro" style="color:#8A6A1F;">How it works</span><h2 class="h2" style="max-width:12ch;margin-top:14px;">A day in a Firro <em style="font-style:italic;font-weight:600;color:#F0D78A;">kitchen.</em></h2></div>
+      <p class="lead" style="max-width:420px;">Customers change their plans. Firro turns those changes into tonight's lock, the morning's prep sheet and the lunch run &mdash; on its own.</p>
+    </div>
+    <div class="hseq" style="position:relative;">
+      <div class="htrack" aria-hidden="true"><div class="hfill"></div><div class="hmark"></div></div>
+      <ol style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;position:relative;">
+        <li class="glass tile hcard rv" style="gap:14px;--d:300ms;">
+          <span class="hnode" style="animation-delay:300ms;"></span>
+          <span class="mono htime">All day</span>
+          <h3 class="disp" style="font-size:24px;font-weight:700;letter-spacing:-.02em;">Customers manage their plans.</h3>
+          <p class="soft" style="font-size:15px;line-height:1.6;">Skip, swap or pause from the customer app &mdash; inside the cutoffs you set.</p>
+        </li>
+        <li class="glass tile hcard rv s2" style="gap:14px;--d:1200ms;">
+          <span class="hnode" style="animation-delay:1200ms;"></span>
+          <span class="mono htime">Cutoff</span>
+          <h3 class="disp" style="font-size:24px;font-weight:700;letter-spacing:-.02em;">Tomorrow locks.</h3>
+          <p class="soft" style="font-size:15px;line-height:1.6;">Firro freezes the meal count per dish, per diet, per slot. No late surprises.</p>
+        </li>
+        <li class="glass tile hcard rv s3" style="gap:14px;--d:2100ms;">
+          <span class="hnode" style="animation-delay:2100ms;"></span>
+          <span class="mono htime">Morning</span>
+          <h3 class="disp" style="font-size:24px;font-weight:700;letter-spacing:-.02em;">The prep sheet is waiting.</h3>
+          <p class="soft" style="font-size:15px;line-height:1.6;">Batch KOTs print for the line, one ticket per parcel for packing.</p>
+        </li>
+        <li class="glass tile hcard rv s4" style="gap:14px;--d:3000ms;">
+          <span class="hnode" style="animation-delay:3000ms;"></span>
+          <span class="mono htime">Meal time</span>
+          <h3 class="disp" style="font-size:24px;font-weight:700;letter-spacing:-.02em;">Out the door, tracked.</h3>
+          <p class="soft" style="font-size:15px;line-height:1.6;">Parcels leave with their own ticket; customers see when lunch is close.</p>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+<section id="batch" style="padding:100px 44px;border-top:1px solid rgba(26,59,26,.08);">
+  <div style="max-width:1280px;margin:0 auto;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-items:center;">
+    <div style="grid-column:span 5;display:flex;flex-direction:column;gap:20px;">
+      <div class="rv"><span class="micro" style="color:#8A6A1F;">Batch cooking</span><h2 class="h2" style="font-size:60px;margin-top:14px;">Cook once per slot. <em class="acc">Not once per order.</em></h2></div>
+      <p class="lead rv">Subscription meals are known the night before. Firro rolls every order in a lunch or dinner slot into one prep sheet, so your kitchen cooks to the gram and runs one line instead of a hundred tickets.</p>
+      <div style="display:flex;flex-direction:column;gap:18px;margin-top:6px;">
+        <div class="rv s2" style="display:flex;gap:14px;align-items:flex-start;"><span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"></polyline></svg></span><div><h3 class="disp" style="font-size:20px;font-weight:700;letter-spacing:-.02em;">Less waste.</h3><p class="soft" style="font-size:15px;line-height:1.55;margin-top:4px;">Exact quantities per dish, per diet &mdash; no cooking for people who paused.</p></div></div>
+        <div class="rv s3" style="display:flex;gap:14px;align-items:flex-start;"><span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"></polyline></svg></span><div><h3 class="disp" style="font-size:20px;font-weight:700;letter-spacing:-.02em;">Fewer hours at the stove.</h3><p class="soft" style="font-size:15px;line-height:1.55;margin-top:4px;">One prep run per slot, with the line working from a single sheet.</p></div></div>
+        <div class="rv s4" style="display:flex;gap:14px;align-items:flex-start;"><span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"></polyline></svg></span><div><h3 class="disp" style="font-size:20px;font-weight:700;letter-spacing:-.02em;">Buy to plan.</h3><p class="soft" style="font-size:15px;line-height:1.55;margin-top:4px;">Ingredient totals come straight from your recipes, so purchasing matches the menu.</p></div></div>
+        <div class="rv s5" style="display:flex;gap:14px;align-items:flex-start;"><span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"></polyline></svg></span><div><h3 class="disp" style="font-size:20px;font-weight:700;letter-spacing:-.02em;">One run per slot.</h3><p class="soft" style="font-size:15px;line-height:1.55;margin-top:4px;">Every parcel in the lunch or dinner batch leaves together, each with its own ticket.</p></div></div>
+      </div>
+      <a href="#demo" class="btn btn-glass rv" style="align-self:flex-start;margin-top:6px;">See it with my numbers <svg class="arr" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></a>
+    </div>
+    <div style="grid-column:7 / span 6;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:16px;align-items:center;">
+      <div class="fold" style="grid-column:span 4;display:flex;flex-direction:column;gap:8px;">
+        <span class="micro" style="font-size:10px;margin-bottom:4px;">Order by order</span>
+        <div class="glass-2" style="padding:10px 12px;border-radius:12px;display:flex;justify-content:space-between;font-size:13px;"><span class="mono" style="color:#3A362C;font-weight:600;">#1041</span><span style="color:#0E3320;font-weight:600;">Power bowl</span></div><div class="glass-2" style="padding:10px 12px;border-radius:12px;display:flex;justify-content:space-between;font-size:13px;"><span class="mono" style="color:#3A362C;font-weight:600;">#1042</span><span style="color:#0E3320;font-weight:600;">Khichdi</span></div><div class="glass-2" style="padding:10px 12px;border-radius:12px;display:flex;justify-content:space-between;font-size:13px;"><span class="mono" style="color:#3A362C;font-weight:600;">#1043</span><span style="color:#0E3320;font-weight:600;">Power bowl</span></div><div class="glass-2" style="padding:10px 12px;border-radius:12px;display:flex;justify-content:space-between;font-size:13px;"><span class="mono" style="color:#3A362C;font-weight:600;">#1044</span><span style="color:#0E3320;font-weight:600;">Paneer bowl</span></div><div class="glass-2" style="padding:10px 12px;border-radius:12px;display:flex;justify-content:space-between;font-size:13px;"><span class="mono" style="color:#3A362C;font-weight:600;">#1045</span><span style="color:#0E3320;font-weight:600;">Power bowl</span></div><div class="glass-2" style="padding:10px 12px;border-radius:12px;display:flex;justify-content:space-between;font-size:13px;"><span class="mono" style="color:#3A362C;font-weight:600;">#1046</span><span style="color:#0E3320;font-weight:600;">Khichdi</span></div>
+        <p style="font-size:12px;color:#6F6957;text-align:center;">&hellip; and 136 more</p>
+      </div>
+      <div class="nudge" style="grid-column:span 1;display:flex;justify-content:center;color:#1F5C3A;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></div>
+      <div class="glass rv" style="grid-column:span 7;padding:26px;box-shadow:0 0 0 1px rgba(201,160,70,.3),0 20px 50px -12px rgba(201,160,70,.35);">
+        <div style="display:flex;justify-content:space-between;align-items:center;"><span class="micro" style="font-size:10px;color:#1F5C3A;">Lunch batch &middot; 142 meals</span><span class="mono" style="font-size:12px;color:#6F6957;">06:00</span></div>
+        <p class="disp" style="font-size:26px;font-weight:700;letter-spacing:-.02em;margin-top:8px;">Prep sheet</p>
+        <div style="margin-top:12px;"><div class="rv s2" style="display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-top:1px solid rgba(26,59,26,.08);font-size:15px;"><span class="soft">Rice, cooked</span><span><span class="num" style="font-size:18px;">18.4</span> <span style="font-size:13px;color:#6F6957;">kg</span></span></div><div class="rv s3" style="display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-top:1px solid rgba(26,59,26,.08);font-size:15px;"><span class="soft">Chicken, marinated</span><span><span class="num" style="font-size:18px;">9.6</span> <span style="font-size:13px;color:#6F6957;">kg</span></span></div><div class="rv s4" style="display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-top:1px solid rgba(26,59,26,.08);font-size:15px;"><span class="soft">Paneer, cubed</span><span><span class="num" style="font-size:18px;">4.2</span> <span style="font-size:13px;color:#6F6957;">kg</span></span></div><div class="rv s5" style="display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-top:1px solid rgba(26,59,26,.08);font-size:15px;"><span class="soft">Moong dal</span><span><span class="num" style="font-size:18px;">3.1</span> <span style="font-size:13px;color:#6F6957;">kg</span></span></div><div class="rv s6" style="display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-top:1px solid rgba(26,59,26,.08);font-size:15px;"><span class="soft">Salad, mixed</span><span><span class="num" style="font-size:18px;">7.0</span> <span style="font-size:13px;color:#6F6957;">kg</span></span></div></div>
+        <p style="font-size:12px;color:#6F6957;margin-top:10px;">Plus one packing ticket per parcel. Sample data.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="nutrition" class="gridbg" style="padding:100px 44px;border-top:1px solid rgba(26,59,26,.08);">
+  <div style="max-width:1280px;margin:0 auto;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-items:center;">
+    <div class="nseq" style="grid-column:span 6;position:relative;height:580px;">
+      <div class="glass rv" style="position:absolute;top:0;left:40px;width:410px;padding:12px 12px 24px;box-shadow:0 30px 80px rgba(31,28,22,.14);">
+        <div style="height:170px;border-radius:18px;background-color:#EEF2EA;background-image:radial-gradient(#D6E0D0 1.3px,transparent 1.3px);background-size:20px 20px;display:flex;align-items:center;justify-content:center;overflow:hidden;"><svg viewBox="0 0 300 300" width="150" height="150" aria-hidden="true" style="filter:drop-shadow(0 10px 18px rgba(31,28,22,.14));">
+  <defs>
+  <filter id="nsoft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="3.2"></feGaussianBlur></filter>
+  <radialGradient id="nrim" cx="38%" cy="32%" r="80%"><stop offset="0%" stop-color="#FFFFFF"></stop><stop offset="78%" stop-color="#FBF8F1"></stop><stop offset="100%" stop-color="#E9E2D2"></stop></radialGradient>
+  <radialGradient id="ninner" cx="42%" cy="36%" r="75%"><stop offset="0%" stop-color="#FCF9F1"></stop><stop offset="82%" stop-color="#F2ECDD"></stop><stop offset="100%" stop-color="#E2D9C4"></stop></radialGradient>
+  <linearGradient id="nchk" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E2A874"></stop><stop offset="55%" stop-color="#C98450"></stop><stop offset="100%" stop-color="#B06E3E"></stop></linearGradient>
+  <radialGradient id="nyolk" cx="40%" cy="35%" r="75%"><stop offset="0%" stop-color="#FBD173"></stop><stop offset="100%" stop-color="#E09E2E"></stop></radialGradient>
+  <radialGradient id="ntomg" cx="38%" cy="32%" r="80%"><stop offset="0%" stop-color="#F2A3A3"></stop><stop offset="100%" stop-color="#CF5B5B"></stop></radialGradient>
+  <radialGradient id="nricem" cx="42%" cy="36%" r="80%"><stop offset="0%" stop-color="#FBF6E9"></stop><stop offset="100%" stop-color="#EDE5CF"></stop></radialGradient>
+  <linearGradient id="nleafa" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#8FDCA6"></stop><stop offset="100%" stop-color="#4FAE6F"></stop></linearGradient>
+  <linearGradient id="nleafb" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#6FCB8D"></stop><stop offset="100%" stop-color="#2F8A50"></stop></linearGradient>
+</defs>
+  <circle cx="150" cy="150" r="147" fill="url(#nrim)"></circle>
+  <circle cx="150" cy="150" r="147" fill="none" stroke="rgba(26,59,26,.14)" stroke-width="1.6"></circle>
+  <circle cx="150" cy="150" r="124" fill="url(#ninner)"></circle>
+  <circle cx="150" cy="150" r="124" fill="none" stroke="rgba(26,59,26,.10)" stroke-width="1.4"></circle>
+  <g class="ndsh" style="animation-delay:150ms;"><ellipse cx="104" cy="190" rx="56" ry="30" fill="rgba(31,28,22,.12)" filter="url(#nsoft)"></ellipse><ellipse cx="102" cy="176" rx="58" ry="47" fill="url(#nricem)"></ellipse><ellipse cx="102" cy="176" rx="58" ry="47" fill="none" stroke="rgba(26,59,26,.10)" stroke-width="1.2"></ellipse><rect x="93.0" y="192.6" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(-58 93.0 192.6)"></rect><rect x="108.9" y="166.4" width="8.5" height="3.4" rx="1.7" fill="#EFE7D2" transform="rotate(-56 108.9 166.4)"></rect><rect x="105.4" y="190.0" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(37 105.4 190.0)"></rect><rect x="104.3" y="209.1" width="8.5" height="3.4" rx="1.7" fill="#EFE7D2" transform="rotate(-55 104.3 209.1)"></rect><rect x="119.5" y="191.9" width="8.5" height="3.4" rx="1.7" fill="#EFE7D2" transform="rotate(-55 119.5 191.9)"></rect><rect x="92.1" y="173.2" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(-14 92.1 173.2)"></rect><rect x="84.2" y="172.7" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(37 84.2 172.7)"></rect><rect x="64.0" y="170.0" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(-24 64.0 170.0)"></rect><rect x="65.8" y="161.5" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(25 65.8 161.5)"></rect><rect x="89.6" y="174.9" width="8.5" height="3.4" rx="1.7" fill="#EFE7D2" transform="rotate(-55 89.6 174.9)"></rect><rect x="113.7" y="211.3" width="8.5" height="3.4" rx="1.7" fill="#DFD4B6" transform="rotate(39 113.7 211.3)"></rect><rect x="53.2" y="186.7" width="8.5" height="3.4" rx="1.7" fill="#DFD4B6" transform="rotate(22 53.2 186.7)"></rect><rect x="102.2" y="195.8" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(-8 102.2 195.8)"></rect><rect x="68.4" y="164.3" width="8.5" height="3.4" rx="1.7" fill="#EFE7D2" transform="rotate(17 68.4 164.3)"></rect><rect x="63.5" y="188.4" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(-52 63.5 188.4)"></rect><rect x="80.9" y="176.7" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(17 80.9 176.7)"></rect><rect x="132.8" y="166.9" width="8.5" height="3.4" rx="1.7" fill="#EFE7D2" transform="rotate(-51 132.8 166.9)"></rect><rect x="58.4" y="160.6" width="8.5" height="3.4" rx="1.7" fill="#DFD4B6" transform="rotate(10 58.4 160.6)"></rect><rect x="88.5" y="147.5" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(46 88.5 147.5)"></rect><rect x="129.1" y="143.5" width="8.5" height="3.4" rx="1.7" fill="#EFE7D2" transform="rotate(51 129.1 143.5)"></rect><rect x="95.4" y="169.1" width="8.5" height="3.4" rx="1.7" fill="#EFE7D2" transform="rotate(9 95.4 169.1)"></rect><rect x="64.1" y="161.7" width="8.5" height="3.4" rx="1.7" fill="#DFD4B6" transform="rotate(44 64.1 161.7)"></rect><rect x="91.8" y="139.3" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(18 91.8 139.3)"></rect><rect x="130.9" y="168.9" width="8.5" height="3.4" rx="1.7" fill="#DFD4B6" transform="rotate(-41 130.9 168.9)"></rect><rect x="144.5" y="191.3" width="8.5" height="3.4" rx="1.7" fill="#EFE7D2" transform="rotate(-37 144.5 191.3)"></rect><rect x="102.5" y="204.3" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(57 102.5 204.3)"></rect><rect x="118.5" y="201.0" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(1 118.5 201.0)"></rect><rect x="122.4" y="142.6" width="8.5" height="3.4" rx="1.7" fill="#EFE7D2" transform="rotate(1 122.4 142.6)"></rect><rect x="75.2" y="190.8" width="8.5" height="3.4" rx="1.7" fill="#E6DCC2" transform="rotate(27 75.2 190.8)"></rect><rect x="114.7" y="192.3" width="8.5" height="3.4" rx="1.7" fill="#EFE7D2" transform="rotate(-11 114.7 192.3)"></rect></g>
+  <g class="ndsh" style="animation-delay:275ms;"><ellipse cx="178" cy="96" rx="52" ry="22" fill="rgba(31,28,22,.12)" filter="url(#nsoft)"></ellipse><g transform="rotate(-24 146 92)">
+      <rect x="124" y="81" width="44" height="22" rx="10" fill="url(#nchk)"></rect>
+      <rect x="124" y="81" width="44" height="22" rx="10" fill="none" stroke="rgba(90,50,20,.28)" stroke-width="1"></rect>
+      <line x1="135" y1="81" x2="135" y2="103" stroke="rgba(90,50,20,.5)" stroke-width="3"></line>
+      <line x1="149" y1="81" x2="149" y2="103" stroke="rgba(90,50,20,.5)" stroke-width="3"></line>
+      <rect x="128" y="84" width="14" height="4" rx="2" fill="rgba(255,240,220,.35)"></rect>
+    </g><g transform="rotate(-6 172 84)">
+      <rect x="150" y="73" width="44" height="22" rx="10" fill="url(#nchk)"></rect>
+      <rect x="150" y="73" width="44" height="22" rx="10" fill="none" stroke="rgba(90,50,20,.28)" stroke-width="1"></rect>
+      <line x1="161" y1="73" x2="161" y2="95" stroke="rgba(90,50,20,.5)" stroke-width="3"></line>
+      <line x1="175" y1="73" x2="175" y2="95" stroke="rgba(90,50,20,.5)" stroke-width="3"></line>
+      <rect x="154" y="76" width="14" height="4" rx="2" fill="rgba(255,240,220,.35)"></rect>
+    </g><g transform="rotate(14 198 92)">
+      <rect x="176" y="81" width="44" height="22" rx="10" fill="url(#nchk)"></rect>
+      <rect x="176" y="81" width="44" height="22" rx="10" fill="none" stroke="rgba(90,50,20,.28)" stroke-width="1"></rect>
+      <line x1="187" y1="81" x2="187" y2="103" stroke="rgba(90,50,20,.5)" stroke-width="3"></line>
+      <line x1="201" y1="81" x2="201" y2="103" stroke="rgba(90,50,20,.5)" stroke-width="3"></line>
+      <rect x="180" y="84" width="14" height="4" rx="2" fill="rgba(255,240,220,.35)"></rect>
+    </g><g transform="rotate(34 216 110)">
+      <rect x="194" y="99" width="44" height="22" rx="10" fill="url(#nchk)"></rect>
+      <rect x="194" y="99" width="44" height="22" rx="10" fill="none" stroke="rgba(90,50,20,.28)" stroke-width="1"></rect>
+      <line x1="205" y1="99" x2="205" y2="121" stroke="rgba(90,50,20,.5)" stroke-width="3"></line>
+      <line x1="219" y1="99" x2="219" y2="121" stroke="rgba(90,50,20,.5)" stroke-width="3"></line>
+      <rect x="198" y="102" width="14" height="4" rx="2" fill="rgba(255,240,220,.35)"></rect>
+    </g><g transform="rotate(-40 158 112)">
+      <rect x="136" y="101" width="44" height="22" rx="10" fill="url(#nchk)"></rect>
+      <rect x="136" y="101" width="44" height="22" rx="10" fill="none" stroke="rgba(90,50,20,.28)" stroke-width="1"></rect>
+      <line x1="147" y1="101" x2="147" y2="123" stroke="rgba(90,50,20,.5)" stroke-width="3"></line>
+      <line x1="161" y1="101" x2="161" y2="123" stroke="rgba(90,50,20,.5)" stroke-width="3"></line>
+      <rect x="140" y="104" width="14" height="4" rx="2" fill="rgba(255,240,220,.35)"></rect>
+    </g></g>
+  <g class="ndsh" style="animation-delay:400ms;"><ellipse cx="216" cy="168" rx="34" ry="40" fill="rgba(31,28,22,.12)" filter="url(#nsoft)"></ellipse><path transform="rotate(-18 206 146) scale(1.1) translate(-18.7 -13.3)" d="M206 161 C 193 148 199 131 206 131 C 213 131 219 148 206 161z" fill="url(#nleafa)"></path><path d="M206 157 L206 136" transform="rotate(-18 206 146)" stroke="rgba(255,255,255,.4)" stroke-width="1.4" stroke-linecap="round"></path><path transform="rotate(24 226 160) scale(1.0) translate(0.0 0.0)" d="M226 175 C 213 162 219 145 226 145 C 233 145 239 162 226 175z" fill="url(#nleafb)"></path><path d="M226 171 L226 150" transform="rotate(24 226 160)" stroke="rgba(255,255,255,.4)" stroke-width="1.4" stroke-linecap="round"></path><path transform="rotate(60 210 182) scale(0.95) translate(11.1 9.6)" d="M210 197 C 197 184 203 167 210 167 C 217 167 223 184 210 197z" fill="url(#nleafa)"></path><path d="M210 193 L210 172" transform="rotate(60 210 182)" stroke="rgba(255,255,255,.4)" stroke-width="1.4" stroke-linecap="round"></path><path transform="rotate(-30 230 192) scale(1.05) translate(-11.0 -9.1)" d="M230 207 C 217 194 223 177 230 177 C 237 177 243 194 230 207z" fill="url(#nleafb)"></path><path d="M230 203 L230 182" transform="rotate(-30 230 192)" stroke="rgba(255,255,255,.4)" stroke-width="1.4" stroke-linecap="round"></path><path transform="rotate(10 214 206) scale(0.9) translate(23.8 22.9)" d="M214 221 C 201 208 207 191 214 191 C 221 191 227 208 214 221z" fill="url(#nleafa)"></path><path d="M214 217 L214 196" transform="rotate(10 214 206)" stroke="rgba(255,255,255,.4)" stroke-width="1.4" stroke-linecap="round"></path><path transform="rotate(80 236 176) scale(0.85) translate(41.6 31.1)" d="M236 191 C 223 178 229 161 236 161 C 243 161 249 178 236 191z" fill="url(#nleafb)"></path><path d="M236 187 L236 166" transform="rotate(80 236 176)" stroke="rgba(255,255,255,.4)" stroke-width="1.4" stroke-linecap="round"></path></g>
+  <g class="ndsh" style="animation-delay:525ms;"><ellipse cx="96" cy="106" rx="30" ry="18" fill="rgba(31,28,22,.12)" filter="url(#nsoft)"></ellipse><circle cx="86" cy="102" r="13" fill="url(#ntomg)"></circle><circle cx="82.1" cy="97.45" r="3.6400000000000006" fill="rgba(255,255,255,.55)"></circle><path d="M82 91 Q86 86 90 91" fill="none" stroke="#2F8A50" stroke-width="2" stroke-linecap="round"></path><circle cx="110" cy="96" r="11" fill="url(#ntomg)"></circle><circle cx="106.7" cy="92.15" r="3.08" fill="rgba(255,255,255,.55)"></circle><path d="M106 87 Q110 82 114 87" fill="none" stroke="#2F8A50" stroke-width="2" stroke-linecap="round"></path><circle cx="134" cy="118" r="4.6" fill="url(#nyolk)"></circle><circle cx="132.6" cy="116.6" r="1.4" fill="rgba(255,255,255,.6)"></circle><circle cx="146" cy="128" r="4.6" fill="url(#nyolk)"></circle><circle cx="144.6" cy="126.6" r="1.4" fill="rgba(255,255,255,.6)"></circle><circle cx="138" cy="136" r="4.6" fill="url(#nyolk)"></circle><circle cx="136.6" cy="134.6" r="1.4" fill="rgba(255,255,255,.6)"></circle><circle cx="152" cy="116" r="4.6" fill="url(#nyolk)"></circle><circle cx="150.6" cy="114.6" r="1.4" fill="rgba(255,255,255,.6)"></circle><circle cx="158" cy="132" r="4.6" fill="url(#nyolk)"></circle><circle cx="156.6" cy="130.6" r="1.4" fill="rgba(255,255,255,.6)"></circle><circle cx="128" cy="128" r="4.6" fill="url(#nyolk)"></circle><circle cx="126.6" cy="126.6" r="1.4" fill="rgba(255,255,255,.6)"></circle></g>
+  <g class="ndsh" style="animation-delay:625ms;"><ellipse cx="174" cy="214" rx="36" ry="20" fill="rgba(31,28,22,.12)" filter="url(#nsoft)"></ellipse><g transform="rotate(-12 162 210)"><ellipse cx="162" cy="210" rx="17" ry="21" fill="#FDFBF4"></ellipse><ellipse cx="162" cy="210" rx="17" ry="21" fill="none" stroke="rgba(26,59,26,.12)" stroke-width="1.2"></ellipse><circle cx="162" cy="211" r="8.5" fill="url(#nyolk)"></circle><circle cx="159.5" cy="208" r="2.2" fill="rgba(255,255,255,.55)"></circle></g><g transform="rotate(16 192 218)"><ellipse cx="192" cy="218" rx="17" ry="21" fill="#FDFBF4"></ellipse><ellipse cx="192" cy="218" rx="17" ry="21" fill="none" stroke="rgba(26,59,26,.12)" stroke-width="1.2"></ellipse><circle cx="192" cy="219" r="8.5" fill="url(#nyolk)"></circle><circle cx="189.5" cy="216" r="2.2" fill="rgba(255,255,255,.55)"></circle></g></g>
+  <g class="ndsh" style="animation-delay:725ms;"><ellipse cx="168" cy="74" rx="2.8" ry="1.5" transform="rotate(20 168 74)" fill="#FDFBF4" stroke="rgba(90,50,20,.25)" stroke-width=".6"></ellipse><ellipse cx="186" cy="70" rx="2.8" ry="1.5" transform="rotate(-25 186 70)" fill="#FDFBF4" stroke="rgba(90,50,20,.25)" stroke-width=".6"></ellipse><ellipse cx="202" cy="80" rx="2.8" ry="1.5" transform="rotate(55 202 80)" fill="#FDFBF4" stroke="rgba(90,50,20,.25)" stroke-width=".6"></ellipse><ellipse cx="154" cy="80" rx="2.8" ry="1.5" transform="rotate(0 154 80)" fill="#FDFBF4" stroke="rgba(90,50,20,.25)" stroke-width=".6"></ellipse><ellipse cx="214" cy="98" rx="2.8" ry="1.5" transform="rotate(35 214 98)" fill="#FDFBF4" stroke="rgba(90,50,20,.25)" stroke-width=".6"></ellipse><g><path d="M150 158 C 142 150 146 138 154 138" fill="none" stroke="#2F8A50" stroke-width="2"></path><circle cx="154" cy="136" r="5" fill="url(#nleafa)"></circle><circle cx="146" cy="142" r="4.4" fill="url(#nleafa)"></circle><circle cx="158" cy="146" r="4.4" fill="url(#nleafa)"></circle><circle cx="150" cy="148" r="3.8" fill="url(#nleafa)"></circle></g><g transform="rotate(-20 236 236)"><path d="M222 236 A 15 15 0 0 1 250 236 Z" fill="#DDEE9A"></path><path d="M222 236 A 15 15 0 0 1 250 236" fill="none" stroke="#9FB840" stroke-width="2.4"></path><line x1="230" y1="233" x2="228" y2="226" stroke="#B9CC66" stroke-width="1.6"></line><line x1="236" y1="232" x2="236" y2="225" stroke="#B9CC66" stroke-width="1.6"></line><line x1="242" y1="233" x2="244" y2="226" stroke="#B9CC66" stroke-width="1.6"></line></g></g>
+  <g class="ndsh" style="animation-delay:850ms;"><path class="stm" style="animation-delay:0ms;" d="M128 46 C 121 36 135 26 128 14" fill="none" stroke="rgba(120,112,92,.5)" stroke-width="2.4" stroke-linecap="round"></path><path class="stm" style="animation-delay:900ms;" d="M152 46 C 145 36 159 26 152 14" fill="none" stroke="rgba(120,112,92,.5)" stroke-width="2.4" stroke-linecap="round"></path><path class="stm" style="animation-delay:1600ms;" d="M176 46 C 169 36 183 26 176 14" fill="none" stroke="rgba(120,112,92,.5)" stroke-width="2.4" stroke-linecap="round"></path></g>
+</svg></div>
+        <div style="padding:16px 10px 0;display:flex;flex-direction:column;gap:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
+            <div><span class="micro" style="font-size:10px;">Lunch &middot; high protein</span><p class="disp" style="font-size:22px;font-weight:700;letter-spacing:-.02em;margin-top:4px;">Chicken power bowl</p></div>
+            <span aria-label="Non-vegetarian" style="width:20px;height:20px;border:1.5px solid #8B4513;border-radius:4px;display:flex;align-items:center;justify-content:center;flex:none;margin-top:4px;"><span style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:8px solid #8B4513;display:block;"></span></span>
+          </div>
+          <p class="num" style="font-size:44px;line-height:1;"><span class="kc" role="text" aria-label="520"></span> <span style="font-family:'Manrope',sans-serif;font-size:15px;font-weight:700;color:#6F6957;letter-spacing:0;">kcal</span></p>
+          <div style="display:flex;flex-direction:column;gap:6px;"><div style="display:flex;justify-content:space-between;font-size:14px;"><span style="font-weight:700;">Protein</span><span class="num nval">42g</span></div><div style="height:8px;border-radius:999px;background:rgba(26,59,26,.08);overflow:hidden;"><div class="nbar" style="--d:1400ms;height:100%;width:70%;border-radius:999px;background:#2E6B47;"></div></div></div><div style="display:flex;flex-direction:column;gap:6px;"><div style="display:flex;justify-content:space-between;font-size:14px;"><span style="font-weight:700;">Carbs</span><span class="num nval">48g</span></div><div style="height:8px;border-radius:999px;background:rgba(26,59,26,.08);overflow:hidden;"><div class="nbar" style="--d:1550ms;height:100%;width:55%;border-radius:999px;background:#9DBFA5;"></div></div></div><div style="display:flex;flex-direction:column;gap:6px;"><div style="display:flex;justify-content:space-between;font-size:14px;"><span style="font-weight:700;">Fat</span><span class="num nval">16g</span></div><div style="height:8px;border-radius:999px;background:rgba(26,59,26,.08);overflow:hidden;"><div class="nbar" style="--d:1700ms;height:100%;width:30%;border-radius:999px;background:#F0D78A;"></div></div></div><div style="display:flex;flex-direction:column;gap:6px;"><div style="display:flex;justify-content:space-between;font-size:14px;"><span style="font-weight:700;">Fibre</span><span class="num nval">9g</span></div><div style="height:8px;border-radius:999px;background:rgba(26,59,26,.08);overflow:hidden;"><div class="nbar" style="--d:1850ms;height:100%;width:36%;border-radius:999px;background:#1F5C3A;"></div></div></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;"><span class="chip nchip" style="--d:2300ms;background:#FDF0F0;color:#8F3B3B;border:1px solid rgba(224,128,128,.3);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="12.5"></line><line x1="12" y1="16" x2="12" y2="16"></line></svg>Contains milk</span><span class="chip nchip" style="--d:2420ms;background:#FDF0F0;color:#8F3B3B;border:1px solid rgba(224,128,128,.3);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="12.5"></line><line x1="12" y1="16" x2="12" y2="16"></line></svg>Contains sesame</span></div>
+        </div>
+      </div>
+      <div class="glass nlink" style="position:absolute;bottom:40px;right:0;width:280px;padding:16px 18px;display:flex;gap:12px;align-items:center;border-radius:20px;">
+        <span class="check" style="width:40px;height:40px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.5"></circle><circle cx="18" cy="6" r="2.5"></circle><circle cx="12" cy="18" r="2.5"></circle><line x1="7.5" y1="8" x2="10.8" y2="15.8"></line><line x1="16.5" y1="8" x2="13.2" y2="15.8"></line></svg></span>
+        <div><p class="disp" style="font-size:15px;font-weight:700;letter-spacing:-.01em;">From 7 linked ingredients</p><p style="font-size:12px;color:#6F6957;margin-top:2px;">Updates when the recipe changes</p></div>
+      </div>
+      <p style="position:absolute;bottom:0;left:52px;font-size:12px;font-weight:600;color:#6F6957;">Sample data</p>
+    </div>
+    <div style="grid-column:8 / span 5;display:flex;flex-direction:column;gap:20px;">
+      <div class="rv"><span class="micro" style="color:#8A6A1F;">The nutrition layer</span><h2 class="h2" style="font-size:60px;margin-top:14px;">Every meal knows <em class="acc">what's in it.</em></h2></div>
+      <p class="lead rv">Link a recipe to its raw ingredients once. Firro works out calories, macros and allergens for every dish and every variant &mdash; and keeps them right when the recipe changes.</p>
+      <div style="display:flex;flex-direction:column;gap:18px;margin-top:6px;">
+        <div class="rv s2" style="display:flex;gap:14px;align-items:flex-start;"><span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"></polyline></svg></span><div><h3 class="disp" style="font-size:20px;font-weight:700;letter-spacing:-.02em;">Calculated, never typed.</h3><p class="soft" style="font-size:15px;line-height:1.55;margin-top:4px;">Nutrition comes from ingredient links, not a chef's guess in a text box.</p></div></div>
+        <div class="rv s3" style="display:flex;gap:14px;align-items:flex-start;"><span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"></polyline></svg></span><div><h3 class="disp" style="font-size:20px;font-weight:700;letter-spacing:-.02em;">Allergens you can stand behind.</h3><p class="soft" style="font-size:15px;line-height:1.55;margin-top:4px;">A fixed list aligned with FSSAI labelling, rolled up from every ingredient.</p></div></div>
+        <div class="rv s4" style="display:flex;gap:14px;align-items:flex-start;"><span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"></polyline></svg></span><div><h3 class="disp" style="font-size:20px;font-weight:700;letter-spacing:-.02em;">Right for each subscriber.</h3><p class="soft" style="font-size:15px;line-height:1.55;margin-top:4px;">Veg, non-veg and Jain variants resolve to each customer's diet at order time.</p></div></div>
+        <div class="rv s5" style="display:flex;gap:14px;align-items:flex-start;"><span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"></polyline></svg></span><div><h3 class="disp" style="font-size:20px;font-weight:700;letter-spacing:-.02em;">Shown where it matters.</h3><p class="soft" style="font-size:15px;line-height:1.55;margin-top:4px;">Macros on the menu and in the customer app &mdash; as information, not pressure.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="platform" style="padding:100px 44px 64px;border-top:1px solid rgba(26,59,26,.08);">
+  <div style="max-width:1280px;margin:0 auto;">
+    <div class="rv" style="display:flex;flex-direction:column;align-items:flex-start;gap:20px;margin-bottom:48px;">
+      <div><span class="micro" style="color:#6F6957;">The platform</span><h2 class="h2" style="max-width:13ch;margin-top:14px;">Four apps. <em class="acc">One kitchen.</em></h2></div>
+      <p class="lead" style="max-width:560px;">Built in-house on one data layer. Change something once and every app knows.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;">
+      <div class="glass tile rv" style="padding:14px 14px 28px;gap:12px;"><div class="appill" style="height:190px;border-radius:18px;background-color:#F5F0E2;background-image:radial-gradient(#E3D8BE 1.3px,transparent 1.3px);background-size:20px 20px;border:1px solid rgba(201,160,70,.22);display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:10px;"><svg width="200" height="140" viewBox="0 0 200 140" aria-hidden="true" fill="none" stroke="#1A3B1A" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+<rect pathLength="1" x="30" y="30" width="110" height="74" rx="10" fill="#FFFFFF"></rect><rect pathLength="1" x="40" y="40" width="54" height="54" rx="5" fill="#B9CDB2" stroke="none" opacity=".5"></rect>
+<line pathLength="1" x1="102" y1="46" x2="130" y2="46"></line><line pathLength="1" x1="102" y1="58" x2="124" y2="58"></line><line pathLength="1" x1="102" y1="70" x2="128" y2="70"></line><rect pathLength="1" x="102" y="82" width="28" height="12" rx="4" fill="#C9A04A" stroke="none"></rect>
+<rect pathLength="1" x="148" y="70" width="34" height="34" rx="6" fill="#FFFFFF"></rect><path pathLength="1" d="M154 70 V44 H176 V70" fill="#FFFFFF"></path><line pathLength="1" x1="159" y1="52" x2="171" y2="52"></line><line pathLength="1" x1="159" y1="60" x2="168" y2="60"></line><line pathLength="1" x1="20" y1="112" x2="190" y2="112"></line></svg></div>
+        <span class="micro" style="padding:0 12px;">At the counter</span>
+        <h3 class="disp" style="font-size:24px;font-weight:700;letter-spacing:-.02em;padding:0 12px;">Firro POS</h3>
+        <p class="soft" style="font-size:14px;line-height:1.55;padding:0 12px;">Orders, billing and KOTs &mdash; and it keeps printing when the internet drops.</p>
+      </div>
+      <div class="glass tile rv s2" style="padding:14px 14px 28px;gap:12px;"><div class="appill" style="height:190px;border-radius:18px;background-color:#F5F0E2;background-image:radial-gradient(#E3D8BE 1.3px,transparent 1.3px);background-size:20px 20px;border:1px solid rgba(201,160,70,.22);display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:10px;"><svg width="200" height="140" viewBox="0 0 200 140" aria-hidden="true" fill="none" stroke="#1A3B1A" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+<rect pathLength="1" x="40" y="22" width="120" height="80" rx="8" fill="#FFFFFF"></rect><path pathLength="1" d="M26 110 H174 L166 102 H34 Z" fill="#FFFFFF"></path>
+<line pathLength="1" x1="52" y1="36" x2="96" y2="36"></line>
+<rect pathLength="1" x="52" y="46" width="22" height="18" rx="3"></rect><rect pathLength="1" x="78" y="46" width="22" height="18" rx="3" fill="#B9CDB2"></rect><rect pathLength="1" x="104" y="46" width="22" height="18" rx="3"></rect><rect pathLength="1" x="130" y="46" width="18" height="18" rx="3"></rect>
+<rect pathLength="1" x="52" y="68" width="22" height="18" rx="3" fill="#B9CDB2"></rect><rect pathLength="1" x="78" y="68" width="22" height="18" rx="3"></rect><rect pathLength="1" x="104" y="68" width="22" height="18" rx="3" fill="#B9CDB2"></rect><rect pathLength="1" x="130" y="68" width="18" height="18" rx="3"></rect></svg></div>
+        <span class="micro" style="padding:0 12px;">In the office</span>
+        <h3 class="disp" style="font-size:24px;font-weight:700;letter-spacing:-.02em;padding:0 12px;">Kitchen Admin</h3>
+        <p class="soft" style="font-size:14px;line-height:1.55;padding:0 12px;">Menus, recipes, plans and pricing, subscribers and production &mdash; one place.</p>
+      </div>
+      <div class="glass tile rv s3" style="padding:14px 14px 28px;gap:12px;"><div class="appill" style="height:190px;border-radius:18px;background-color:#F5F0E2;background-image:radial-gradient(#E3D8BE 1.3px,transparent 1.3px);background-size:20px 20px;border:1px solid rgba(201,160,70,.22);display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:10px;"><svg width="200" height="140" viewBox="0 0 200 140" aria-hidden="true" fill="none" stroke="#1A3B1A" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+<rect pathLength="1" x="72" y="12" width="56" height="116" rx="12" fill="#FFFFFF"></rect><line pathLength="1" x1="94" y1="20" x2="106" y2="20"></line>
+<rect pathLength="1" x="80" y="30" width="40" height="26" rx="5" fill="#B9CDB2" stroke="none" opacity=".6"></rect><line pathLength="1" x1="80" y1="66" x2="112" y2="66"></line><line pathLength="1" x1="80" y1="76" x2="104" y2="76"></line>
+<rect pathLength="1" x="80" y="90" width="40" height="14" rx="7" fill="#C9A04A" stroke="none"></rect>
+<circle pathLength="1" cx="150" cy="44" r="16" fill="#FFFFFF"></circle><polyline pathLength="1" points="143 44 148 49 158 39"></polyline><circle pathLength="1" cx="46" cy="84" r="12" fill="#FFFFFF"></circle><line pathLength="1" x1="41" y1="84" x2="51" y2="84"></line></svg></div>
+        <span class="micro" style="padding:0 12px;">In their pocket</span>
+        <h3 class="disp" style="font-size:24px;font-weight:700;letter-spacing:-.02em;padding:0 12px;">Customer App</h3>
+        <p class="soft" style="font-size:14px;line-height:1.55;padding:0 12px;">Your subscribers skip, swap and order on demand.</p>
+      </div>
+      <div class="glass tile rv s4" style="padding:14px 14px 28px;gap:12px;"><div class="appill" style="height:190px;border-radius:18px;background-color:#F5F0E2;background-image:radial-gradient(#E3D8BE 1.3px,transparent 1.3px);background-size:20px 20px;border:1px solid rgba(201,160,70,.22);display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:10px;"><svg width="200" height="140" viewBox="0 0 200 140" aria-hidden="true" fill="none" stroke="#1A3B1A" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+<circle pathLength="1" cx="58" cy="100" r="16" fill="#FFFFFF"></circle><circle pathLength="1" cx="146" cy="100" r="16" fill="#FFFFFF"></circle>
+<path pathLength="1" d="M58 100 L78 74 H118 L132 100"></path><path pathLength="1" d="M118 74 L128 50 H140"></path><path pathLength="1" d="M78 74 V64 H104"></path>
+<rect pathLength="1" x="40" y="40" width="38" height="30" rx="5" fill="#B9CDB2"></rect><line pathLength="1" x1="40" y1="52" x2="78" y2="52"></line>
+<path pathLength="1" d="M164 30 c0 -8 12 -8 12 0 c0 8 -6 12 -6 16 c0 -4 -6 -8 -6 -16z" fill="#FFFFFF"></path><circle pathLength="1" cx="170" cy="30" r="2"></circle>
+<line pathLength="1" x1="20" y1="118" x2="190" y2="118"></line></svg></div>
+        <span class="micro" style="padding:0 12px;">On the road</span>
+        <h3 class="disp" style="font-size:24px;font-weight:700;letter-spacing:-.02em;padding:0 12px;">Delivery Partner App</h3>
+        <p class="soft" style="font-size:14px;line-height:1.55;padding:0 12px;">Deliveries, handover and proof of delivery in the rider's hand.</p>
+      </div>
+    </div>
+
+    <div class="rv" style="margin-top:96px;margin-bottom:40px;"><span class="micro" style="color:#8A6A1F;">Under the hood</span><h3 class="disp" style="font-size:44px;line-height:1;max-width:18ch;margin-top:12px;">The rules a subscription kitchen <em class="acc">runs on.</em></h3></div>
+    <div class="wseq" style="display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:auto auto;gap:16px;">
+
+      <div class="glass rv" style="grid-column:span 5;grid-row:span 2;padding:32px;display:flex;flex-direction:column;gap:10px;">
+        <span class="micro" style="font-size:11px;">Subscriptions</span>
+        <h3 class="disp" style="font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.1;">Subscriptions that manage themselves.</h3>
+        <p class="soft" style="font-size:15px;line-height:1.6;max-width:40ch;">Fixed plans or build-your-own. Pause, skip, swap and renew under cutoffs you set, with every change flowing straight to prep.</p>
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px;"><div style="display:flex;align-items:center;justify-content:center;padding:4px 0 8px;">
+          <div class="lockring" style="--p:62;width:290px;height:290px;border-radius:50%;background:conic-gradient(#2E6B47 calc(var(--p) * 1%), #EAE2D0 0);display:flex;align-items:center;justify-content:center;box-shadow:0 18px 50px -14px rgba(201,160,70,.55);transition:background 600ms linear;">
+            <div style="width:224px;height:224px;border-radius:50%;background:#FFFFFF;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;">
+              <span class="micro" style="font-size:9.5px;">Tomorrow locks in</span>
+              <span class="lockclock mono" style="font-size:38px;font-weight:600;color:#0E3320;letter-spacing:-.02em;">04:00:53</span>
+              <span class="mono" style="font-size:10px;letter-spacing:.14em;color:#6F6957;">AT 21:00</span>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;"><div style="flex:1;padding:14px 16px;border-radius:16px;background:#FAF7F0;border:1px solid rgba(26,59,26,.08);"><p class="num" style="font-size:22px;line-height:1;">24h</p><p style="font-size:13px;color:#6F6957;margin-top:6px;">Skip</p></div><div style="flex:1;padding:14px 16px;border-radius:16px;background:#FAF7F0;border:1px solid rgba(26,59,26,.08);"><p class="num" style="font-size:22px;line-height:1;">24h</p><p style="font-size:13px;color:#6F6957;margin-top:6px;">Swap</p></div><div style="flex:1;padding:14px 16px;border-radius:16px;background:#FAF7F0;border:1px solid rgba(26,59,26,.08);"><p class="num" style="font-size:22px;line-height:1;">12h</p><p style="font-size:13px;color:#6F6957;margin-top:6px;">Customize</p></div></div>
+        <p style="font-size:12px;font-weight:600;color:#6F6957;margin-top:4px;">Example cutoffs &mdash; yours to set</p></div>
+      </div>
+
+      <div class="glass rv s2" style="grid-column:span 7;padding:32px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span class="micro" style="font-size:11px;">Early warnings</span>
+          <span class="chip" style="background:#FEF6E6;color:#7B4F05;border:1px solid rgba(245,158,11,.3);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 14"></polyline></svg>In progress</span>
+        </div>
+        <h3 class="disp" style="font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.1;">Early warnings.</h3>
+        <p class="soft" style="font-size:15px;line-height:1.6;max-width:44ch;">Flags from pause and skip patterns, so you can call a regular before they cancel.</p>
+        <div style="position:relative;margin-top:6px;">
+          <svg viewBox="0 0 620 150" width="100%" height="150" aria-hidden="true" style="display:block;overflow:visible;">
+            <defs><clipPath id="wclipFut"><rect class="wreveal" x="0" y="0" width="620" height="170"></rect></clipPath></defs>
+            <g clip-path="url(#wclipFut)">
+              <path d="M16 118 C 110 120, 150 72, 250 76 S 380 122, 452 106 S 540 60, 596 38" fill="none" stroke="#2E6B47" stroke-width="3" stroke-linecap="round" stroke-dasharray="0.1 9"></path>
+              <circle cx="596" cy="38" r="16" fill="rgba(245,158,11,.18)" class="wpulse"></circle>
+              <circle cx="596" cy="38" r="7" fill="#F59E0B"></circle>
+            </g>
+            <circle cx="16" cy="118" r="6.5" fill="#2E6B47"></circle>
+          </svg>
+          <div class="wflag" style="position:absolute;right:34px;top:-8px;padding:8px 12px;border-radius:12px;background:#FEF6E6;border:1px solid rgba(245,158,11,.3);font-size:13px;font-weight:700;color:#7B4F05;">Anitha &middot; 3 skips in 2 weeks</div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:#6F6957;margin-top:6px;" class="mono"><span>WEEK 1</span><span>WEEK 6</span></div>
+        </div>
+      </div>
+
+      <div class="glass rv s3" style="grid-column:span 4;padding:32px;display:flex;flex-direction:column;gap:10px;">
+        <span class="micro" style="font-size:11px;">Recipe costing</span>
+        <h3 class="disp" style="font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.1;">Recipe costing.</h3>
+        <p class="soft" style="font-size:15px;line-height:1.6;">Ingredient cost, selling price and margin on every dish, before it reaches the menu.</p>
+        <div style="margin-top:auto;padding-top:14px;">
+          <div style="display:flex;align-items:baseline;gap:10px;"><span class="num" style="font-size:64px;line-height:1;color:#1F5C3A;">31%</span><span style="font-size:13px;font-weight:700;color:#6F6957;">food cost</span></div>
+          <div style="display:flex;height:10px;border-radius:999px;overflow:hidden;margin-top:14px;background:#EAE2D0;"><div class="wbar" style="width:31%;background:#2E6B47;"></div><div class="wbar" style="width:69%;background:#9DBFA5;opacity:.55;animation-delay:200ms;"></div></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#6F6957;margin-top:8px;"><span>Ingredients</span><span>Margin</span></div>
+        </div>
+      </div>
+
+      <div class="glass rv s4" style="grid-column:span 3;padding:32px;display:flex;flex-direction:column;gap:10px;">
+        <span class="micro" style="font-size:11px;">GST</span>
+        <h3 class="disp" style="font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.1;">GST-ready billing.</h3>
+        <p class="soft" style="font-size:14px;line-height:1.55;">Invoice numbers allocated at payment, the right tax on every item type, and no invoices on aggregator orders.</p>
+        <div style="margin-top:auto;padding-top:14px;">
+          <p class="mono" style="font-size:12px;color:#6F6957;">T1/2627/</p>
+          <p class="mono" style="font-size:40px;line-height:1.05;font-weight:600;color:#1F5C3A;letter-spacing:-.02em;">000142</p>
+          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;"><span style="padding:6px 10px;border-radius:10px;background:#FAF7F0;border:1px solid rgba(26,59,26,.08);font-size:12px;font-weight:700;">CGST <span class="num">2.5%</span></span><span style="padding:6px 10px;border-radius:10px;background:#FAF7F0;border:1px solid rgba(26,59,26,.08);font-size:12px;font-weight:700;">SGST <span class="num">2.5%</span></span></div>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:12px;font-weight:600;color:#6F6957;margin-top:14px;text-align:right;">Sample data</p>
+  </div>
+</section>
+<section style="padding:0 44px 24px;">
+  <div style="max-width:1280px;margin:0 auto;">
+    <div class="glass rv" style="padding:48px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px;align-items:center;background:linear-gradient(120deg,rgba(31,92,58,.85),rgba(14,51,32,.92));border-color:rgba(240,215,138,.25);">
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <span class="micro" style="color:#F0D78A;">Pilot &middot; Coimbatore</span>
+        <h2 class="disp" style="font-size:52px;line-height:1;color:#FBF1D2;">We're taking on a <em style="font-style:italic;font-weight:600;color:#F0D78A;">few more</em> kitchens.</h2>
+        <p style="color:#C9DBC4;font-size:17px;line-height:1.6;max-width:44ch;">Firro is running with pilot kitchens in Coimbatore. If you cook for subscribers, we'd like to set it up with you.</p>
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:8px;">
+          <a href="#demo" class="btn btn-gold">Book a demo</a>
+          <p style="font-size:14px;color:#C9DBC4;">Pricing when we talk &mdash; every kitchen is set up differently.</p>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div class="rv s2" style="display:flex;align-items:center;gap:16px;padding:12px;border-radius:20px;background:rgba(14,51,32,.6);border:1px solid rgba(240,215,138,.18);">
+          <span style="width:72px;height:72px;border-radius:16px;background:#E8F8ED;display:flex;align-items:center;justify-content:center;flex:none;"><svg width="48" height="48" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="#1A3B1A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 10 Q24 3 31 10"></path><line x1="15" y1="10" x2="15" y2="42"></line><line x1="33" y1="10" x2="33" y2="42"></line><rect x="13" y="13" width="22" height="8" rx="3" fill="#FFFFFF"></rect><rect x="13" y="23" width="22" height="8" rx="3" fill="#82D69B"></rect><rect x="13" y="33" width="22" height="8" rx="3" fill="#FFFFFF"></rect></svg></span>
+          <p class="disp" style="font-size:22px;font-weight:700;letter-spacing:-.02em;color:#FBF1D2;">Tiffin services</p>
+        </div>
+        <div class="rv s3" style="display:flex;align-items:center;gap:16px;padding:12px;border-radius:20px;background:rgba(14,51,32,.6);border:1px solid rgba(240,215,138,.18);">
+          <span style="width:72px;height:72px;border-radius:16px;background:#E8F8ED;display:flex;align-items:center;justify-content:center;flex:none;"><svg width="48" height="48" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="#1A3B1A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 24 H41 A17 14 0 0 1 7 24 Z" fill="#FFFFFF"></path><line x1="18" y1="42" x2="30" y2="42"></line><path d="M13 24 C13 18 19 16 24 18 C28 15 34 16 35 24" fill="#82D69B"></path><circle cx="19" cy="21" r="3" fill="#FFFFFF"></circle><path d="M20 10 c-2 -3 2 -5 0 -8"></path><path d="M28 10 c-2 -3 2 -5 0 -8"></path></svg></span>
+          <p class="disp" style="font-size:22px;font-weight:700;letter-spacing:-.02em;color:#FBF1D2;">Subscription meal brands</p>
+        </div>
+        <div class="rv s4" style="display:flex;align-items:center;gap:16px;padding:12px;border-radius:20px;background:rgba(14,51,32,.6);border:1px solid rgba(240,215,138,.18);">
+          <span style="width:72px;height:72px;border-radius:16px;background:#E8F8ED;display:flex;align-items:center;justify-content:center;flex:none;"><svg width="48" height="48" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="#1A3B1A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 22 H27 V36 A4 4 0 0 1 23 40 H9 A4 4 0 0 1 5 36 Z" fill="#FFFFFF"></path><path d="M4 22 H28 C28 18 4 18 4 22z" fill="#82D69B"></path><path d="M30 28 H44 V37 A3 3 0 0 1 41 40 H33 A3 3 0 0 1 30 37 Z" fill="#FFFFFF"></path><line x1="37" y1="28" x2="41" y2="12"></line><path d="M12 14 c-2 -3 2 -5 0 -8"></path><path d="M20 14 c-2 -3 2 -5 0 -8"></path></svg></span>
+          <p class="disp" style="font-size:22px;font-weight:700;letter-spacing:-.02em;color:#FBF1D2;">Cloud and central kitchens</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="faq" style="padding:96px 44px 100px;">
+  <div style="max-width:1280px;margin:0 auto;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-items:start;">
+    <div class="rv" style="grid-column:span 5;display:flex;flex-direction:column;gap:18px;">
+      <span class="micro">FAQ</span>
+      <h2 class="h2" style="font-size:60px;">Questions kitchens <em class="acc">ask us.</em></h2>
+      <p class="lead">Something else? <a href="https://wa.me/911234567890" style="font-weight:800;">Chat on WhatsApp</a>.</p>
+    </div>
+    <div class="rv" style="grid-column:7 / span 6;">
+      <details open><summary>Does the POS work without internet?<svg class="pm" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F5C3A" stroke-width="1.75" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></summary><p>Yes. Firro POS keeps taking orders and printing KOTs when the connection drops, and syncs everything once it's back.</p></details>
+      <details><summary>What devices do I need?<svg class="pm" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F5C3A" stroke-width="1.75" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></summary><p>A tablet or desktop for the counter and a network thermal printer. Kitchen Admin runs in any browser.</p></details>
+      <details><summary>Who owns our data?<svg class="pm" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F5C3A" stroke-width="1.75" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></summary><p>You do. Your menu, orders and subscriber list stay yours.</p></details>
+      <details><summary>Where does the nutrition data come from?<svg class="pm" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F5C3A" stroke-width="1.75" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></summary><p>From the raw ingredients you link to each recipe. Firro adds them up by weight, so the numbers follow your actual recipe, not a generic dish.</p></details>
+      <details><summary>How much will batch cooking save us?<svg class="pm" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F5C3A" stroke-width="1.75" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></summary><p>It depends on your volume, menu and how you cook today. Bring a week of orders to the demo and we'll work it out with your numbers.</p></details>
+      <details><summary>What does it cost?<svg class="pm" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F5C3A" stroke-width="1.75" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></summary><p>It depends on your kitchen's size and which apps you need. Book a demo and we'll work it out together.</p></details>
+    </div>
+  </div>
+</section>
+<section id="demo" style="min-height:90vh;display:flex;align-items:center;padding:100px 44px;position:relative;overflow:hidden;border-top:1px solid rgba(26,59,26,.08);">
+  <div style="position:absolute;left:50%;top:50%;width:900px;height:900px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(201,160,70,.14),rgba(199,240,89,.08) 42%,transparent 70%);pointer-events:none;"></div>
+  <div style="position:relative;max-width:1280px;width:100%;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px;align-items:center;">
+    <div class="rv" style="display:flex;flex-direction:column;gap:20px;">
+      <span class="micro" style="color:#8A6A1F;">Get started</span>
+      <h2 class="disp" style="font-size:88px;line-height:.92;">See Firro on <em class="acc">your own menu.</em></h2>
+      <p class="lead" style="max-width:44ch;">Tell us how your kitchen runs. We'll call within a business day and walk you through it.</p>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:6px;font-size:15px;font-weight:700;">
+        <p style="display:flex;align-items:center;gap:10px;"><span style="color:#1F5C3A;display:flex;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"></polyline></svg></span>A 30-minute call, not a sales script</p>
+        <p style="display:flex;align-items:center;gap:10px;"><span style="color:#1F5C3A;display:flex;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"></polyline></svg></span>We set up your first plan with you</p>
+        <p style="display:flex;align-items:center;gap:10px;"><span style="color:#1F5C3A;display:flex;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"></polyline></svg></span>No spam. Ever.</p>
+      </div>
+    </div>
+    <form class="glass rv s2" style="padding:36px;">
+      <div data-form-state="sent" hidden>
+        <div style="min-height:440px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:16px;">
+          <span class="pop" style="width:72px;height:72px;border-radius:999px;background:#2E6B47;color:#052619;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px -8px rgba(201,160,70,.6);">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"></polyline></svg>
+          </span>
+          <h3 class="disp in d1" style="font-size:36px;">Got it.</h3>
+          <p class="soft in d2" style="font-size:17px;line-height:1.6;max-width:340px;">We'll call you within a business day to set up your demo.</p>
+          <a href="https://wa.me/911234567890" class="btn btn-glass in d3" style="margin-top:8px;">Chat on WhatsApp</a>
+        </div>
+      </div>
+      <div data-form-state="form">
+        <div style="display:flex;flex-direction:column;gap:18px;">
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;">
+            <div class="field"><label for="f-name">Your name</label><input id="f-name" type="text" name="name" required autocomplete="name"></div>
+            <div class="field"><label for="f-phone">Phone</label><input id="f-phone" type="tel" name="phone" required autocomplete="tel" placeholder="+91 98765 43210"></div>
+            <div class="field"><label for="f-kitchen">Kitchen name</label><input id="f-kitchen" type="text" name="kitchen" required></div>
+            <div class="field"><label for="f-city">City</label><input id="f-city" type="text" name="city" required autocomplete="address-level2"></div>
+          </div>
+          <div class="field"><label for="f-meals">Meals a day</label>
+            <select id="f-meals" name="meals" required>
+              <option value="">Pick a range</option>
+              <option value="under-50">Under 50</option>
+              <option value="50-200">50 to 200</option>
+              <option value="200-500">200 to 500</option>
+              <option value="500-plus">500 plus</option>
+            </select>
+          </div>
+          <div class="field"><label for="f-tool">What do you use today? <span style="font-weight:500;color:#6F6957;">Optional</span></label><input id="f-tool" type="text" name="current_tool" placeholder="Register, WhatsApp, spreadsheet, another POS"></div>
+          <label for="f-consent" style="display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:20px;color:#3A362C;cursor:pointer;"><input id="f-consent" type="checkbox" name="consent" required style="width:20px;height:20px;margin:0;flex:none;accent-color:#1F5C3A;">I agree to be contacted about Firro. <a href="#privacy" style="font-weight:800;">Privacy policy</a></label>
+          <button type="button" data-submit class="btn btn-glow" style="width:100%;justify-content:center;margin-top:4px;">Book my demo</button>
+          <p style="font-size:13px;color:#6F6957;text-align:center;">We'll only use your number to set up the call.</p>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+<footer style="background:#1A3B1A;padding:72px 44px 32px;">
+  <div style="max-width:1280px;margin:0 auto;">
+    <div style="display:flex;justify-content:space-between;gap:48px;flex-wrap:wrap;padding-bottom:48px;">
+      <div style="display:flex;flex-direction:column;gap:12px;max-width:340px;">
+        <span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:30px;letter-spacing:-1px;color:#F7EFD9;">firro<span style="color:#E9C46A;">.</span></span>
+        <p style="font-size:15px;line-height:1.6;color:#C9DBC4;">The operating system for subscription kitchens. Made in Coimbatore.</p>
+      </div>
+      <div style="display:flex;gap:64px;">
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <span class="micro" style="color:#E9C46A;font-size:11px;">Product</span>
+          <a href="#how" style="font-size:15px;color:#D9CFB3;">How it works</a><a href="#platform" style="font-size:15px;color:#D9CFB3;">Platform</a><a href="#batch" style="font-size:15px;color:#D9CFB3;">Batch cooking</a><a href="#nutrition" style="font-size:15px;color:#D9CFB3;">Nutrition</a><a href="#faq" style="font-size:15px;color:#D9CFB3;">FAQ</a>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <span class="micro" style="color:#E9C46A;font-size:11px;">Talk to us</span>
+          <a href="#demo" style="font-size:15px;color:#D9CFB3;">Book a demo</a><a href="https://wa.me/911234567890" style="font-size:15px;color:#D9CFB3;">Chat on WhatsApp</a><span style="font-size:15px;color:#D9CFB3;">Coimbatore, India</span>
+        </div>
+      </div>
+    </div>
+    <div style="border-top:1px solid rgba(255,243,220,.14);padding-top:24px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13px;color:#A89D80;">
+      <p>&copy; 2026 Uyir AI Labs Pvt Ltd</p><p>DPIIT-recognised startup</p>
+    </div>
+  </div>
+</footer>
+
+<a href="https://wa.me/911234567890" aria-label="Chat on WhatsApp" class="btn btn-glow pop fab" style="animation-delay:900ms;position:fixed;right:24px;bottom:24px;z-index:30;font-size:15px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.5 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.2A8.4 8.4 0 1 1 21 11.5z"></path></svg><span class="fab-l">Chat on WhatsApp</span></a>
+</div>
+
+<script>
+/* Reference-only behaviour (vanilla). Mirrors the canvas logic exactly. */
+(function () {
+  // one-time sequences when each block comes into view
+  [['.hseq', 0.6], ['.nseq', 0.45], ['.wseq', 0.35]].forEach(function (p) {
+    var el = document.querySelector(p[0]); if (!el) return;
+    if (!('IntersectionObserver' in window)) { el.classList.add('play'); return; }
+    var io = new IntersectionObserver(function (es) {
+      if (es.some(function (e) { return e.isIntersecting; })) { el.classList.add('play'); io.disconnect(); }
+    }, { threshold: p[1] });
+    io.observe(el);
+  });
+  // live countdown to 21:00 local
+  function tick() {
+    var now = new Date(), lock = new Date(now); lock.setHours(21, 0, 0, 0);
+    if (lock <= now) lock.setDate(lock.getDate() + 1);
+    var s = Math.floor((lock - now) / 1000), z = function (n) { return String(n).padStart(2, '0'); };
+    var c = document.querySelector('.lockclock'), r = document.querySelector('.lockring');
+    if (c) c.textContent = z(Math.floor(s / 3600)) + ':' + z(Math.floor(s / 60) % 60) + ':' + z(s % 60);
+    if (r) r.style.setProperty('--p', String(Math.round((1 - s / 86400) * 100)));
+  }
+  tick(); setInterval(tick, 1000);
+  // WhatsApp FAB collapses to an icon after the hero
+  var fab = document.querySelector('.fab');
+  function onScroll() { if (fab) fab.classList.toggle('mini', window.scrollY > 480); }
+  window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  // demo form: frontend-only success state
+  var btn = document.querySelector('[data-submit]');
+  if (btn) btn.addEventListener('click', function () {
+    document.querySelector('[data-form-state="form"]').hidden = true;
+    document.querySelector('[data-form-state="sent"]').hidden = false;
+  });
+})();
+</script>
+</body>
+</html>

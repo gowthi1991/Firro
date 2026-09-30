@@ -1,0 +1,65 @@
+/* Firro design tokens — extracted from design/reference/firro-home-v3.html ("Heritage light v3").
+   Use these custom properties everywhere; do not hard-code hex values in components.
+   Food-illustration colours inside the SVGs are the only exception (keep them as authored). */
+
+:root {
+  /* Surfaces */
+  --bg: #FAF7F0;               /* page cream */
+  --surface: #FFFFFF;          /* cards (glass is rgba(255,255,255,.9)) */
+  --surface-input: #FFFDF8;
+  --surface-warm: #F5F0E2;     /* app-illustration panels */
+  --surface-sage: #EEF2EA;     /* nutrition image panel, icon tiles */
+  --line: rgba(26,59,26,.08);
+  --line-strong: rgba(26,59,26,.14);
+
+  /* Ink */
+  --ink: #0E3320;              /* headings, strong text */
+  --text: #3A362C;             /* body */
+  --muted: #6F6957;            /* labels, captions, input borders (≥4.5:1 on cream) */
+  --faint: #9C9583;            /* placeholders only */
+
+  /* Brand — forest & gold (heritage) */
+  --forest: #1F4A33;           /* primary button fill */
+  --forest-hover: #173D29;
+  --heritage: #1F5C3A;         /* green text, links, italic accents, icons */
+  --forest-mid: #2E6B47;       /* fills: bars, ring, live dots */
+  --forest-deep: #0E2A1C;      /* dark band gradient end */
+  --sage: #9DBFA5;
+  --gold: #D9B45A;             /* fills, orbit dot */
+  --gold-accent: #C9A04A;      /* accents inside illustrations */
+  --gold-text: #8A6A1F;        /* section labels on cream (large/bold only) */
+  --gold-light: #F0D78A;       /* gold on forest ONLY — never on cream */
+  --gold-soft: #E9C46A;        /* labels on forest */
+  --cream-on-dark: #FBF1D2;    /* headings on forest */
+  --text-on-dark: #C9DBC4;     /* body on forest */
+
+  /* Status */
+  --amber: #F59E0B;  --amber-text: #7B4F05;  --amber-bg: #FEF6E6;
+  --coral-text: #8F3B3B;  --coral-bg: #FDF0F0;
+
+  /* Type */
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;  /* 600/700/800, opsz axis */
+  --font-body: 'Manrope', system-ui, sans-serif;                   /* 400–800 */
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;          /* 500/700 — times, prices, IDs only */
+  --tracking-display: -.04em;
+  --h1: 80px;   --h2: 68px;   --lead: 18px;   --body: 16px;   --micro: 12px; /* desktop */
+
+  /* Radii */
+  --r-sm: 10px; --r-md: 14px; --r-lg: 18px; --r-xl: 20px; --r-2xl: 28px; --r-pill: 999px;
+
+  /* Shadows (warm, faint) */
+  --shadow-card: 0 1px 2px rgba(31,28,22,.04), 0 8px 24px rgba(31,28,22,.06);
+  --shadow-float: 0 20px 50px -12px rgba(31,28,22,.18);
+  --shadow-btn: 0 0 0 1px rgba(201,160,70,.45), 0 12px 30px -10px rgba(31,74,51,.55);
+
+  /* Motion */
+  --ease-out: cubic-bezier(.2,.7,.2,1);
+  --ease-in: cubic-bezier(.6,0,.8,.4);
+  --ease-spring: cubic-bezier(.34,1.4,.64,1);   /* sparingly: pops, "Ready" chip, dish items */
+  --dur-fast: 200ms; --dur-base: 320ms;
+
+  /* Layout */
+  --container: 1280px;
+  --gutter: 44px;          /* desktop; see responsive rules in BUILD_BRIEF §5 */
+  --section-y: 100px;
+}
