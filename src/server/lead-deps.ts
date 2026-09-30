@@ -1,9 +1,11 @@
 // Production dependencies for the lead handler: Neon Postgres, Resend email, salted IP hashing.
-// Reads DATABASE_URL, RESEND_API_KEY, LEAD_NOTIFY_EMAIL, LEAD_FROM_EMAIL, IP_HASH_SALT at runtime.
+// Reads DATABASE_URL, RESEND_API_KEY, LEAD_NOTIFY_EMAIL, LEAD_FROM_EMAIL, IP_HASH_SALT and the
+// optional ZOHO_CRM_* variables at runtime.
 import { neon } from '@neondatabase/serverless';
 import migration from '../../migrations/001_leads.sql?raw';
 import { buildLeadEmail } from './lead-email';
 import { neonRegion } from './neon-region';
+import { createZohoCrm } from './zoho-crm';
 import { sha256Hex, type LeadDeps, type LeadStore, type StoredLead } from './lead-handler';
 
 const env = (k: string) => process.env[k]?.trim() || undefined;
@@ -90,9 +92,17 @@ export function leadDeps(): LeadDeps {
   if (deps) return deps;
   const url = env('DATABASE_URL');
   const salt = env('IP_HASH_SALT') ?? '';
+  const clientId = env('ZOHO_CRM_CLIENT_ID');
+  const clientSecret = env('ZOHO_CRM_CLIENT_SECRET');
+  const refreshToken = env('ZOHO_CRM_REFRESH_TOKEN');
+  const crm =
+    clientId && clientSecret && refreshToken
+      ? createZohoCrm({ clientId, clientSecret, refreshToken })
+      : undefined;
   return (deps = {
     store: url ? createStore(url) : null,
     notify: sendEmail,
+    crm,
     hashIp: (ip) => sha256Hex(`${salt}${ip}`),
     log: console,
   });
