@@ -91,6 +91,14 @@ One line each: **what** — why — how to change.
 64. **Analytics is injected from the bundled script, not the Astro components**, so no new inline scripts need CSP hashes. It isn't injected on localhost (there are no `/_vercel` routes there). `track()` removes the `?text=` from WhatsApp hrefs before sending. Custom events are only recorded on a Vercel plan that includes them. — `src/lib/analytics.ts`.
 65. **The Zoho CRM hook and the prefilled WhatsApp links are deferred to a later PR, at the owner's request.** The Zoho work is kept on the local branch `feat/zoho-crm`, which is not pushed. — n/a.
 
+## Contact email & docs (`fix/contact-email`)
+
+Numbered 72–74 to follow PR 4's 70–71. They sit here, not at the end of the file, so the two PRs don't conflict.
+
+72. **The public contact email is `support@getfirro.com`**, set once in `CONTACT.email` and used on `/privacy` and in the Organization JSON-LD. The test reads `CONTACT.email` rather than repeating the literal. — `src/config/site.ts`, `tests/behaviour.spec.ts`.
+73. **README "Placeholders to fill before launch" became "Launch configuration"**, with a Status column that marks open items. `KNOWN_ISSUES.md` item 1 lists the same open items: legal review of the privacy notice, lead emails until `LEAD_NOTIFY_EMAIL` is set, and social profiles. — `README.md`, `docs/KNOWN_ISSUES.md`.
+74. **Stale known issues removed**: "privacy page title/description still say draft" (fixed in PR 3) and "production deployments fail until the site reaches main" (the site is live). The Resend item now reflects that `RESEND_API_KEY` is set in Production but `LEAD_NOTIFY_EMAIL` isn't. — `docs/KNOWN_ISSUES.md`.
+
 ## Post-launch fixes (`fix/post-launch`)
 
 66. **The privacy page's "Draft prepared September 2026" line became "Last updated September 2026"**, along with the requested title and meta-description fixes, since it's the same draft leftover the owner removed the banner for. The code comment in `privacy.ts` no longer says DRAFT. — `src/content/privacy.ts`.
