@@ -11,7 +11,9 @@ design in `handoff/design/reference/firro-home-v3.html` ("Heritage light v3").
 
 ## Run it
 
-Requires Node 22 (`engines.node` is `22.x` so Vercel uses the project’s Node 22 setting; `.nvmrc` pins 22).
+Requires Node 22.12 or newer within 22.x (`engines.node` is `^22.12.0`: Astro 7's minimum, and it keeps
+Vercel on Node 22). `.nvmrc` pins 22, so with nvm run `nvm install && nvm use` first. On another
+major (e.g. Node 24) `npm install` prints an `EBADENGINE` warning and the build isn't tested there.
 
 ```bash
 npm install
