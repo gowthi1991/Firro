@@ -10,3 +10,4 @@ playwright-report/
 tests/__snapshots__/
 src/components/illustrations/
 CLAUDE.md
+tests/__snapshots__/

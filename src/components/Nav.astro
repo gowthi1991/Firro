@@ -81,6 +81,13 @@ const href = (h: string) => `${anchorBase}${h}`;
     align-items: baseline;
     gap: 10px;
   }
+  @media (max-width: 1023px) {
+    .wordmark {
+      align-items: center;
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
   .wm {
     font-family: var(--font-display);
     font-weight: 800;
