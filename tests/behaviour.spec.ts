@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import { settle } from './helpers';
 
 test.describe('sequences', () => {
@@ -125,12 +125,30 @@ test('FAQ: first item open, items toggle', async ({ page }) => {
 });
 
 test.describe('demo form', () => {
+  // /api/lead is a Vercel function; the static test server doesn't run it, so every test mocks it.
+  const fillValid = async (page: Page) => {
+    await page.getByLabel('Your name').fill('Test Kitchen Owner');
+    await page.getByLabel('Phone').fill('98765 43210');
+    await page.getByLabel('Kitchen name').fill('Test Kitchen');
+    await page.getByLabel('City').fill('Coimbatore');
+    await page.getByLabel('Meals a day').selectOption('50-200');
+    await page.getByLabel('I agree to be contacted about Firro.').check();
+  };
+  const mockLead = (page: Page, status: number, body: unknown, seen: unknown[] = []) =>
+    page.route('**/api/lead', async (route) => {
+      seen.push(route.request().postDataJSON());
+      await new Promise((r) => setTimeout(r, 300)); // long enough to observe the loading state
+      await route.fulfill({ status, contentType: 'application/json', body: JSON.stringify(body) });
+    });
+
   test.beforeEach(async ({ page }) => {
     await page.goto('/#demo');
     await settle(page);
   });
 
   test('shows inline errors on empty submit and focuses the first one', async ({ page }) => {
+    const seen: unknown[] = [];
+    await mockLead(page, 200, { ok: true }, seen);
     await page.getByRole('button', { name: 'Book my demo' }).click();
     for (const id of ['f-name', 'f-phone', 'f-kitchen', 'f-city', 'f-meals', 'f-consent']) {
       await expect(page.locator(`#${id}`)).toHaveAttribute('aria-invalid', 'true');
@@ -138,6 +156,7 @@ test.describe('demo form', () => {
     }
     await expect(page.locator('#f-name')).toBeFocused();
     await expect(page.locator('#f-tool')).not.toHaveAttribute('aria-invalid', 'true');
+    expect(seen).toEqual([]);
   });
 
   test('validates the phone on blur', async ({ page }) => {
@@ -152,62 +171,81 @@ test.describe('demo form', () => {
     await expect(page.locator('#f-phone-err')).toBeVisible();
   });
 
-  test('valid submit shows loading then the success state', async ({ page }) => {
-    const leads: string[] = [];
-    page.on('console', (m) => {
-      if (m.text().startsWith('[lead:stub]')) leads.push(m.text());
-    });
-    await page.getByLabel('Your name').fill('Test Kitchen Owner');
-    await page.getByLabel('Phone').fill('98765 43210');
-    await page.getByLabel('Kitchen name').fill('Test Kitchen');
-    await page.getByLabel('City').fill('Coimbatore');
-    await page.getByLabel('Meals a day').selectOption('50-200');
-    await page.getByLabel('I agree to be contacted about Firro.').check();
-    const submit = page.getByRole('button', { name: 'Book my demo' });
-    await submit.click();
+  test('valid submit posts to /api/lead, shows loading, then the success state', async ({
+    page,
+  }) => {
+    const seen: Record<string, unknown>[] = [];
+    await mockLead(page, 200, { ok: true }, seen);
+    await fillValid(page);
+    await page.getByRole('button', { name: 'Book my demo' }).click();
     await expect(page.getByRole('button', { name: 'Booking…' })).toBeDisabled();
     await expect(page.getByRole('heading', { name: 'Got it.' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Got it.' })).toBeFocused();
     await expect(page.locator('[data-form-status]')).toContainText('Got it.');
-    expect(leads.length).toBe(1);
+    expect(seen).toHaveLength(1);
+    expect(seen[0]).toMatchObject({
+      name: 'Test Kitchen Owner',
+      phone: '+919876543210',
+      kitchen: 'Test Kitchen',
+      city: 'Coimbatore',
+      meals: '50-200',
+      consent: true,
+      website: '',
+    });
   });
 
-  test('failed submit shows retry and WhatsApp fallback', async ({ page }) => {
-    // make the stub throw by breaking the console.info it logs through
-    await page.evaluate(() => {
-      const orig = console.info;
-      console.info = (...a: unknown[]) => {
-        if (a[0] === '[lead:stub]') throw new Error('offline');
-        orig(...a);
-      };
+  test('server validation errors show inline on the right fields', async ({ page }) => {
+    await mockLead(page, 400, {
+      ok: false,
+      errors: {
+        phone: 'Enter a 10-digit Indian mobile number, like +91 98765 43210.',
+        city: 'Please enter your city.',
+      },
     });
-    await page.getByLabel('Your name').fill('Test');
-    await page.getByLabel('Phone').fill('+919876543210');
-    await page.getByLabel('Kitchen name').fill('Test Kitchen');
-    await page.getByLabel('City').fill('Coimbatore');
-    await page.getByLabel('Meals a day').selectOption('under-50');
-    await page.getByLabel('I agree to be contacted about Firro.').check();
+    await fillValid(page);
     await page.getByRole('button', { name: 'Book my demo' }).click();
-    await expect(page.locator('[data-form-error]')).toBeVisible();
-    await expect(page.locator('[data-form-error] a')).toHaveAttribute('href', /wa\.me/);
-    await expect(page.getByRole('button', { name: 'Try again' })).toBeEnabled();
+    await expect(page.locator('#f-phone')).toHaveAttribute('aria-invalid', 'true');
+    await expect(page.locator('#f-phone-err')).toHaveText(/10-digit Indian mobile/);
+    await expect(page.locator('#f-city-err')).toHaveText('Please enter your city.');
+    await expect(page.locator('#f-phone')).toBeFocused();
+    await expect(page.locator('[data-form-error]')).toBeHidden();
+    await expect(page.getByRole('heading', { name: 'Got it.' })).toBeHidden();
   });
+
+  test('rate limit (429) shows a friendly message with WhatsApp fallback', async ({ page }) => {
+    await mockLead(page, 429, { ok: false, message: 'rate limited' });
+    await fillValid(page);
+    await page.getByRole('button', { name: 'Book my demo' }).click();
+    const panel = page.locator('[data-form-error]');
+    await expect(panel).toBeVisible();
+    await expect(panel).toContainText('We already have your request.');
+    await expect(panel.locator('a')).toHaveAttribute('href', /wa\.me/);
+    await expect(page.locator('[data-form-status]')).toContainText('We already have your request.');
+  });
+
+  for (const [label, setup] of [
+    ['server error', (page: Page) => mockLead(page, 500, { ok: false, message: 'x' })],
+    ['network failure', (page: Page) => page.route('**/api/lead', (r) => r.abort())],
+  ] as const) {
+    test(`${label} shows retry and WhatsApp fallback`, async ({ page }) => {
+      await setup(page);
+      await fillValid(page);
+      await page.getByRole('button', { name: 'Book my demo' }).click();
+      await expect(page.locator('[data-form-error]')).toBeVisible();
+      await expect(page.locator('[data-form-error]')).toContainText('That didn’t go through.');
+      await expect(page.locator('[data-form-error] a')).toHaveAttribute('href', /wa\.me/);
+      await expect(page.getByRole('button', { name: 'Try again' })).toBeEnabled();
+    });
+  }
 
   test('honeypot submissions are not sent', async ({ page }) => {
-    const leads: string[] = [];
-    page.on('console', (m) => {
-      if (m.text().startsWith('[lead:stub]')) leads.push(m.text());
-    });
+    const seen: unknown[] = [];
+    await mockLead(page, 200, { ok: true }, seen);
     await page.locator('#f-website').fill('spam', { force: true });
-    await page.getByLabel('Your name').fill('Bot');
-    await page.getByLabel('Phone').fill('9876543210');
-    await page.getByLabel('Kitchen name').fill('Bot');
-    await page.getByLabel('City').fill('Bot');
-    await page.getByLabel('Meals a day').selectOption('under-50');
-    await page.getByLabel('I agree to be contacted about Firro.').check();
+    await fillValid(page);
     await page.getByRole('button', { name: 'Book my demo' }).click();
     await expect(page.getByRole('heading', { name: 'Got it.' })).toBeVisible();
-    expect(leads).toEqual([]);
+    expect(seen).toEqual([]);
   });
 
   test('consent links to the privacy page', async ({ page }) => {
