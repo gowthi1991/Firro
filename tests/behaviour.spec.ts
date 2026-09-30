@@ -366,3 +366,16 @@ test('every WhatsApp link carries the prefilled message', async ({ page }) => {
     }
   }
 });
+
+test('contact email is support@getfirro.com on /privacy and in the JSON-LD', async ({ page }) => {
+  await page.goto('/privacy');
+  await expect(page.getByRole('link', { name: 'support@getfirro.com' })).toHaveAttribute(
+    'href',
+    'mailto:support@getfirro.com',
+  );
+  await page.goto('/');
+  const org = await page.$$eval('script[type="application/ld+json"]', (els) =>
+    els.map((e) => JSON.parse(e.textContent ?? '{}')).find((d) => d['@type'] === 'Organization'),
+  );
+  expect(org?.email).toBe('support@getfirro.com');
+});

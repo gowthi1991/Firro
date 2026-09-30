@@ -2,7 +2,7 @@
 
 Nothing here blocks review. Items are ordered by how much they matter before launch.
 
-1. **Placeholders are live.** Contact email `hello@getfirro.com`, and the lead endpoint (unset → console stub) are all placeholders. See "Placeholders" in the README.
+1. **The original placeholders are filled**: the WhatsApp number, the contact email (`support@getfirro.com`), and lead capture on `/api/lead`. See "Placeholders" in the README for what's left (social profiles).
 2. **Privacy notice has not had legal review.** The draft banner was removed for launch at the owner's request; the page title, description and "Draft prepared" line still say draft. It needs legal review (retention period, processor list, grievance contact) before launch.
 3. **Two overlaps exist in the approved desktop design and were kept.** The hero prep-sheet card covers part of the "Carbs" orbit chip, and the nutrition "linked ingredients" card covers the Fibre "9g" value. Both are the same in the reference.
 4. **Automated tests run in Chromium only**, which is what CI installs. The Safari/Firefox scroll-reveal fallback was checked by hand in Playwright's WebKit and Firefox builds (all 47 reveal elements show on scroll, no console errors). A real iPhone and a low-end Android haven't been tried.

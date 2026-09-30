@@ -10,8 +10,8 @@ export const WHATSAPP_MESSAGE = "Hi Firro, I'd like to know more about Firro for
 export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE).replace(/'/g, '%27')}`;
 
 export const CONTACT = {
-  /** TODO(launch): confirm the public contact inbox. */
-  email: 'hello@getfirro.com',
+  /** Public contact inbox: privacy page (data requests) and Organization JSON-LD. */
+  email: 'support@getfirro.com',
   city: 'Coimbatore, India',
 };
 
