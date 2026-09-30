@@ -11,3 +11,4 @@ tests/__snapshots__/
 src/components/illustrations/
 CLAUDE.md
 tests/__snapshots__/
+.claude/
