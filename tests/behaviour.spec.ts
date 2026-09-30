@@ -1,5 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import { settle } from './helpers';
+import { CONTACT } from '../src/config/site';
 
 test.describe('sequences', () => {
   test('play once when scrolled into view', async ({ page }) => {
@@ -365,4 +366,17 @@ test('every WhatsApp link carries the prefilled message', async ({ page }) => {
       expect(href, 'URL-encoded').not.toMatch(/[ ',]/);
     }
   }
+});
+
+test('contact email (CONTACT.email) is used on /privacy and in the JSON-LD', async ({ page }) => {
+  await page.goto('/privacy');
+  await expect(page.getByRole('link', { name: CONTACT.email })).toHaveAttribute(
+    'href',
+    `mailto:${CONTACT.email}`,
+  );
+  await page.goto('/');
+  const org = await page.$$eval('script[type="application/ld+json"]', (els) =>
+    els.map((e) => JSON.parse(e.textContent ?? '{}')).find((d) => d['@type'] === 'Organization'),
+  );
+  expect(org?.email).toBe(CONTACT.email);
 });

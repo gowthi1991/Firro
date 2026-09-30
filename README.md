@@ -57,16 +57,19 @@ handoff/                # design source material (reference, tokens, brand, brie
 docs/                   # PLAN, DECISIONS, KNOWN_ISSUES, PR_BODY, screenshots/
 ```
 
-## Placeholders to fill before launch
+## Launch configuration
 
-| What            | Where                                     | Now                                            |
-| --------------- | ----------------------------------------- | ---------------------------------------------- |
-| WhatsApp number | `WHATSAPP_NUMBER` in `src/config/site.ts` | `917845551223` (used by every WhatsApp link)   |
-| Contact email   | `CONTACT.email` in `src/config/site.ts`   | `hello@getfirro.com` (privacy page + JSON-LD)  |
-| Lead capture    | Vercel env vars (see below)               | `/api/lead` built; needs `DATABASE_URL` etc.   |
-| Privacy notice  | `src/content/privacy.ts`                  | draft text, banner removed for launch          |
-| Analytics       | `track()` in `src/lib/analytics.ts`       | no-op; `data-event` attributes already on CTAs |
-| Social profiles | `SOCIAL` in `src/config/site.ts`          | none (feeds JSON-LD `sameAs`)                  |
+What's configured and what's still open. `docs/KNOWN_ISSUES.md` item 1 lists the same open items.
+
+| What            | Where                                     | Status                                                                                      |
+| --------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------- |
+| WhatsApp number | `WHATSAPP_NUMBER` in `src/config/site.ts` | `917845551223` (used by every WhatsApp link)                                                |
+| Contact email   | `CONTACT.email` in `src/config/site.ts`   | `support@getfirro.com` (privacy page + JSON-LD)                                             |
+| Lead capture    | Vercel env vars (see below)               | Live: leads are stored in Neon (`DATABASE_URL` connected in Production and Preview)         |
+| Lead emails     | `LEAD_NOTIFY_EMAIL`, `RESEND_API_KEY`     | **Open:** skipped until `LEAD_NOTIFY_EMAIL` is set (`RESEND_API_KEY` is in Production only) |
+| Privacy notice  | `src/content/privacy.ts`                  | Published without the draft banner; **open: legal review pending**                          |
+| Analytics       | `track()` in `src/lib/analytics.ts`       | Vercel Web Analytics + Speed Insights (custom events need a plan that includes them)        |
+| Social profiles | `SOCIAL` in `src/config/site.ts`          | **Open:** none yet (feeds JSON-LD `sameAs`)                                                 |
 
 Everything labelled "Sample data" on the page is illustrative and stays labelled.
 
