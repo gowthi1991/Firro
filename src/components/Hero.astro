@@ -137,6 +137,7 @@ const wordDelays = [80, 125, 170, 215, 260];
 
 <style>
   .hero {
+    overflow-x: clip;
     margin-top: -76px;
     min-height: 100vh;
     padding: 150px var(--gutter) 80px;
@@ -269,9 +270,14 @@ const wordDelays = [80, 125, 170, 215, 260];
     inset: 11%;
     animation: spin 56s linear infinite;
   }
+  /* Zero-width arm, rotated about the orbit centre: same geometry as the reference's full-size
+     square arm, but without invisible rotated corners that would widen the page. */
   .arm {
     position: absolute;
-    inset: 0;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 0;
     transform: rotate(var(--a));
     pointer-events: none;
   }
@@ -511,6 +517,24 @@ const wordDelays = [80, 125, 170, 215, 260];
     }
     .delivery {
       left: -6%;
+    }
+    .trust {
+      gap: 12px 22px;
+    }
+  }
+  /* Tablet: the orbit sits alone in a wide row, so the story cards move further out and leave the chips clear. */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .pause {
+      top: -2%;
+      left: -30%;
+    }
+    .prep {
+      top: 40%;
+      right: -30%;
+    }
+    .delivery {
+      bottom: -2%;
+      left: -28%;
     }
   }
   @media (max-width: 1023px) {

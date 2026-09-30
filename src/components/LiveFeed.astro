@@ -98,6 +98,16 @@ import { feed } from '../content/site';
     flex: none;
   }
 
+  @media (max-width: 1023px) {
+    .feed {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .feed > span {
+      white-space: normal;
+      line-height: 1.5;
+    }
+  }
   @media (max-width: 767px) {
     .band {
       padding: 16px var(--gutter);

@@ -150,7 +150,9 @@ const f = demo.fields;
                 aria-describedby="f-consent-err"
                 data-error={demo.errors.consent}
               />
-              {f.consent} <a href="/privacy">{f.consentLink}</a>
+              <span>
+                {f.consent} <a href="/privacy">{f.consentLink}</a>
+              </span>
             </label>
             <p class="err" id="f-consent-err" hidden></p>
           </div>
@@ -328,6 +330,7 @@ const f = demo.fields;
   }
   .consent a {
     font-weight: 800;
+    margin-left: 6px; /* reference: 10px flex gap between text and link */
   }
   .hp {
     position: absolute;
