@@ -15,7 +15,9 @@ export default defineConfig({
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: [
     {
-      command: 'npm run preview -- --port 4321',
+      // --ignore-lock keeps astro preview in the foreground (Astro 7 auto-backgrounds it when it
+      // detects an AI agent, which would look like an early exit to Playwright).
+      command: 'npm run preview -- --port 4321 --ignore-lock',
       url: 'http://localhost:4321',
       reuseExistingServer: !process.env.CI,
       timeout: 60_000,
