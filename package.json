@@ -14,7 +14,8 @@
     "test": "playwright test",
     "lint": "prettier --check .",
     "format": "prettier --write .",
-    "gen:assets": "node scripts/generate-assets.mjs"
+    "gen:assets": "node scripts/generate-assets.mjs",
+    "screenshots": "node scripts/screenshots.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",

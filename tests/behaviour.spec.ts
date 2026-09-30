@@ -64,6 +64,25 @@ test.describe('WhatsApp FAB', () => {
     await expect(fab).toBeHidden();
   });
 
+  test('mobile: stays out of the way of the hero CTAs, then shows as a 56px icon', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+    const fab = page.locator('[data-fab]');
+    await expect(fab).toBeHidden();
+    await page.evaluate(() => window.scrollTo(0, 1100));
+    await expect(fab).toBeVisible();
+    await expect(fab).toHaveClass(/\bmini\b/);
+    // wait for the pop-in animation (scale .94 → 1) to finish
+    await expect
+      .poll(async () => {
+        const b = await fab.boundingBox();
+        return [Math.round(b!.width), Math.round(b!.height)];
+      })
+      .toEqual([56, 56]);
+  });
+
   test('links to WhatsApp', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('[data-fab]')).toHaveAttribute('href', /^https:\/\/wa\.me\/\d+$/);

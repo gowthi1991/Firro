@@ -56,8 +56,11 @@ for (const width of [390, 768]) {
     await expect(page.locator('.site-header .links')).toBeHidden();
     await expect(sheet).toBeHidden();
 
+    const h1Before = (await page.locator('h1').boundingBox())!.y;
     await btn.click();
     await expect(btn).toHaveAttribute('aria-expanded', 'true');
+    // the sheet overlays the page; it must not push content down
+    expect((await page.locator('h1').boundingBox())!.y).toBe(h1Before);
     await expect(sheet).toBeVisible();
     await expect(sheet.getByRole('link')).toHaveCount(5);
     await expect(sheet.getByRole('link').first()).toBeFocused();
