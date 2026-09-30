@@ -108,12 +108,50 @@ Replies: `{ ok: true }` (200) · 400 validation · 413 too large · 429 rate lim
    | `LEAD_NOTIFY_EMAIL`    | yes      | who gets new-lead emails; comma-separate several                     |
    | `LEAD_FROM_EMAIL`      | no       | `Firro leads <leads@getfirro.com>`; defaults to Resend's test sender |
    | `IP_HASH_SALT`         | no       | long random string, so stored IP hashes can't be reversed            |
+   | `ZOHO_CRM_*` (3 vars)  | no       | optional Zoho CRM sync — see "Zoho CRM (optional)" below             |
    | `PUBLIC_LEAD_ENDPOINT` | no       | leave unset (defaults to `/api/lead`); `stub` disables sending       |
 
 5. **Point `getfirro.com`** at the Vercel project. `site` in `astro.config.mjs` already uses that
    domain for canonical URLs, the sitemap and OG tags.
 6. **Smoke test**: submit the form once on the preview URL, then check that the row exists in
    Neon and the email arrived.
+
+## Zoho CRM (optional)
+
+When `ZOHO_CRM_CLIENT_ID`, `ZOHO_CRM_CLIENT_SECRET` and `ZOHO_CRM_REFRESH_TOKEN` are all set, every
+stored lead is also created as a **Lead** in Zoho CRM on the India data centre
+(`accounts.zoho.in` / `www.zohoapis.in`):
+
+| Zoho field             | Value                                                         |
+| ---------------------- | ------------------------------------------------------------- |
+| First Name / Last Name | the name, split on the last space (Zoho requires a last name) |
+| Company                | kitchen name                                                  |
+| Phone, Mobile          | `+91XXXXXXXXXX`                                               |
+| City                   | city                                                          |
+| Lead Source            | `Website`                                                     |
+| Description            | meals range, current tool and the Firro lead id               |
+
+A CRM failure never fails the form. The lead is already in Postgres, and the error shows in the
+function logs as `[lead] CRM sync failed`. Leave the variables unset to switch the hook off.
+
+**Create the self-client and refresh token (one-time):**
+
+1. Sign in to <https://api-console.zoho.in> with the Zoho account that owns the CRM, then choose
+   **Add Client → Self Client → Create**. Copy the **Client ID** and **Client Secret**.
+2. Open the **Generate Code** tab. Enter the scope `ZohoCRM.modules.leads.CREATE`, pick 10 minutes,
+   add a description, and click **Create**. Copy the **grant code**, which expires in 10 minutes.
+3. Exchange the grant code for a refresh token in a terminal (fill in the three values):
+   ```bash
+   curl -s -X POST https://accounts.zoho.in/oauth/v2/token -d grant_type=authorization_code -d client_id=CLIENT_ID -d client_secret=CLIENT_SECRET -d code=GRANT_CODE
+   ```
+   The JSON response contains `refresh_token`. It doesn't expire, so treat it like a password.
+4. Add `ZOHO_CRM_CLIENT_ID`, `ZOHO_CRM_CLIENT_SECRET` and `ZOHO_CRM_REFRESH_TOKEN` in Vercel
+   (Production, and Preview if you want previews to sync) as sensitive variables, then redeploy.
+5. In Zoho CRM, check that **Lead Source** has a `Website` option (Setup → Modules and Fields →
+   Leads → Lead Source). Add it if it's missing.
+6. Submit a test lead. The function log should show `[lead] CRM synced <id>`.
+
+The API version is in `ZOHO_LEADS_URL` in `src/server/zoho-crm.ts`.
 
 ## Quality gates
 

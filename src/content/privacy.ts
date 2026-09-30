@@ -1,10 +1,10 @@
-// DRAFT privacy notice — pending legal review before launch. Plain language on purpose.
+// Privacy notice shown at /privacy. Plain language on purpose.
 // Contact email is a placeholder (see src/config/site.ts).
 
 export const privacy = {
   label: 'Privacy',
   title: 'Privacy notice',
-  updated: 'Draft prepared September 2026',
+  updated: 'Last updated September 2026',
   intro:
     'This notice explains what happens to the details you share when you ask for a Firro demo on this website. Firro is a product of Uyir AI Labs Pvt Ltd, Coimbatore, India.',
   sections: [
@@ -26,6 +26,7 @@ export const privacy = {
       h: 'Where it goes',
       p: [
         'When you send the form, your details are saved in a secure database run for us by Neon (a managed Postgres provider), through our website host, Vercel. A copy is emailed to the Firro team through Resend, an email delivery service, so we can call you quickly.',
+        'If we connect our customer-management system (Zoho CRM, hosted in Zoho’s India data centre), your details are also added there so our team can follow up.',
         'These providers may process data on servers outside India. They act only on our instructions and may not use your details for their own purposes.',
       ],
     },
@@ -44,7 +45,7 @@ export const privacy = {
     {
       h: 'Who we share it with',
       p: [
-        'We do not sell or rent your details, and we do not share them with other businesses for their own use. They are handled only by the Firro team, and by the service providers named above (Vercel, Neon and Resend), which store or deliver data for us under contract and only on our instructions.',
+        'We do not sell or rent your details, and we do not share them with other businesses for their own use. They are handled only by the Firro team, and by the service providers named above (Vercel, Neon, Resend and, if connected, Zoho), which store or deliver data for us under contract and only on our instructions.',
       ],
     },
     {

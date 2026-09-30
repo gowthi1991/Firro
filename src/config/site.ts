@@ -4,7 +4,10 @@ export const SITE_URL = 'https://getfirro.com';
 
 /** WhatsApp Business number: country code, digits only. */
 export const WHATSAPP_NUMBER = '917845551223';
-export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`;
+/** Prefilled text for every "Chat on WhatsApp" link. */
+export const WHATSAPP_MESSAGE = "Hi Firro, I'd like to know more about Firro for my kitchen.";
+// encodeURIComponent leaves ' as-is; encode it too so the link is fully percent-encoded.
+export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE).replace(/'/g, '%27')}`;
 
 export const CONTACT = {
   /** TODO(launch): confirm the public contact inbox. */

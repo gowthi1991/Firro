@@ -29,6 +29,8 @@ export interface LeadDeps {
   /** null when DATABASE_URL isn't configured. */
   store: LeadStore | null;
   notify(lead: StoredLead): Promise<void>;
+  /** Optional CRM sync (Zoho); undefined when not configured. */
+  crm?: (lead: StoredLead) => Promise<void>;
   hashIp(ip: string): Promise<string>;
   log: Pick<Console, 'info' | 'warn' | 'error'>;
 }
@@ -93,11 +95,19 @@ export function createLeadHandler(deps: LeadDeps) {
       const saved = await deps.store.insert({ ...lead, user_agent, ip_hash });
       deps.log.info('[lead] stored', saved.id); // id only — no personal data in logs
 
-      try {
-        await deps.notify({ ...lead, ...saved, user_agent });
-      } catch (err) {
-        // The lead is stored; a failed notification must not fail the request.
-        deps.log.error('[lead] notification failed', { id: saved.id, err: String(err) });
+      // The lead is stored; a failed email or CRM sync must never fail the request.
+      const stored: StoredLead = { ...lead, ...saved, user_agent };
+      const [mail, crm] = await Promise.allSettled([
+        deps.notify(stored),
+        deps.crm ? deps.crm(stored) : Promise.resolve(),
+      ]);
+      if (mail.status === 'rejected') {
+        deps.log.error('[lead] notification failed', { id: saved.id, err: String(mail.reason) });
+      }
+      if (crm.status === 'rejected') {
+        deps.log.error('[lead] CRM sync failed', { id: saved.id, err: String(crm.reason) });
+      } else if (deps.crm) {
+        deps.log.info('[lead] CRM synced', saved.id);
       }
       return json(200, { ok: true });
     } catch (err) {

@@ -109,7 +109,10 @@ test.describe('WhatsApp FAB', () => {
 
   test('links to WhatsApp', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('[data-fab]')).toHaveAttribute('href', /^https:\/\/wa\.me\/\d+$/);
+    await expect(page.locator('[data-fab]')).toHaveAttribute(
+      'href',
+      /^https:\/\/wa\.me\/\d+\?text=/,
+    );
   });
 });
 
@@ -345,4 +348,21 @@ test('analytics hooks are present', async ({ page }) => {
   await page.goto('/');
   expect(await page.locator('[data-event="book_demo_click"]').count()).toBeGreaterThan(2);
   expect(await page.locator('[data-event="whatsapp_click"]').count()).toBeGreaterThan(2);
+});
+
+test('every WhatsApp link carries the prefilled message', async ({ page }) => {
+  const expected = "Hi Firro, I'd like to know more about Firro for my kitchen.";
+  for (const path of ['/', '/privacy', '/404']) {
+    await page.goto(path);
+    const hrefs = await page.$$eval('a[href*="wa.me"]', (as) =>
+      as.map((a) => a.getAttribute('href')!),
+    );
+    expect(hrefs.length, path).toBeGreaterThan(0);
+    for (const href of hrefs) {
+      const url = new URL(href);
+      expect(url.origin + url.pathname, href).toBe('https://wa.me/917845551223');
+      expect(url.searchParams.get('text'), href).toBe(expected);
+      expect(href, 'URL-encoded').not.toMatch(/[ ',]/);
+    }
+  }
 });
