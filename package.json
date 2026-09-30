@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "http-server .vercel/output/static -p 4321 -c-1",
+    "preview": "node scripts/serve-static.mjs .vercel/output/static 4321",
     "check": "astro check",
     "test": "playwright test",
     "lint": "prettier --check .",

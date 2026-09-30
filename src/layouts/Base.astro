@@ -9,6 +9,7 @@ import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import WhatsAppFab from '../components/WhatsAppFab.astro';
 import { SEO, SITE_URL } from '../config/site';
+import { BOOT_SCRIPT } from '../config/boot-script';
 
 interface Props {
   title?: string;
@@ -36,10 +37,6 @@ const fontFaces = `
 @font-face{font-family:'Manrope';font-style:normal;font-display:swap;font-weight:200 800;src:url(${manrope}) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 @font-face{font-family:'JetBrains Mono';font-style:normal;font-display:swap;font-weight:500;src:url(${mono500}) format('woff2');unicode-range:U+0000-00FF,U+2000-206F}
 @font-face{font-family:'JetBrains Mono';font-style:normal;font-display:swap;font-weight:700;src:url(${mono700}) format('woff2');unicode-range:U+0000-00FF,U+2000-206F}`;
-
-// Runs before first paint: enables JS-only hidden states, detects @property support,
-// and removes the gate again if the bundled script never boots (content must never stay hidden).
-const bootScript = `(function(d){var h=d.documentElement;h.classList.add('js');if(window.CSS&&CSS.registerProperty)h.classList.add('prop');setTimeout(function(){if(!h.classList.contains('js-ready'))h.classList.remove('js')},3000)})(document)`;
 ---
 
 <!doctype html>
@@ -78,7 +75,7 @@ const bootScript = `(function(d){var h=d.documentElement;h.classList.add('js');i
 
     <link rel="preload" href={bricolage} as="font" type="font/woff2" crossorigin />
     <style is:inline set:html={fontFaces} />
-    <script is:inline set:html={bootScript} />
+    <script is:inline set:html={BOOT_SCRIPT} />
     {jsonLd.map((data) => (
       <script is:inline type="application/ld+json" set:html={JSON.stringify(data)} />
     ))}

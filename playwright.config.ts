@@ -15,11 +15,12 @@ export default defineConfig({
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: [
     {
-      // The Vercel adapter has no `astro preview`; serve the prerendered output statically.
-      // /api/lead isn't served here — tests that submit the form mock it with page.route().
-      command: 'npx http-server .vercel/output/static -p 4321 -s -c-1',
+      // The Vercel adapter has no `astro preview`; serve the prerendered output with the headers
+      // from vercel.json (CSP etc.). /api/lead isn't served — tests that submit the form mock it.
+      command: 'node scripts/serve-static.mjs .vercel/output/static 4321',
       url: 'http://localhost:4321',
-      reuseExistingServer: !process.env.CI,
+      // Never reuse: a running `npm run dev` on 4321 would otherwise be tested instead of the build.
+      reuseExistingServer: false,
       timeout: 60_000,
     },
     {
