@@ -11,3 +11,4 @@ blob-report/
 .lighthouse/
 .scratch/
 .vercel/
+.claude/
