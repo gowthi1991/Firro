@@ -1,0 +1,90 @@
+---
+import Base from '../layouts/Base.astro';
+import { privacy } from '../content/privacy';
+import { CONTACT } from '../config/site';
+
+const withEmail = (s: string) =>
+  s.replace('{email}', `<a href="mailto:${CONTACT.email}">${CONTACT.email}</a>`);
+---
+
+<Base
+  title="Privacy notice (draft) — Firro"
+  description="How Firro handles the details you share when you ask for a demo. Draft notice, pending review."
+>
+  <section class="page gridbg" aria-labelledby="privacy-title">
+    <div class="wrap">
+      <span class="micro gold">{privacy.label}</span>
+      <h1 id="privacy-title" class="disp title">
+        {privacy.title}
+      </h1>
+      <p class="updated">{privacy.updated}</p>
+      <p class="lead intro">{privacy.intro}</p>
+      {privacy.sections.map((s) => (
+        <section class="block">
+          <h2 class="disp">{s.h}</h2>
+          {s.p.map((p) => (
+            <p set:html={withEmail(p)} />
+          ))}
+        </section>
+      ))}
+      <a href="/" class="btn btn-glass back">
+        {privacy.back}
+      </a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .page {
+    margin-top: -76px;
+    padding: 150px var(--gutter) var(--section-y);
+  }
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .gold {
+    display: block;
+  }
+  .title {
+    font-size: var(--h2-md);
+    line-height: 0.96;
+    margin-top: 14px;
+  }
+  .updated {
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .intro {
+    margin-top: 28px;
+  }
+  .block {
+    margin-top: 40px;
+  }
+  .block h2 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .block p {
+    margin-top: 12px;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+  .block :global(a) {
+    font-weight: 800;
+  }
+  .back {
+    margin-top: 56px;
+  }
+  @media (max-width: 767px) {
+    .page {
+      padding-top: 120px;
+    }
+    .block h2 {
+      font-size: 22px;
+    }
+  }
+</style>

@@ -1,0 +1,225 @@
+---
+import { nav } from '../content/site';
+
+interface Props {
+  anchorBase?: string;
+}
+const { anchorBase = '/' } = Astro.props;
+const href = (h: string) => `${anchorBase}${h}`;
+---
+
+<header class="site-header">
+  <nav class="glass nav in" aria-label="Primary">
+    <a href={href('#top')} aria-label={nav.homeLabel} class="wordmark">
+      <span class="wm">
+        firro<span class="dot">.</span>
+      </span>
+    </a>
+    <div class="links">
+      {nav.links.map((l) => (
+        <a href={href(l.href)} class="nl">
+          {l.label}
+        </a>
+      ))}
+    </div>
+    <a href={href('#demo')} class="btn btn-glow cta" data-event="book_demo_click">
+      {nav.cta}
+    </a>
+    <button
+      type="button"
+      class="menu-btn"
+      aria-expanded="false"
+      aria-controls="nav-sheet"
+      data-nav-toggle
+    >
+      <span class="sr-only">{nav.menuLabel}</span>
+      <svg
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.75"
+        stroke-linecap="round"
+        aria-hidden="true"
+      >
+        <line class="l1" x1="4" y1="8" x2="20" y2="8"></line>
+        <line class="l2" x1="4" y1="16" x2="20" y2="16"></line>
+      </svg>
+    </button>
+  </nav>
+  <div id="nav-sheet" class="sheet glass" data-nav-sheet hidden>
+    <ul>
+      {nav.links.map((l) => (
+        <li>
+          <a href={href(l.href)}>{l.label}</a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 16px;
+    z-index: 60;
+    padding: 0 32px;
+  }
+  .nav {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    padding: 10px 10px 10px 24px;
+    border-radius: var(--r-pill);
+    background: rgba(255, 253, 248, 0.92);
+  }
+  .wordmark {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  @media (max-width: 1023px) {
+    .wordmark {
+      align-items: center;
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
+  .wm {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 24px;
+    letter-spacing: -1px;
+    color: var(--ink);
+  }
+  .wm .dot {
+    color: var(--heritage);
+  }
+  .links {
+    display: flex;
+    gap: 24px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .links a {
+    color: var(--text);
+  }
+  .links a:hover {
+    color: var(--ink);
+  }
+  .cta {
+    margin-left: auto;
+    min-height: 44px;
+    padding: 0 20px;
+    font-size: 14px;
+  }
+  .menu-btn {
+    display: none;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--r-pill);
+    align-items: center;
+    justify-content: center;
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    flex: none;
+  }
+  .menu-btn line {
+    transition: transform var(--dur-fast) var(--ease-out);
+    transform-origin: 12px 12px;
+  }
+  .menu-btn[aria-expanded='true'] .l1 {
+    transform: translateY(4px) rotate(45deg);
+  }
+  .menu-btn[aria-expanded='true'] .l2 {
+    transform: translateY(-4px) rotate(-45deg);
+  }
+  .sheet {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: var(--gutter);
+    right: var(--gutter);
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 8px;
+    border-radius: var(--r-xl);
+    background: rgba(255, 253, 248, 0.97);
+    box-shadow: var(--shadow-float);
+  }
+  .sheet a {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 0 16px;
+    border-radius: var(--r-md);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .sheet a:hover {
+    background: var(--surface-sage);
+  }
+  .sheet li + li a {
+    border-top: 1px solid var(--line);
+    border-radius: 0;
+  }
+
+  @media (max-width: 1279px) {
+    .site-header {
+      padding: 0 var(--gutter);
+    }
+    .nav {
+      gap: 20px;
+    }
+    .links {
+      gap: 18px;
+    }
+  }
+  @media (max-width: 1023px) {
+    .links {
+      display: none;
+    }
+    .menu-btn {
+      display: inline-flex;
+    }
+    .nav {
+      gap: 10px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .sheet {
+      display: none !important;
+    }
+  }
+  @media (max-width: 767px) {
+    .site-header {
+      top: 10px;
+      padding: 0 12px;
+    }
+    .sheet {
+      left: 12px;
+      right: 12px;
+    }
+    .nav {
+      padding: 6px 6px 6px 18px;
+      gap: 8px;
+    }
+    .wm {
+      font-size: 22px;
+    }
+    .cta {
+      padding: 0 16px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .menu-btn line {
+      transition: none;
+    }
+  }
+</style>

@@ -1,0 +1,653 @@
+---
+import { hero } from '../content/site';
+import { WHATSAPP_URL } from '../config/site';
+import PowerBowl from './illustrations/PowerBowl.astro';
+import IconCheck from './icons/IconCheck.astro';
+import IconArrow from './icons/IconArrow.astro';
+
+const wordDelays = [80, 125, 170, 215, 260];
+---
+
+<section id="top" class="hero gridbg" aria-labelledby="hero-title">
+  <div class="container grid">
+    <div class="copy">
+      <span class="micro in chiprow">
+        <span class="live-dot live"></span>
+        {hero.chip}
+      </span>
+      <h1 id="hero-title" class="disp title">
+        {hero.titleWords.map((w, i) => (
+          <>
+            <span class="w" style={`animation-delay:${wordDelays[i]}ms`}>
+              {w}
+            </span>{' '}
+          </>
+        ))}
+        <em class="acc">{hero.titleAccent}</em>
+      </h1>
+      <p class="in d2 soft sub">{hero.sub}</p>
+      <div class="in d3 ctas" data-hero-ctas>
+        <a href="#demo" class="btn btn-glow" data-event="book_demo_click">
+          {hero.primaryCta} <IconArrow />
+        </a>
+        <a href={WHATSAPP_URL} class="btn btn-glass" data-event="whatsapp_click">
+          {hero.secondaryCta}
+        </a>
+      </div>
+      <ul class="in d4 trust">
+        {hero.trust.map((t) => (
+          <li>
+            <span class="tick">
+              <IconCheck />
+            </span>
+            {t}
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="visual">
+      <div class="orbitwrap">
+        <div class="ring r0" aria-hidden="true"></div>
+        <div class="spin" aria-hidden="true">
+          <span class="golddot"></span>
+        </div>
+        <div class="ring r1" aria-hidden="true"></div>
+        <div class="ring r2" aria-hidden="true"></div>
+        <PowerBowl class="plate" role="img" aria-label={hero.plateLabel} />
+        <div class="orbit" aria-hidden="true">
+          {hero.chips.map((c) => (
+            <div class="arm" style={`--a:${c.angle}deg`}>
+              <div class="onode">
+                <span class="ochip">
+                  <span class="odot" style={`background:${c.dot}`} />
+                  {c.valueFirst ? (
+                    <>
+                      <span class="mono">{c.value}</span> {c.label}
+                    </>
+                  ) : (
+                    <>
+                      {c.label} <span class="mono">{c.value}</span>
+                    </>
+                  )}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="story" data-seq="story">
+        <div class="glass pop d5 card pause">
+          <div class="row">
+            <span class="micro m10">{hero.pause.label}</span>
+            <span class="mono time">{hero.pause.time}</span>
+          </div>
+          <p class="disp ctitle">{hero.pause.title}</p>
+          <p class="cbody">{hero.pause.body}</p>
+        </div>
+
+        <div class="glass pop d6 card prep">
+          <div class="row center">
+            <span class="micro m10 green">{hero.prep.label}</span>
+            <span class="chip spring ready">
+              <IconCheck size={12} strokeWidth={2} />
+              {hero.prep.ready}
+            </span>
+          </div>
+          <p class="disp ptitle">{hero.prep.title}</p>
+          <div class="rows">
+            {hero.prep.rows.map((r) =>
+              r.was ? (
+                <div class="prow flash">
+                  <span class="soft">{r.dish}</span>
+                  <span class="num swap">
+                    <span class="old" aria-hidden="true">
+                      {r.was}
+                    </span>
+                    <span class="new">{r.count}</span>
+                  </span>
+                </div>
+              ) : (
+                <div class="prow">
+                  <span class="soft">{r.dish}</span>
+                  <span class="num">{r.count}</span>
+                </div>
+              ),
+            )}
+          </div>
+          <p class="locks">
+            {hero.prep.locksPrefix} <span class="mono">{hero.prep.locksTime}</span>{' '}
+            {hero.prep.locksSuffix}
+          </p>
+        </div>
+
+        <div class="glass pop card delivery">
+          <span class="live-dot live big"></span>
+          <div>
+            <p class="disp dtitle">{hero.delivery.title}</p>
+            <p class="dbody">{hero.delivery.body}</p>
+          </div>
+        </div>
+      </div>
+      <p class="sample hsample">{hero.sample}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    overflow-x: clip;
+    margin-top: -76px;
+    min-height: 100vh;
+    padding: 150px var(--gutter) 80px;
+    display: flex;
+    align-items: center;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: 40px;
+    align-items: center;
+  }
+  .copy {
+    display: flex;
+    flex-direction: column;
+  }
+  .chiprow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text);
+  }
+  .title {
+    font-size: var(--h1-size);
+    line-height: 0.95;
+    margin: 24px 0 28px;
+    max-width: 11ch;
+  }
+  .w {
+    display: inline-block;
+    animation: rise var(--dur-base) var(--ease-out) both;
+  }
+  .sub {
+    font-size: 19px;
+    line-height: 1.6;
+    max-width: 540px;
+  }
+  .ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 34px;
+  }
+  .trust {
+    display: flex;
+    gap: 28px;
+    margin-top: 44px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    flex-wrap: wrap;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .trust li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tick {
+    color: var(--heritage);
+    display: flex;
+  }
+
+  /* ---- visual ---- */
+  .visual {
+    position: relative;
+    width: 100%;
+    max-width: var(--hero-orbit);
+    aspect-ratio: 1;
+    justify-self: center;
+  }
+  .orbitwrap {
+    position: absolute;
+    inset: 0;
+  }
+  .ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+  }
+  .r0 {
+    inset: 0;
+  }
+  .r1 {
+    inset: 11%;
+  }
+  .r2 {
+    inset: 22%;
+    border-color: rgba(78, 204, 121, 0.35);
+  }
+  .spin {
+    position: absolute;
+    inset: 0;
+  }
+  .golddot {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--gold);
+    top: -6px;
+    left: calc(50% - 6px);
+    box-shadow: 0 0 16px rgba(217, 180, 90, 0.8);
+  }
+  .visual :global(.plate) {
+    position: absolute;
+    inset: 25%;
+    width: 50%;
+    height: 50%;
+    border-radius: 50%;
+    box-shadow:
+      0 30px 70px rgba(31, 28, 22, 0.18),
+      0 0 0 10px #ffffff,
+      0 0 0 11px rgba(201, 160, 70, 0.35);
+    animation: platein 700ms var(--ease-out) 200ms both;
+  }
+  @keyframes platein {
+    from {
+      opacity: 0;
+      transform: scale(0.86) rotate(-20deg);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .orbit {
+    position: absolute;
+    inset: 11%;
+    animation: spin 56s linear infinite;
+  }
+  /* Zero-width arm, rotated about the orbit centre: same geometry as the reference's full-size
+     square arm, but without invisible rotated corners that would widen the page. */
+  .arm {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    transform: rotate(var(--a));
+    pointer-events: none;
+  }
+  .onode {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translate(-50%, -50%);
+  }
+  .onode > span {
+    display: inline-flex;
+    animation: counter 56s linear infinite;
+  }
+  @keyframes counter {
+    from {
+      transform: rotate(calc(-1 * var(--a)));
+    }
+    to {
+      transform: rotate(calc(-1 * var(--a) - 360deg));
+    }
+  }
+  .ochip {
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: var(--r-pill);
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(26, 59, 26, 0.1);
+    box-shadow: 0 6px 18px rgba(31, 28, 22, 0.1);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .odot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--r-pill);
+    display: block;
+  }
+
+  /* story cards: positioned on the orbit at desktop, stacked below it on mobile */
+  .story {
+    display: contents;
+  }
+  .card {
+    position: absolute;
+    border-radius: var(--r-xl);
+  }
+  .row {
+    display: flex;
+    justify-content: space-between;
+  }
+  .row.center {
+    align-items: center;
+  }
+  .m10 {
+    font-size: 10px;
+  }
+  .m10.green {
+    color: var(--heritage);
+  }
+  .pause {
+    top: -4%;
+    left: -12%;
+    width: 244px;
+    padding: 16px 18px;
+  }
+  .time {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .ctitle {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-top: 8px;
+  }
+  .cbody {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .prep {
+    top: 44%;
+    right: -16%;
+    width: 236px;
+    padding: 16px;
+    box-shadow: 0 20px 60px rgba(31, 28, 22, 0.12);
+  }
+  .ready {
+    background: var(--surface-sage);
+    color: var(--heritage);
+    font-size: 11px;
+    padding: 3px 9px;
+  }
+  .ptitle {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-top: 8px;
+  }
+  .rows {
+    margin-top: 8px;
+  }
+  .prow {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-top: 1px solid var(--line);
+    font-size: 14px;
+  }
+  .prow.flash {
+    padding: 8px 6px;
+    margin: 0 -6px;
+  }
+  .locks {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+  .locks .mono {
+    color: var(--ink);
+  }
+  .delivery {
+    animation-delay: 2000ms;
+    bottom: -3%;
+    left: -10%;
+    width: 240px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--amber-bg);
+    border-color: rgba(245, 158, 11, 0.35);
+  }
+  .live-dot.big {
+    width: 10px;
+    height: 10px;
+  }
+  .dtitle {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .dbody {
+    font-size: 13px;
+    color: var(--amber-text);
+    margin-top: 2px;
+  }
+  .hsample {
+    position: absolute;
+    bottom: -30px;
+    right: 0;
+  }
+
+  /* prep-sheet swap 48 → 47, flash, "Ready" chip springs in */
+  .swap {
+    display: inline-grid;
+  }
+  .swap > span {
+    grid-area: 1 / 1;
+  }
+  .old {
+    animation: outUp 200ms var(--ease-in) 1400ms both;
+  }
+  .new {
+    animation: inUp var(--dur-base) var(--ease-out) 1500ms both;
+  }
+  .flash {
+    animation: flash 900ms var(--ease-out) 1400ms both;
+    border-radius: 8px;
+  }
+  .spring {
+    animation: springIn var(--dur-base) var(--ease-spring) 1700ms both;
+  }
+  @keyframes outUp {
+    to {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+  }
+  @keyframes inUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes flash {
+    0% {
+      background: rgba(201, 160, 70, 0);
+    }
+    30% {
+      background: rgba(201, 160, 70, 0.16);
+    }
+    100% {
+      background: rgba(201, 160, 70, 0);
+    }
+  }
+  @keyframes springIn {
+    from {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  /* With JS, the story sequence waits until it is on screen (matters on mobile, where it sits below the fold). */
+  :global(html.js) .story:not(.play) :is(.pop, .old, .new, .flash, .spring, .live) {
+    animation-play-state: paused;
+  }
+
+  /* ---- responsive ---- */
+  @media (max-width: 1439px) {
+    .prep {
+      right: -5%;
+    }
+  }
+  @media (max-width: 1279px) {
+    .hero {
+      padding-top: 136px;
+    }
+    .sub {
+      font-size: 18px;
+    }
+    .pause {
+      left: -8%;
+    }
+    .prep {
+      right: -3%;
+    }
+    .delivery {
+      left: -6%;
+    }
+    .trust {
+      gap: 12px 22px;
+    }
+  }
+  /* Tablet: the orbit sits alone in a wide row, so the story cards move further out and leave the chips clear. */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .pause {
+      top: -2%;
+      left: -30%;
+    }
+    .prep {
+      top: 40%;
+      right: -30%;
+    }
+    .delivery {
+      bottom: -2%;
+      left: -28%;
+    }
+  }
+  @media (max-width: 1023px) {
+    .hero {
+      min-height: 0;
+      padding: 128px var(--gutter) 96px;
+    }
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 72px;
+    }
+    .title {
+      max-width: 12ch;
+    }
+  }
+  @media (max-width: 767px) {
+    .hero {
+      padding: 112px var(--gutter) 72px;
+    }
+    .title {
+      line-height: 0.98;
+      margin: 20px 0 22px;
+    }
+    .sub {
+      font-size: 17px;
+    }
+    .ctas {
+      flex-direction: column;
+      margin-top: 28px;
+    }
+    .ctas .btn {
+      width: 100%;
+      justify-content: center;
+    }
+    .trust {
+      gap: 12px 20px;
+      margin-top: 32px;
+      padding-top: 20px;
+    }
+    .grid {
+      gap: 48px;
+    }
+    .visual {
+      aspect-ratio: auto;
+      max-width: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+    }
+    .orbitwrap {
+      position: relative;
+      inset: auto;
+      width: var(--hero-orbit);
+      max-width: 100%;
+      aspect-ratio: 1;
+      margin: 18px 0;
+    }
+    .orbit {
+      inset: 12%;
+    }
+    .ochip {
+      gap: 6px;
+      padding: 6px 11px;
+      font-size: 12px;
+    }
+    .story {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+    .card {
+      position: relative;
+      inset: auto;
+      width: auto;
+    }
+    .pause {
+      align-self: flex-start;
+      width: min(88%, 300px);
+    }
+    .prep {
+      width: 100%;
+      padding: 18px;
+    }
+    .delivery {
+      align-self: flex-end;
+      width: min(88%, 300px);
+    }
+    .hsample {
+      position: static;
+      align-self: flex-end;
+      margin-top: -12px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .w,
+    .visual :global(.plate),
+    .orbit,
+    .onode > span {
+      animation: none;
+    }
+    .onode > span {
+      transform: rotate(calc(-1 * var(--a)));
+    }
+    .old {
+      display: none;
+    }
+    .new,
+    .flash,
+    .spring {
+      animation: none;
+    }
+  }
+</style>

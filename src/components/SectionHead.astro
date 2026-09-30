@@ -1,0 +1,29 @@
+---
+// Label + H2 (with italic accent) used by several sections.
+import type { Accented } from '../content/site';
+
+interface Props {
+  label: string;
+  heading: Accented;
+  id?: string;
+  /** Section-label colour: muted (default) or gold. */
+  gold?: boolean;
+  /** Smaller 60px heading variant used by batch / nutrition / faq. */
+  md?: boolean;
+  maxCh?: number;
+}
+const { label, heading, id, gold = false, md = false, maxCh } = Astro.props;
+---
+
+<div>
+  <span class:list={['micro', { gold }]}>{label}</span>
+  <h2 id={id} class:list={['h2', { md }]} style={maxCh ? `max-width:${maxCh}ch` : undefined}>
+    {heading.title} <em class="acc">{heading.accent}</em>
+  </h2>
+</div>
+
+<style>
+  h2 {
+    margin-top: 14px;
+  }
+</style>

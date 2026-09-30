@@ -1,0 +1,461 @@
+---
+import { demo } from '../content/site';
+import { WHATSAPP_URL } from '../config/site';
+import IconCheck from './icons/IconCheck.astro';
+
+const f = demo.fields;
+// Error copy is read by src/scripts/form.ts from data attributes, so all copy stays in content/site.ts.
+---
+
+<section id="demo" class="demo bt" aria-labelledby="demo-title">
+  <div class="glow" aria-hidden="true"></div>
+  <div class="container grid">
+    <div class="rv copy">
+      <span class="micro gold">{demo.label}</span>
+      <h2 id="demo-title" class="disp title">
+        {demo.heading.title} <em class="acc">{demo.heading.accent}</em>
+      </h2>
+      <p class="lead">{demo.lead}</p>
+      <ul class="promises">
+        {demo.promises.map((p) => (
+          <li>
+            <span class="tick">
+              <IconCheck />
+            </span>
+            {p}
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <form
+      class="glass rv s2 form"
+      novalidate
+      aria-labelledby="demo-title"
+      data-lead-form
+      data-loading-label={demo.loading}
+      data-summary-error={demo.errors.summary}
+    >
+      <div data-form-state="sent" hidden>
+        <div class="sent">
+          <span class="pop sentmark" aria-hidden="true">
+            <IconCheck size={34} strokeWidth={2} />
+          </span>
+          <h3 class="disp in d1 senttitle" tabindex="-1" data-sent-title>
+            {demo.sent.title}
+          </h3>
+          <p class="soft in d2 sentbody">{demo.sent.body}</p>
+          <a href={WHATSAPP_URL} class="btn btn-glass in d3 sentcta" data-event="whatsapp_click">
+            {demo.sent.cta}
+          </a>
+        </div>
+      </div>
+
+      <div data-form-state="form">
+        <div class="fields">
+          <div class="pair">
+            <div class="field">
+              <label for="f-name">{f.name}</label>
+              <input
+                id="f-name"
+                maxlength="120"
+                type="text"
+                name="name"
+                required
+                aria-required="true"
+                autocomplete="name"
+                aria-describedby="f-name-err"
+                data-error={demo.errors.name}
+              />
+              <p class="err" id="f-name-err" hidden></p>
+            </div>
+            <div class="field">
+              <label for="f-phone">{f.phone}</label>
+              <input
+                id="f-phone"
+                maxlength="20"
+                type="tel"
+                name="phone"
+                required
+                aria-required="true"
+                autocomplete="tel"
+                inputmode="tel"
+                placeholder={f.phonePlaceholder}
+                aria-describedby="f-phone-err"
+                data-error={demo.errors.phone}
+              />
+              <p class="err" id="f-phone-err" hidden></p>
+            </div>
+            <div class="field">
+              <label for="f-kitchen">{f.kitchen}</label>
+              <input
+                id="f-kitchen"
+                maxlength="160"
+                type="text"
+                name="kitchen"
+                required
+                aria-required="true"
+                autocomplete="organization"
+                aria-describedby="f-kitchen-err"
+                data-error={demo.errors.kitchen}
+              />
+              <p class="err" id="f-kitchen-err" hidden></p>
+            </div>
+            <div class="field">
+              <label for="f-city">{f.city}</label>
+              <input
+                id="f-city"
+                maxlength="80"
+                type="text"
+                name="city"
+                required
+                aria-required="true"
+                autocomplete="address-level2"
+                aria-describedby="f-city-err"
+                data-error={demo.errors.city}
+              />
+              <p class="err" id="f-city-err" hidden></p>
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-meals">{f.meals}</label>
+            <select
+              id="f-meals"
+              name="meals"
+              required
+              aria-required="true"
+              aria-describedby="f-meals-err"
+              data-error={demo.errors.meals}
+            >
+              {f.mealsOptions.map((o) => (
+                <option value={o.value}>{o.label}</option>
+              ))}
+            </select>
+            <p class="err" id="f-meals-err" hidden></p>
+          </div>
+          <div class="field">
+            <label for="f-tool">
+              {f.tool} <span class="opt">{f.toolOptional}</span>
+            </label>
+            <input
+              id="f-tool"
+              maxlength="300"
+              type="text"
+              name="current_tool"
+              placeholder={f.toolPlaceholder}
+            />
+          </div>
+          <div class="hp" aria-hidden="true">
+            <label for="f-website">Website</label>
+            <input id="f-website" type="text" name="website" tabindex="-1" autocomplete="off" />
+          </div>
+          <div class="consentwrap">
+            <label for="f-consent" class="consent">
+              <input
+                id="f-consent"
+                type="checkbox"
+                name="consent"
+                required
+                aria-required="true"
+                aria-describedby="f-consent-err"
+                data-error={demo.errors.consent}
+              />
+              <span>
+                {f.consent} <a href="/privacy">{f.consentLink}</a>
+              </span>
+            </label>
+            <p class="err" id="f-consent-err" hidden></p>
+          </div>
+
+          <div
+            class="failure"
+            data-form-error
+            data-limit-title={demo.rateLimited.title}
+            data-limit-body={demo.rateLimited.body}
+            hidden
+          >
+            <p class="ftitle" data-failure-title>
+              {demo.failure.title}
+            </p>
+            <p class="fbody">
+              <span data-failure-body>{demo.failure.body}</span>{' '}
+              <a href={WHATSAPP_URL} data-event="whatsapp_click">
+                {demo.failure.whatsapp}
+              </a>
+            </p>
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-glow submit"
+            data-submit
+            data-retry-label={demo.failure.retry}
+          >
+            {demo.submit}
+          </button>
+          <p class="note">{demo.note}</p>
+        </div>
+      </div>
+      <p class="sr-only" aria-live="polite" data-form-status></p>
+    </form>
+  </div>
+</section>
+
+<style>
+  .demo {
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    padding: var(--section-y) var(--gutter);
+    position: relative;
+    overflow: hidden;
+  }
+  .glow {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 900px;
+    height: 900px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      rgba(201, 160, 70, 0.14),
+      rgba(199, 240, 89, 0.08) 42%,
+      transparent 70%
+    );
+    pointer-events: none;
+  }
+  .grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 56px;
+    align-items: center;
+  }
+  .copy {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .title {
+    font-size: var(--h2-xl);
+    line-height: 0.92;
+  }
+  .lead {
+    max-width: 44ch;
+  }
+  .promises {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 6px;
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .promises li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .tick {
+    color: var(--heritage);
+    display: flex;
+  }
+
+  .form {
+    padding: 36px;
+  }
+  .fields {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .pair {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .field label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .opt {
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .field input,
+  .field select {
+    background: var(--surface-input);
+    border: 1.5px solid var(--muted);
+    border-radius: var(--r-md);
+    padding: 13px 14px;
+    color: var(--ink);
+    font-size: 16px;
+    transition:
+      border-color 120ms,
+      box-shadow 120ms;
+  }
+  .field input::placeholder {
+    color: var(--faint);
+  }
+  .field input:focus,
+  .field select:focus {
+    outline: none;
+    border-color: var(--forest-mid);
+    box-shadow: 0 0 0 3px rgba(201, 160, 70, 0.18);
+  }
+  .field input:focus-visible,
+  .field select:focus-visible {
+    outline: 2px solid var(--heritage);
+    outline-offset: 2px;
+  }
+  .field [aria-invalid='true'] {
+    border-color: var(--coral-text);
+  }
+  .err {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--coral-text);
+  }
+  .consentwrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .consent {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .consent input {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    flex: none;
+    accent-color: var(--heritage);
+  }
+  .consent a {
+    font-weight: 800;
+    margin-left: 6px; /* reference: 10px flex gap between text and link */
+  }
+  .hp {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .failure {
+    padding: 14px 16px;
+    border-radius: var(--r-md);
+    background: var(--coral-bg);
+    border: 1px solid rgba(224, 128, 128, 0.3);
+    color: var(--coral-text);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .ftitle {
+    font-weight: 800;
+  }
+  .failure a {
+    color: var(--coral-text);
+    font-weight: 800;
+    text-decoration: underline;
+  }
+  .submit {
+    width: 100%;
+    justify-content: center;
+    margin-top: 4px;
+  }
+  .submit[disabled] {
+    cursor: progress;
+    opacity: 0.85;
+  }
+  .note {
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .sent {
+    min-height: 440px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 16px;
+  }
+  .sentmark {
+    width: 72px;
+    height: 72px;
+    border-radius: var(--r-pill);
+    background: var(--forest-mid);
+    color: #052619;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px -8px rgba(201, 160, 70, 0.6);
+  }
+  .senttitle {
+    font-size: 36px;
+  }
+  .senttitle:focus {
+    outline: none;
+  }
+  .sentbody {
+    font-size: 17px;
+    line-height: 1.6;
+    max-width: 340px;
+  }
+  .sentcta {
+    margin-top: 8px;
+  }
+
+  @media (max-width: 1279px) {
+    .grid {
+      gap: 40px;
+    }
+    .form {
+      padding: 30px;
+    }
+  }
+  @media (max-width: 1023px) {
+    .demo {
+      min-height: 0;
+    }
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 40px;
+    }
+  }
+  @media (max-width: 767px) {
+    .form {
+      padding: 22px 18px;
+      border-radius: var(--r-xl);
+    }
+    .pair {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .consent {
+      min-height: 44px;
+      align-items: flex-start;
+      padding-top: 2px;
+    }
+    .sent {
+      min-height: 360px;
+    }
+  }
+</style>

@@ -1,0 +1,57 @@
+---
+import Base from '../layouts/Base.astro';
+import IconArrow from '../components/icons/IconArrow.astro';
+---
+
+<Base title="Page not found — Firro" description="This page doesn't exist." noindex>
+  <section class="nf gridbg" aria-labelledby="nf-title">
+    <div class="wrap">
+      <span class="micro gold">Error 404</span>
+      <h1 id="nf-title" class="disp title">
+        This dish isn't <em class="acc">on the menu.</em>
+      </h1>
+      <p class="lead">The page you were looking for doesn't exist or has moved.</p>
+      <div class="ctas">
+        <a href="/" class="btn btn-glow">
+          Back to home <IconArrow />
+        </a>
+        <a href="/#demo" class="btn btn-glass" data-event="book_demo_click">
+          Book a demo
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    margin-top: -76px;
+    min-height: 88vh;
+    display: flex;
+    align-items: center;
+    padding: 150px var(--gutter) var(--section-y);
+  }
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .title {
+    font-size: var(--h2-size);
+    line-height: 0.96;
+  }
+  .ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  @media (max-width: 767px) {
+    .ctas .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>

@@ -1,0 +1,354 @@
+---
+import { batch } from '../content/site';
+import SectionHead from './SectionHead.astro';
+import IconCheck from './icons/IconCheck.astro';
+import IconArrow from './icons/IconArrow.astro';
+---
+
+<section id="batch" class="section bt" aria-labelledby="batch-title">
+  <div class="container grid">
+    <div class="copy">
+      <div class="rv">
+        <SectionHead id="batch-title" label={batch.label} heading={batch.heading} gold md />
+      </div>
+      <p class="lead rv">{batch.lead}</p>
+      <ul class="checks">
+        {batch.checks.map((c, i) => (
+          <li class={`rv s${i + 2}`}>
+            <span class="check">
+              <IconCheck />
+            </span>
+            <div>
+              <h3 class="disp">{c.title}</h3>
+              <p class="soft">{c.body}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+      <a href="#demo" class="btn btn-glass rv cta" data-event="book_demo_click">
+        {batch.cta} <IconArrow />
+      </a>
+    </div>
+
+    <div class="visual">
+      <div class="fold">
+        <span class="micro m10 tl">{batch.ticketsLabel}</span>
+        <ul class="tickets">
+          {batch.tickets.map((t) => (
+            <li class="glass-2 ticket">
+              <span class="mono id">{t.id}</span>
+              <span class="dish">{t.dish}</span>
+            </li>
+          ))}
+        </ul>
+        <p class="more">{batch.more}</p>
+      </div>
+      <div class="nudge" aria-hidden="true">
+        <IconArrow size={28} class="" />
+      </div>
+      <div class="glass rv sheet">
+        <div class="row">
+          <span class="micro m10 green">{batch.sheet.label}</span>
+          <span class="mono time">{batch.sheet.time}</span>
+        </div>
+        <p class="disp stitle">{batch.sheet.title}</p>
+        <ul class="srows">
+          {batch.sheet.rows.map((r, i) => (
+            <li class={`rv s${i + 2}`}>
+              <span class="soft">{r.item}</span>
+              <span>
+                <span class="num qty">{r.qty}</span> <span class="unit">{batch.sheet.unit}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+        <p class="note">{batch.sheet.note}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 24px;
+    align-items: center;
+  }
+  .copy {
+    grid-column: span 5;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .checks {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 6px;
+  }
+  .checks li {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .checks h3 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .checks p {
+    font-size: 15px;
+    line-height: 1.55;
+    margin-top: 4px;
+  }
+  .cta {
+    align-self: flex-start;
+    margin-top: 6px;
+  }
+
+  .visual {
+    grid-column: 7 / span 6;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 16px;
+    align-items: center;
+  }
+  .fold {
+    grid-column: span 4;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .m10 {
+    font-size: 10px;
+  }
+  .m10.green {
+    color: var(--heritage);
+  }
+  .tl {
+    margin-bottom: 4px;
+  }
+  .tickets {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .ticket {
+    padding: 10px 12px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+  }
+  .id {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .dish {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .more {
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+  }
+  .nudge {
+    grid-column: span 1;
+    display: flex;
+    justify-content: center;
+    color: var(--heritage);
+  }
+  .sheet {
+    grid-column: span 7;
+    padding: 26px;
+    box-shadow:
+      0 0 0 1px rgba(201, 160, 70, 0.3),
+      0 20px 50px -12px rgba(201, 160, 70, 0.35);
+  }
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .time {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .stitle {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-top: 8px;
+  }
+  .srows {
+    margin-top: 12px;
+  }
+  .srows li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 10px 0;
+    border-top: 1px solid var(--line);
+    font-size: 15px;
+  }
+  .qty {
+    font-size: 18px;
+  }
+  .unit {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .note {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 10px;
+  }
+
+  /* Tickets fold into the prep sheet as the section scrolls through (Chromium);
+     other browsers play it once on entering view (html.js + .in-view from reveal.ts). */
+  @keyframes fold {
+    from {
+      opacity: 1;
+      transform: none;
+    }
+    to {
+      opacity: 0.72;
+      transform: translateX(14px) scale(0.97);
+    }
+  }
+  @keyframes foldDown {
+    from {
+      opacity: 1;
+      transform: none;
+    }
+    to {
+      opacity: 0.72;
+      transform: translateY(8px) scale(0.97);
+    }
+  }
+  @keyframes nudge {
+    0%,
+    100% {
+      transform: none;
+    }
+    50% {
+      transform: translateX(6px);
+    }
+  }
+  @keyframes nudgeDown {
+    0%,
+    100% {
+      transform: rotate(90deg);
+    }
+    50% {
+      transform: translateY(6px) rotate(90deg);
+    }
+  }
+  @supports (animation-timeline: view()) {
+    .fold {
+      animation: fold linear both;
+      animation-timeline: view();
+      animation-range: cover 30% cover 60%;
+    }
+    .nudge {
+      animation: nudge linear both;
+      animation-timeline: view();
+      animation-range: cover 35% cover 55%;
+    }
+  }
+  @supports not (animation-timeline: view()) {
+    :global(html.js) .fold.in-view {
+      animation: fold 900ms var(--ease-out) 400ms both;
+    }
+    :global(html.js) .nudge.in-view {
+      animation: nudge 800ms var(--ease-out) 300ms both;
+    }
+  }
+
+  @media (max-width: 1279px) {
+    .grid {
+      column-gap: 20px;
+    }
+    .copy {
+      grid-column: span 6;
+    }
+    .visual {
+      grid-column: 7 / span 6;
+      column-gap: 10px;
+    }
+    .sheet {
+      padding: 22px;
+    }
+  }
+  @media (max-width: 1023px) {
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 56px;
+    }
+    .copy,
+    .visual {
+      grid-column: 1 / -1;
+    }
+    .visual {
+      column-gap: 16px;
+    }
+  }
+  @media (max-width: 767px) {
+    .grid {
+      row-gap: 44px;
+    }
+    .visual {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 12px;
+    }
+    .fold,
+    .nudge,
+    .sheet {
+      grid-column: 1 / -1;
+    }
+    .tickets {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .ticket {
+      flex-direction: column;
+      gap: 2px;
+      padding: 9px 10px;
+      font-size: 12px;
+    }
+    .nudge {
+      transform: rotate(90deg);
+    }
+    .sheet {
+      padding: 22px 20px;
+    }
+    @supports (animation-timeline: view()) {
+      .fold {
+        animation-name: foldDown;
+      }
+      .nudge {
+        animation-name: nudgeDown;
+      }
+    }
+    @supports not (animation-timeline: view()) {
+      :global(html.js) .fold.in-view {
+        animation-name: foldDown;
+      }
+      :global(html.js) .nudge.in-view {
+        animation-name: nudgeDown;
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fold,
+    .nudge,
+    :global(html.js) .fold.in-view,
+    :global(html.js) .nudge.in-view {
+      animation: none;
+    }
+  }
+</style>

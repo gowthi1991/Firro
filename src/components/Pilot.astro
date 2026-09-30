@@ -1,0 +1,155 @@
+---
+import { pilot } from '../content/site';
+import KindTiffin from './illustrations/KindTiffin.astro';
+import KindBrand from './illustrations/KindBrand.astro';
+import KindCloud from './illustrations/KindCloud.astro';
+
+const icons = [KindTiffin, KindBrand, KindCloud];
+---
+
+<section class="pilot" aria-labelledby="pilot-title">
+  <div class="container">
+    <div class="glass rv band">
+      <div class="copy">
+        <span class="micro label">{pilot.label}</span>
+        <h2 id="pilot-title" class="disp title">
+          {pilot.titleBefore} <em>{pilot.titleAccent}</em> {pilot.titleAfter}
+        </h2>
+        <p class="body">{pilot.body}</p>
+        <div class="actions">
+          <a href="#demo" class="btn btn-gold" data-event="book_demo_click">
+            {pilot.cta}
+          </a>
+          <p class="note">{pilot.note}</p>
+        </div>
+      </div>
+      <ul class="kinds">
+        {pilot.kinds.map((k, i) => {
+          const Icon = icons[i]!;
+          return (
+            <li class={`rv s${i + 2} kind`}>
+              <span class="kicon">
+                <Icon width="48" height="48" aria-hidden="true" />
+              </span>
+              <p class="disp kname">{k}</p>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pilot {
+    padding: 0 var(--gutter) 24px;
+  }
+  .band {
+    padding: 48px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 48px;
+    align-items: center;
+    background: linear-gradient(120deg, rgba(31, 92, 58, 0.85), rgba(14, 51, 32, 0.92));
+    border-color: rgba(240, 215, 138, 0.25);
+  }
+  .copy {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .label {
+    color: var(--gold-light);
+  }
+  .title {
+    font-size: var(--h2-sm);
+    line-height: 1;
+    color: var(--cream-on-dark);
+  }
+  .title em {
+    font-style: italic;
+    font-weight: 600;
+    color: var(--gold-light);
+  }
+  .body {
+    color: var(--text-on-dark);
+    font-size: 17px;
+    line-height: 1.6;
+    max-width: 44ch;
+  }
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .note {
+    font-size: 14px;
+    color: var(--text-on-dark);
+  }
+  .kinds {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .kind {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px;
+    border-radius: var(--r-xl);
+    background: rgba(14, 51, 32, 0.6);
+    border: 1px solid rgba(240, 215, 138, 0.18);
+  }
+  .kicon {
+    width: 72px;
+    height: 72px;
+    border-radius: 16px;
+    background: #e8f8ed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+  }
+  .kname {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--cream-on-dark);
+  }
+  @media (max-width: 1279px) {
+    .band {
+      padding: 40px;
+      gap: 36px;
+    }
+  }
+  @media (max-width: 1023px) {
+    .band {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 767px) {
+    .band {
+      padding: 28px 20px;
+      gap: 28px;
+      border-radius: var(--r-xl);
+    }
+    .actions .btn {
+      width: 100%;
+      justify-content: center;
+    }
+    .kicon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+    }
+    .kicon :global(svg) {
+      width: 40px;
+      height: 40px;
+    }
+    .kname {
+      font-size: 19px;
+    }
+  }
+</style>
