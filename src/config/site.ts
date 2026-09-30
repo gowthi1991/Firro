@@ -26,7 +26,7 @@ export const SOCIAL: string[] = [];
 export const SEO = {
   title: 'Firro — The operating system for subscription kitchens',
   description:
-    "Firro plans tomorrow's prep from today's subscriptions. One operating system for subscription and tiffin kitchens: POS, kitchen admin, customer app and delivery.",
+    "Firro plans tomorrow's prep from today's subscriptions. One operating system for subscription and tiffin kitchens: POS, admin, customer app and delivery.",
   themeColor: '#1F4A33',
   locale: 'en_IN',
 };

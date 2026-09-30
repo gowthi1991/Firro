@@ -49,7 +49,7 @@ const bootScript = `(function(d){var h=d.documentElement;h.classList.add('js');i
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {!noindex && <link rel="canonical" href={canonical} />}
     {noindex && <meta name="robots" content="noindex" />}
     <meta name="theme-color" content={SEO.themeColor} />
 
