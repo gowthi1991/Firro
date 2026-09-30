@@ -50,3 +50,21 @@ One line each: **what** — why — how to change.
 32. **Visual tests serve the reference's Google Fonts from the local @fontsource files** — hermetic in CI, identical binaries on both sides. — `tests/helpers.ts`.
 33. **CI also runs `npm run lint`** in addition to the brief's steps. — `.github/workflows/ci.yml`.
 34. **Node 22.12+ instead of Node 20** — Astro 7 (latest stable, brief §1) refuses to run on Node 20; the brief allows "20 LTS or newer". CI, `engines` and `.nvmrc` use 22. — `.github/workflows/ci.yml`, `package.json`.
+
+## Lead capture backend (`feat/lead-backend`)
+
+35. **One Vercel function, everything else prerendered** — `@astrojs/vercel` with `output: 'static'`; only `src/pages/api/lead.ts` sets `prerender = false`. — `astro.config.mjs`.
+36. **Framework-free handler with injected dependencies** (`createLeadHandler({ store, notify, hashIp, log })`) so validation, rate limiting, honeypot and email-failure paths are unit-tested without a database. — `src/server/lead-handler.ts`; production wiring in `src/server/lead-deps.ts`.
+37. **Server error messages reuse the form's copy** (`demo.errors` in `src/content/site.ts`), so a 400 can be shown inline without translation, and client and server always agree. — `src/lib/lead-schema.ts`.
+38. **Oversized bodies get 413, not 400** — 413 is the accurate status; the body is still `{ ok:false, errors:{ form } }`. The declared `Content-Length` is checked before reading, and the actual byte length after. — `lead-handler.ts`.
+39. **No `DATABASE_URL` → 503** (the form shows its "didn't go through" state with the WhatsApp fallback) rather than pretending success; losing leads silently is worse. — `lead-handler.ts`.
+40. **The IP hash is salted** — `SHA-256(IP_HASH_SALT + ip)`. An unsalted hash of an IPv4 address can be reversed by brute force; set `IP_HASH_SALT` in Vercel. It's optional so a missing salt never breaks submissions. — `lead-deps.ts`.
+41. **Table created lazily from the migration file itself** — `migrations/001_leads.sql` is imported with `?raw`, split on statement-ending semicolons and run once per function instance (`CREATE … IF NOT EXISTS`); a failure retries on the next request. One SQL source, no drift. Adds an index on `(phone, created_at)` for the rate-limit query. — `lead-deps.ts`.
+42. **Rate limit = count query before insert** (3 per phone per 24h), as specified. Not atomic: a burst of parallel requests could store a 4th; acceptable for a demo form. — `lead-handler.ts`.
+43. **Resend called with `fetch`, no SDK** — one POST, one less dependency. The email is awaited with an 8s timeout (Vercel may freeze a function after it responds); failures are logged and the visitor still gets `{ ok:true }`. — `lead-deps.ts`.
+44. **Default sender `onboarding@resend.dev`** so it works before the domain is verified; set `LEAD_FROM_EMAIL` once `getfirro.com` is verified in Resend. — `.env.example`, README.
+45. **`PUBLIC_LEAD_ENDPOINT` defaults to `/api/lead`; `stub` keeps the old console stub** for local work without a database. — `src/lib/lead.ts`.
+46. **The form now sends the honeypot field (`website`)** so the server can drop direct bot POSTs too; the browser still drops filled honeypots without sending. `maxlength` on inputs mirrors the server limits. — `form.ts`, `Demo.astro`.
+47. **Unit tests use the Playwright runner** (`tests/unit/`, no browser) instead of adding Vitest — one runner, one CI step. — `tests/unit/lead.spec.ts`.
+48. **Tests and `npm run preview` serve `.vercel/output/static` with http-server** — the Vercel adapter doesn't support `astro preview`. Form tests mock `/api/lead` with `page.route()`. Use `npm run dev` (or `vercel dev`) to exercise the real function locally. — `playwright.config.ts`, `package.json`.
+49. **Privacy draft names the processors** (Vercel, Neon, Resend), the hashed IP and browser type, possible processing outside India, and deletion of notification emails at the 12-month limit. Still a draft pending legal review. — `src/content/privacy.ts`.

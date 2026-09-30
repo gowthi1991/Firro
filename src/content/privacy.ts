@@ -13,7 +13,15 @@ export const privacy = {
       h: 'What we collect',
       p: [
         'When you fill in the demo form we collect: your name, your phone number, your kitchen’s name, your city, roughly how many meals you cook a day, and — if you choose to tell us — the tools you use today. We also record that you agreed to be contacted, and the time you sent the form.',
+        'To stop spam and repeated submissions we also record the type of browser you used and a scrambled, one-way code made from your internet (IP) address. We never store the IP address itself, and the code cannot be turned back into it.',
         'We do not use advertising trackers on this site, and we do not ask for payment details.',
+      ],
+    },
+    {
+      h: 'Where it goes',
+      p: [
+        'When you send the form, your details are saved in a secure database run for us by Neon (a managed Postgres provider), through our website host, Vercel. A copy is emailed to the Firro team through Resend, an email delivery service, so we can call you quickly.',
+        'These providers may process data on servers outside India. They act only on our instructions and may not use your details for their own purposes.',
       ],
     },
     {
@@ -25,13 +33,13 @@ export const privacy = {
     {
       h: 'How long we keep it',
       p: [
-        'We keep your details until your enquiry is closed — for example, once the demo has happened and you have decided whether to go ahead — and for no longer than 12 months after you sent the form. After that we delete them.',
+        'We keep your details until your enquiry is closed — for example, once the demo has happened and you have decided whether to go ahead — and for no longer than 12 months after you sent the form. After that we delete them from the database, and delete the notification emails too.',
       ],
     },
     {
       h: 'Who we share it with',
       p: [
-        'We do not sell or rent your details, and we do not share them with other businesses for their own use. They are handled only by the Firro team, and by service providers who store data for us under contract and only on our instructions.',
+        'We do not sell or rent your details, and we do not share them with other businesses for their own use. They are handled only by the Firro team, and by the service providers named above (Vercel, Neon and Resend), which store or deliver data for us under contract and only on our instructions.',
       ],
     },
     {
