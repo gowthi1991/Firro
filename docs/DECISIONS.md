@@ -50,3 +50,43 @@ One line each: **what** — why — how to change.
 32. **Visual tests serve the reference's Google Fonts from the local @fontsource files** — hermetic in CI, identical binaries on both sides. — `tests/helpers.ts`.
 33. **CI also runs `npm run lint`** in addition to the brief's steps. — `.github/workflows/ci.yml`.
 34. **Node 22.12+ instead of Node 20** — Astro 7 (latest stable, brief §1) refuses to run on Node 20; the brief allows "20 LTS or newer". CI, `engines` and `.nvmrc` use 22. — `.github/workflows/ci.yml`, `package.json`.
+
+## Lead capture backend (`feat/lead-backend`)
+
+35. **One Vercel function, everything else prerendered** — `@astrojs/vercel` with `output: 'static'`; only `src/pages/api/lead.ts` sets `prerender = false`. — `astro.config.mjs`.
+36. **Framework-free handler with injected dependencies** (`createLeadHandler({ store, notify, hashIp, log })`) so validation, rate limiting, honeypot and email-failure paths are unit-tested without a database. — `src/server/lead-handler.ts`; production wiring in `src/server/lead-deps.ts`.
+37. **Server error messages reuse the form's copy** (`demo.errors` in `src/content/site.ts`), so a 400 can be shown inline without translation, and client and server always agree. — `src/lib/lead-schema.ts`.
+38. **Oversized bodies get 413, not 400** — 413 is the accurate status; the body is still `{ ok:false, errors:{ form } }`. The declared `Content-Length` is checked before reading, and the actual byte length after. — `lead-handler.ts`.
+39. **No `DATABASE_URL` → 503** (the form shows its "didn't go through" state with the WhatsApp fallback) rather than pretending success; losing leads silently is worse. — `lead-handler.ts`.
+40. **The IP hash is salted** — `SHA-256(IP_HASH_SALT + ip)`. An unsalted hash of an IPv4 address can be reversed by brute force; set `IP_HASH_SALT` in Vercel. It's optional so a missing salt never breaks submissions. — `lead-deps.ts`.
+41. **Table created lazily from the migration file itself** — `migrations/001_leads.sql` is imported with `?raw`, split on statement-ending semicolons and run once per function instance (`CREATE … IF NOT EXISTS`); a failure retries on the next request. One SQL source, no drift. Adds an index on `(phone, created_at)` for the rate-limit query. — `lead-deps.ts`.
+42. **Rate limit = count query before insert** (3 per phone per 24h), as specified. Not atomic: a burst of parallel requests could store a 4th; acceptable for a demo form. — `lead-handler.ts`.
+43. **Resend called with `fetch`, no SDK** — one POST, one less dependency. The email is awaited with an 8s timeout (Vercel may freeze a function after it responds); failures are logged and the visitor still gets `{ ok:true }`. — `lead-deps.ts`.
+44. **Default sender `onboarding@resend.dev`** so it works before the domain is verified; set `LEAD_FROM_EMAIL` once `getfirro.com` is verified in Resend. — `.env.example`, README.
+45. **`PUBLIC_LEAD_ENDPOINT` defaults to `/api/lead`; `stub` keeps the old console stub** for local work without a database. — `src/lib/lead.ts`.
+46. **The form now sends the honeypot field (`website`)** so the server can drop direct bot POSTs too; the browser still drops filled honeypots without sending. `maxlength` on inputs mirrors the server limits. — `form.ts`, `Demo.astro`.
+47. **Unit tests use the Playwright runner** (`tests/unit/`, no browser) instead of adding Vitest — one runner, one CI step. — `tests/unit/lead.spec.ts`.
+48. **Tests and `npm run preview` serve `.vercel/output/static` with http-server** — the Vercel adapter doesn't support `astro preview`. Form tests mock `/api/lead` with `page.route()`. Use `npm run dev` (or `vercel dev`) to exercise the real function locally. — `playwright.config.ts`, `package.json`.
+49. **Privacy draft names the processors** (Vercel, Neon, Resend), the hashed IP and browser type, possible processing outside India, and deletion of notification emails at the 12-month limit. Still a draft pending legal review. — `src/content/privacy.ts`.
+
+## Vercel project `getfirro`
+
+50. **Project Node.js version set to 22.x** (it was 24.x) to match CI, `.nvmrc` and `engines`. Changed through the Vercel API (`PATCH /v9/projects/getfirro`). — Vercel → Settings → General.
+51. **Functions pinned to Mumbai (`bom1`)** in `vercel.json`, next to the Coimbatore audience. — `vercel.json`.
+52. **`IP_HASH_SALT` is a different random value for Production and Preview.** Production was added first and is sensitive, so it can't be read back to reuse. Separate salts also keep preview hashes unlinkable to production ones. Both values were generated with `openssl rand -hex 32` and passed on stdin (Preview through the Vercel API), never on the command line or in output. — Vercel env.
+53. **`LEAD_FROM_EMAIL` is not marked sensitive** (it's an address, not a secret), so it stays readable in the dashboard. — Vercel env.
+54. **The function logs a lead's id on insert (`[lead] stored <id>`), `[lead] notified <id>` after an email, and the Neon region once per cold start.** The Neon integration's variables are sensitive, so their values can't be read by the CLI, API or `vercel env run`; function logs are the only place to confirm storage and region from outside. No personal data is logged. — `lead-handler.ts`, `lead-deps.ts`, `neon-region.ts`.
+55. **Domains added through the Vercel API**, because `vercel domains add` refuses while the latest production deployment (from `main`, which only has a README) is in error. The API accepted both domains. — Vercel → Settings → Domains.
+56. **`www.getfirro.com` 308-redirects to `getfirro.com`** so there's one canonical host, matching the canonical URLs, sitemap and OG tags. — Vercel → Domains → www.getfirro.com.
+57. **End-to-end test ran against the preview through `vercel curl`** (it handles deployment protection, so no bypass secret was created or stored). Storage and email were confirmed from function logs, because the database can't be queried from outside Vercel (see decision 54).
+
+## Security headers & analytics
+
+58. **`regions` left at `bom1`**: the function log after a fresh deploy still reports the Neon database in `us-east-1`, so it hasn't been recreated in Mumbai or Singapore yet. Once it has, set `bom1` (Mumbai) or `sin1` (Singapore) in `vercel.json` and check the `[lead] database region:` log line. — `vercel.json`.
+59. **The CSP allows the one inline script (the boot script) by SHA-256 hash, not `'unsafe-inline'`.** The script now lives in `src/config/boot-script.ts`, and `tests/security.spec.ts` fails with the new hash if it changes. — `vercel.json`.
+60. **`style-src` keeps `'unsafe-inline'`**: the reference design uses many `style=""` attributes (animation delays, orbit angles, bar widths), which can't be hashed. Scripts stay locked down. — `vercel.json`.
+61. **No `upgrade-insecure-requests`**: every resource is same-origin, HSTS already forces HTTPS, and it would break the local HTTP test server. — `vercel.json`.
+62. **Vercel's preview toolbar (`vercel.live`) is not allowed by the CSP**, per the brief ("only self, the fonts, and Vercel Analytics"). It won't load on previews. Add `https://vercel.live` to `script-src`/`frame-src`/`connect-src` if you want it. — `vercel.json`.
+63. **Tests and `npm run preview` use `scripts/serve-static.mjs`**, which applies the `vercel.json` headers, so the CSP is tested locally. The Playwright site server never reuses an already-running server: a stray `npm run dev` on port 4321 was being tested instead of the build. — `playwright.config.ts`.
+64. **Analytics is injected from the bundled script, not the Astro components**, so no new inline scripts need CSP hashes. It isn't injected on localhost (there are no `/_vercel` routes there). `track()` removes the `?text=` from WhatsApp hrefs before sending. Custom events are only recorded on a Vercel plan that includes them. — `src/lib/analytics.ts`.
+65. **The Zoho CRM hook and the prefilled WhatsApp links are deferred to a later PR, at the owner's request.** The Zoho work is kept on the local branch `feat/zoho-crm`, which is not pushed. — n/a.

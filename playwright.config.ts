@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 // `npm run test` expects a fresh `npm run build` (CI does this first).
-// Two servers: the built site (astro preview) and the approved design reference.
+// Two servers: the built site (static output) and the approved design reference.
 export default defineConfig({
   testDir: 'tests',
   fullyParallel: true,
@@ -15,11 +15,12 @@ export default defineConfig({
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: [
     {
-      // --ignore-lock keeps astro preview in the foreground (Astro 7 auto-backgrounds it when it
-      // detects an AI agent, which would look like an early exit to Playwright).
-      command: 'npm run preview -- --port 4321 --ignore-lock',
+      // The Vercel adapter has no `astro preview`; serve the prerendered output with the headers
+      // from vercel.json (CSP etc.). /api/lead isn't served — tests that submit the form mock it.
+      command: 'node scripts/serve-static.mjs .vercel/output/static 4321',
       url: 'http://localhost:4321',
-      reuseExistingServer: !process.env.CI,
+      // Never reuse: a running `npm run dev` on 4321 would otherwise be tested instead of the build.
+      reuseExistingServer: false,
       timeout: 60_000,
     },
     {

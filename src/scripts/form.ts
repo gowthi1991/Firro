@@ -1,7 +1,8 @@
-// Demo form: validates on blur and submit, shows inline errors, then calls the submitLead() stub.
-// States: form → loading ("Booking…") → sent ("Got it.") or error (retry + WhatsApp fallback).
+// Demo form: validates on blur and submit, shows inline errors, then posts via submitLead().
+// States: form → loading ("Booking…") → sent ("Got it."), inline server errors (400),
+// or a failure panel (429 rate limit / anything else) with retry + WhatsApp fallback.
 
-import { submitLead, type LeadPayload } from '../lib/lead';
+import { submitLead, type LeadPayload, type LeadResult } from '../lib/lead';
 import { normaliseIndianMobile } from '../lib/phone';
 import { track } from '../lib/analytics';
 
@@ -14,12 +15,12 @@ function isValid(el: Field): boolean {
   return v.length > 0;
 }
 
-function setError(el: Field, show: boolean): void {
+function setError(el: Field, show: boolean, message?: string): void {
   const err = document.getElementById(`${el.id}-err`);
   if (show) {
     el.setAttribute('aria-invalid', 'true');
     if (err) {
-      err.textContent = el.dataset.error ?? '';
+      err.textContent = message ?? el.dataset.error ?? '';
       err.hidden = false;
     }
   } else {
@@ -78,7 +79,7 @@ export function initForm(): void {
     submit.textContent = form.dataset.loadingLabel ?? submitLabel;
     if (failure) failure.hidden = true;
 
-    let ok = true;
+    let result: LeadResult = { ok: true, status: 200 };
     if (!bot) {
       const payload: LeadPayload = {
         name: val('name'),
@@ -88,33 +89,62 @@ export function initForm(): void {
         meals: val('meals'),
         current_tool: val('current_tool'),
         consent: data.get('consent') !== null,
+        website: '',
         page: location.pathname,
         submitted_at: new Date().toISOString(),
       };
       try {
-        ok = (await submitLead(payload)).ok;
+        result = await submitLead(payload);
       } catch {
-        ok = false;
+        result = { ok: false, status: 0 };
       }
-      track('form_submit', { ok, meals: payload.meals });
+      track('form_submit', { ok: result.ok, status: result.status, meals: payload.meals });
     }
 
     submit.disabled = false;
     submit.removeAttribute('aria-busy');
 
-    if (ok) {
+    if (result.ok) {
       if (formState) formState.hidden = true;
       if (sentState) sentState.hidden = false;
       const title = form.querySelector<HTMLElement>('[data-sent-title]');
       if (status)
         status.textContent = `${title?.textContent ?? ''} ${sentState?.querySelector('p')?.textContent ?? ''}`;
       title?.focus();
-    } else {
-      submit.textContent = submit.dataset.retryLabel ?? submitLabel;
-      if (failure) {
-        failure.hidden = false;
-        if (status) status.textContent = failure.textContent?.replace(/\s+/g, ' ').trim() ?? '';
+      return;
+    }
+
+    submit.textContent = submit.dataset.retryLabel ?? submitLabel;
+
+    // 400 with per-field errors: show the server's messages inline, like client-side validation.
+    const fieldErrors = Object.entries(result.errors ?? {}).filter(([k]) => k !== 'form');
+    const shown = fieldErrors
+      .map(([k, msg]) => {
+        const el = fields.find((f) => f.name === k);
+        if (el) setError(el, true, msg);
+        return el;
+      })
+      .filter((el): el is Field => !!el);
+    if (result.status === 400 && shown.length) {
+      shown[0]?.focus();
+      if (status) status.textContent = form.dataset.summaryError ?? '';
+      return;
+    }
+
+    if (failure) {
+      const t = failure.querySelector<HTMLElement>('[data-failure-title]');
+      const b = failure.querySelector<HTMLElement>('[data-failure-body]');
+      t?.setAttribute('data-default', t.getAttribute('data-default') ?? t.textContent ?? '');
+      b?.setAttribute('data-default', b.getAttribute('data-default') ?? b.textContent ?? '');
+      if (result.status === 429) {
+        if (t) t.textContent = failure.dataset.limitTitle ?? '';
+        if (b) b.textContent = failure.dataset.limitBody ?? '';
+      } else {
+        if (t) t.textContent = t.dataset.default ?? '';
+        if (b) b.textContent = result.errors?.form ?? b.dataset.default ?? '';
       }
+      failure.hidden = false;
+      if (status) status.textContent = failure.textContent?.replace(/\s+/g, ' ').trim() ?? '';
     }
   });
 }

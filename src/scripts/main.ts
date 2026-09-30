@@ -5,7 +5,7 @@ import { initCountdown } from './countdown';
 import { initFab } from './fab';
 import { initNav } from './nav';
 import { initForm } from './form';
-import { wireDataEvents } from '../lib/analytics';
+import { initAnalytics, wireDataEvents } from '../lib/analytics';
 
 document.documentElement.classList.add('js-ready');
 initReveal();
@@ -15,3 +15,4 @@ initFab();
 initNav();
 initForm();
 wireDataEvents();
+initAnalytics();
