@@ -27,18 +27,18 @@ Nothing is deployed and nothing has been merged. `main` is untouched.
 
 ## Screenshots
 
-|                | Desktop (1440)                                    | Mobile (390)                                                                              |
-| -------------- | ------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| Full page      | [desktop-full](docs/screenshots/desktop-full.png) | [mobile-full](docs/screenshots/mobile-full.png)                                           |
-| Hero           | ![](docs/screenshots/desktop-hero.png)            | ![](docs/screenshots/mobile-hero.png)                                                     |
-| How it works   | ![](docs/screenshots/desktop-how.png)             | ![](docs/screenshots/mobile-how.png)                                                      |
-| Batch          | ![](docs/screenshots/desktop-batch.png)           | ![](docs/screenshots/mobile-batch.png)                                                    |
-| Nutrition      | ![](docs/screenshots/desktop-nutrition.png)       | ![](docs/screenshots/mobile-nutrition.png)                                                |
-| Platform       | ![](docs/screenshots/desktop-platform.png)        | ![](docs/screenshots/mobile-platform.png)                                                 |
-| Demo form      | ![](docs/screenshots/desktop-demo.png)            | ![](docs/screenshots/mobile-demo.png)                                                     |
-| Menu / privacy | —                                                 | [menu](docs/screenshots/mobile-menu.png) · [privacy](docs/screenshots/mobile-privacy.png) |
+|                | Desktop (1440)                                                                                                          | Mobile (390)                                                                                                                                                                                                                          |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Full page      | [desktop-full](https://github.com/gowthi1991/Firro/blob/feat/marketing-site/docs/screenshots/desktop-full.png?raw=true) | [mobile-full](https://github.com/gowthi1991/Firro/blob/feat/marketing-site/docs/screenshots/mobile-full.png?raw=true)                                                                                                                 |
+| Hero           | ![](https://github.com/gowthi1991/Firro/blob/feat/marketing-site/docs/screenshots/desktop-hero.png?raw=true)            | ![](https://github.com/gowthi1991/Firro/blob/feat/marketing-site/docs/screenshots/mobile-hero.png?raw=true)                                                                                                                           |
+| How it works   | ![](https://github.com/gowthi1991/Firro/blob/feat/marketing-site/docs/screenshots/desktop-how.png?raw=true)             | ![](https://github.com/gowthi1991/Firro/blob/feat/marketing-site/docs/screenshots/mobile-how.png?raw=true)                                                                                                                            |
+| Batch          | ![](https://github.com/gowthi1991/Firro/blob/feat/marketing-site/docs/screenshots/desktop-batch.png?raw=true)           | ![](https://github.com/gowthi1991/Firro/blob/feat/marketing-site/docs/screenshots/mobile-batch.png?raw=true)                                                                                                                          |
+| Nutrition      | ![](https://github.com/gowthi1991/Firro/blob/feat/marketing-site/docs/screenshots/desktop-nutrition.png?raw=true)       | ![](https://github.com/gowthi1991/Firro/blob/feat/marketing-site/docs/screenshots/mobile-nutrition.png?raw=true)                                                                                                                      |
+| Platform       | ![](https://github.com/gowthi1991/Firro/blob/feat/marketing-site/docs/screenshots/desktop-platform.png?raw=true)        | ![](https://github.com/gowthi1991/Firro/blob/feat/marketing-site/docs/screenshots/mobile-platform.png?raw=true)                                                                                                                       |
+| Demo form      | ![](https://github.com/gowthi1991/Firro/blob/feat/marketing-site/docs/screenshots/desktop-demo.png?raw=true)            | ![](https://github.com/gowthi1991/Firro/blob/feat/marketing-site/docs/screenshots/mobile-demo.png?raw=true)                                                                                                                           |
+| Menu / privacy | —                                                                                                                       | [menu](https://github.com/gowthi1991/Firro/blob/feat/marketing-site/docs/screenshots/mobile-menu.png?raw=true) · [privacy](https://github.com/gowthi1991/Firro/blob/feat/marketing-site/docs/screenshots/mobile-privacy.png?raw=true) |
 
-The rest of the sections are in [`docs/screenshots/`](docs/screenshots/).
+The rest of the sections are in [`docs/screenshots/`](https://github.com/gowthi1991/Firro/tree/feat/marketing-site/docs/screenshots).
 
 ## Responsive approach
 
@@ -88,7 +88,7 @@ The rest of the sections are in [`docs/screenshots/`](docs/screenshots/).
 
 ## Decisions
 
-The full list of 32 is in [docs/DECISIONS.md](docs/DECISIONS.md). The top five:
+The full list of 32 is in [docs/DECISIONS.md](https://github.com/gowthi1991/Firro/blob/feat/marketing-site/docs/DECISIONS.md). The top five:
 
 1. **The tickets-fold animation is implemented even though it never ran in the reference.** A stray `}` there made browsers drop the `.fold` rule, and brief §3.6 asks for the fold.
 2. **Timeline nodes stay gold under reduced motion.** In the reference's cascade they turn green on the forest band once the sequence plays; gold is the sequence's real final state.
@@ -98,7 +98,7 @@ The full list of 32 is in [docs/DECISIONS.md](docs/DECISIONS.md). The top five:
 
 ## Known issues
 
-These are in [docs/KNOWN_ISSUES.md](docs/KNOWN_ISSUES.md). In short:
+These are in [docs/KNOWN_ISSUES.md](https://github.com/gowthi1991/Firro/blob/feat/marketing-site/docs/KNOWN_ISSUES.md). In short:
 
 - The placeholders below are live.
 - The privacy notice is a draft.
