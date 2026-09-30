@@ -1,10 +1,10 @@
-// DRAFT privacy notice — pending legal review before launch. Plain language on purpose.
+// Privacy notice shown at /privacy. Plain language on purpose.
 // Contact email is a placeholder (see src/config/site.ts).
 
 export const privacy = {
   label: 'Privacy',
   title: 'Privacy notice',
-  updated: 'Draft prepared September 2026',
+  updated: 'Last updated September 2026',
   intro:
     'This notice explains what happens to the details you share when you ask for a Firro demo on this website. Firro is a product of Uyir AI Labs Pvt Ltd, Coimbatore, India.',
   sections: [
