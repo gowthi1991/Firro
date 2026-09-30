@@ -79,3 +79,14 @@ One line each: **what** — why — how to change.
 55. **Domains added through the Vercel API**, because `vercel domains add` refuses while the latest production deployment (from `main`, which only has a README) is in error. The API accepted both domains. — Vercel → Settings → Domains.
 56. **`www.getfirro.com` 308-redirects to `getfirro.com`** so there's one canonical host, matching the canonical URLs, sitemap and OG tags. — Vercel → Domains → www.getfirro.com.
 57. **End-to-end test ran against the preview through `vercel curl`** (it handles deployment protection, so no bypass secret was created or stored). Storage and email were confirmed from function logs, because the database can't be queried from outside Vercel (see decision 54).
+
+## Security headers & analytics
+
+58. **`regions` left at `bom1`**: the function log after a fresh deploy still reports the Neon database in `us-east-1`, so it hasn't been recreated in Mumbai or Singapore yet. Once it has, set `bom1` (Mumbai) or `sin1` (Singapore) in `vercel.json` and check the `[lead] database region:` log line. — `vercel.json`.
+59. **The CSP allows the one inline script (the boot script) by SHA-256 hash, not `'unsafe-inline'`.** The script now lives in `src/config/boot-script.ts`, and `tests/security.spec.ts` fails with the new hash if it changes. — `vercel.json`.
+60. **`style-src` keeps `'unsafe-inline'`**: the reference design uses many `style=""` attributes (animation delays, orbit angles, bar widths), which can't be hashed. Scripts stay locked down. — `vercel.json`.
+61. **No `upgrade-insecure-requests`**: every resource is same-origin, HSTS already forces HTTPS, and it would break the local HTTP test server. — `vercel.json`.
+62. **Vercel's preview toolbar (`vercel.live`) is not allowed by the CSP**, per the brief ("only self, the fonts, and Vercel Analytics"). It won't load on previews. Add `https://vercel.live` to `script-src`/`frame-src`/`connect-src` if you want it. — `vercel.json`.
+63. **Tests and `npm run preview` use `scripts/serve-static.mjs`**, which applies the `vercel.json` headers, so the CSP is tested locally. The Playwright site server never reuses an already-running server: a stray `npm run dev` on port 4321 was being tested instead of the build. — `playwright.config.ts`.
+64. **Analytics is injected from the bundled script, not the Astro components**, so no new inline scripts need CSP hashes. It isn't injected on localhost (there are no `/_vercel` routes there). `track()` removes the `?text=` from WhatsApp hrefs before sending. Custom events are only recorded on a Vercel plan that includes them. — `src/lib/analytics.ts`.
+65. **The Zoho CRM hook and the prefilled WhatsApp links are deferred to a later PR, at the owner's request.** The Zoho work is kept on the local branch `feat/zoho-crm`, which is not pushed. — n/a.
