@@ -49,3 +49,4 @@ One line each: **what** — why — how to change.
 31. **404 has its own copy ("This dish isn't on the menu.") and no canonical (`noindex`).** — `src/pages/404.astro`.
 32. **Visual tests serve the reference's Google Fonts from the local @fontsource files** — hermetic in CI, identical binaries on both sides. — `tests/helpers.ts`.
 33. **CI also runs `npm run lint`** in addition to the brief's steps. — `.github/workflows/ci.yml`.
+34. **Node 22.12+ instead of Node 20** — Astro 7 (latest stable, brief §1) refuses to run on Node 20; the brief allows "20 LTS or newer". CI, `engines` and `.nvmrc` use 22. — `.github/workflows/ci.yml`, `package.json`.

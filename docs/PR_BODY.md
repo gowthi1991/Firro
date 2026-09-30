@@ -88,7 +88,7 @@ The rest of the sections are in [`docs/screenshots/`](https://github.com/gowthi1
 
 ## Decisions
 
-The full list of 33 is in [docs/DECISIONS.md](https://github.com/gowthi1991/Firro/blob/feat/marketing-site/docs/DECISIONS.md). The top five:
+The full list of 34 is in [docs/DECISIONS.md](https://github.com/gowthi1991/Firro/blob/feat/marketing-site/docs/DECISIONS.md). The top five:
 
 1. **The tickets-fold animation is implemented even though it never ran in the reference.** A stray `}` there made browsers drop the `.fold` rule, and brief §3.6 asks for the fold.
 2. **Timeline nodes stay gold under reduced motion.** In the reference's cascade they turn green on the forest band once the sequence plays; gold is the sequence's real final state.

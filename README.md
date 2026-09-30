@@ -9,7 +9,7 @@ design in `handoff/design/reference/firro-home-v3.html` ("Heritage light v3").
 
 ## Run it
 
-Requires Node 20+.
+Requires Node 22.12+ (Astro 7). `.nvmrc` pins 22.
 
 ```bash
 npm install
@@ -72,7 +72,7 @@ payload is `{ name, phone (+91…), kitchen, city, meals, current_tool, consent,
 
 The build output is fully static, so any static host works:
 
-- **Vercel / Netlify**: framework "Astro", build command `npm run build`, output directory `dist`.
+- **Vercel / Netlify**: framework "Astro", Node 22, build command `npm run build`, output directory `dist`.
   Set `PUBLIC_LEAD_ENDPOINT` in the host's environment settings when the backend exists.
 - Point `getfirro.com` at the host. `site` in `astro.config.mjs` already uses that domain for
   canonical URLs, the sitemap and OG tags.
