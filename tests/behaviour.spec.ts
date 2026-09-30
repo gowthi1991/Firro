@@ -307,6 +307,40 @@ test.describe('without JavaScript', () => {
   });
 });
 
+test('track() forwards custom events to Vercel Analytics', async ({ page }) => {
+  // Analytics isn't injected on localhost, so stand in for its window.va queue.
+  await page.addInitScript(() => {
+    const w = window as unknown as { va: (...a: unknown[]) => void; __va: unknown[][] };
+    w.__va = [];
+    w.va = (...a: unknown[]) => w.__va.push(a);
+  });
+  await page.route('**/api/lead', (r) =>
+    r.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' }),
+  );
+  await page.goto('/');
+  await settle(page);
+  await page.locator('#top').getByRole('link', { name: 'Book a demo' }).click();
+  await page.getByLabel('Your name').fill('Test');
+  await page.getByLabel('Phone').fill('9876543210');
+  await page.getByLabel('Kitchen name').fill('Test Kitchen');
+  await page.getByLabel('City').fill('Coimbatore');
+  await page.getByLabel('Meals a day').selectOption('under-50');
+  await page.getByLabel('I agree to be contacted about Firro.').check();
+  await page.getByRole('button', { name: 'Book my demo' }).click();
+  await expect(page.getByRole('heading', { name: 'Got it.' })).toBeVisible();
+  const events = await page.evaluate(() =>
+    (
+      window as unknown as { __va: [string, { name: string; data?: Record<string, unknown> }][] }
+    ).__va
+      .filter(([type]) => type === 'event')
+      .map(([, e]) => ({ name: e.name, data: e.data })),
+  );
+  expect(events).toEqual([
+    { name: 'book_demo_click', data: { href: '#demo' } },
+    { name: 'form_submit', data: { ok: true, status: 200, meals: 'under-50' } },
+  ]);
+});
+
 test('analytics hooks are present', async ({ page }) => {
   await page.goto('/');
   expect(await page.locator('[data-event="book_demo_click"]').count()).toBeGreaterThan(2);

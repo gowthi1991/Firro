@@ -18,6 +18,12 @@ export const privacy = {
       ],
     },
     {
+      h: 'Analytics',
+      p: [
+        'To see how many people visit, which buttons they use and how fast pages load, we use Vercel Web Analytics and Speed Insights. They do not use cookies and do not collect your name, number or anything else that identifies you — only anonymous, aggregated counts such as page views, clicks on "Book a demo" or "Chat on WhatsApp", form submissions, and page-speed measurements.',
+      ],
+    },
+    {
       h: 'Where it goes',
       p: [
         'When you send the form, your details are saved in a secure database run for us by Neon (a managed Postgres provider), through our website host, Vercel. A copy is emailed to the Firro team through Resend, an email delivery service, so we can call you quickly.',
