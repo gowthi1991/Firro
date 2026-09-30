@@ -1,0 +1,93 @@
+---
+import { fab } from '../content/site';
+import { WHATSAPP_URL } from '../config/site';
+import IconWhatsApp from './icons/IconWhatsApp.astro';
+---
+
+<a
+  href={WHATSAPP_URL}
+  aria-label={fab.label}
+  class="btn btn-glow pop fab"
+  data-fab
+  data-event="whatsapp_click"
+>
+  <IconWhatsApp />
+  <span class="fab-l">{fab.label}</span>
+</a>
+
+<style>
+  .fab {
+    animation-delay: 900ms;
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 30;
+    font-size: 15px;
+    transition:
+      padding var(--dur-base) var(--ease-out),
+      gap var(--dur-base) var(--ease-out),
+      transform 120ms,
+      box-shadow var(--dur-fast),
+      opacity var(--dur-fast),
+      visibility var(--dur-fast);
+  }
+  .fab-l {
+    display: inline-block;
+    max-width: 180px;
+    overflow: hidden;
+    white-space: nowrap;
+    transition:
+      max-width var(--dur-base) var(--ease-out),
+      opacity var(--dur-fast);
+  }
+  .fab:global(.mini) {
+    padding: 0 16px;
+    gap: 0;
+  }
+  .fab:global(.mini) .fab-l {
+    max-width: 0;
+    opacity: 0;
+  }
+  .fab:global(.mini):hover,
+  .fab:global(.mini):focus-visible {
+    padding: 0 24px;
+    gap: 10px;
+  }
+  .fab:global(.mini):hover .fab-l,
+  .fab:global(.mini):focus-visible .fab-l {
+    max-width: 180px;
+    opacity: 1;
+  }
+  /* Hidden while the demo form is on screen so it never covers the submit button. */
+  .fab:global(.away) {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  @media (max-width: 767px) {
+    .fab {
+      right: 16px;
+      bottom: 16px;
+      min-height: 56px;
+    }
+    .fab:global(.mini),
+    .fab:global(.mini):hover,
+    .fab:global(.mini):focus-visible {
+      width: 56px;
+      padding: 0;
+      gap: 0;
+      justify-content: center;
+    }
+    .fab:global(.mini):hover .fab-l,
+    .fab:global(.mini):focus-visible .fab-l {
+      max-width: 0;
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .fab,
+    .fab-l {
+      transition: none;
+    }
+  }
+</style>

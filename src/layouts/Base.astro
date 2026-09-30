@@ -1,0 +1,100 @@
+---
+import '../styles/tokens.css';
+import '../styles/global.css';
+import bricolage from '@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-opsz-normal.woff2?url';
+import manrope from '@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2?url';
+import mono500 from '@fontsource/jetbrains-mono/files/jetbrains-mono-latin-500-normal.woff2?url';
+import mono700 from '@fontsource/jetbrains-mono/files/jetbrains-mono-latin-700-normal.woff2?url';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import WhatsAppFab from '../components/WhatsAppFab.astro';
+import { SEO, SITE_URL } from '../config/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Anchor prefix for nav/footer links: '' on the home page, '/' elsewhere. */
+  anchorBase?: string;
+  noindex?: boolean;
+  jsonLd?: Record<string, unknown>[];
+}
+
+const {
+  title = SEO.title,
+  description = SEO.description,
+  anchorBase = '/',
+  noindex = false,
+  jsonLd = [],
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, SITE_URL).href;
+const ogImage = new URL('/og.png', SITE_URL).href;
+
+// Latin subsets only; the display face is preloaded (it paints the LCP heading).
+const fontFaces = `
+@font-face{font-family:'Bricolage Grotesque';font-style:normal;font-display:swap;font-weight:200 800;src:url(${bricolage}) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Manrope';font-style:normal;font-display:swap;font-weight:200 800;src:url(${manrope}) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-display:swap;font-weight:500;src:url(${mono500}) format('woff2');unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-display:swap;font-weight:700;src:url(${mono700}) format('woff2');unicode-range:U+0000-00FF,U+2000-206F}`;
+
+// Runs before first paint: enables JS-only hidden states, detects @property support,
+// and removes the gate again if the bundled script never boots (content must never stay hidden).
+const bootScript = `(function(d){var h=d.documentElement;h.classList.add('js');if(window.CSS&&CSS.registerProperty)h.classList.add('prop');setTimeout(function(){if(!h.classList.contains('js-ready'))h.classList.remove('js')},3000)})(document)`;
+---
+
+<!doctype html>
+<html lang="en-IN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="theme-color" content={SEO.themeColor} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Firro" />
+    <meta property="og:locale" content={SEO.locale} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Firro — plans tomorrow's prep from today's subscriptions."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="preload" href={bricolage} as="font" type="font/woff2" crossorigin />
+    <style is:inline set:html={fontFaces} />
+    <script is:inline set:html={bootScript} />
+    {jsonLd.map((data) => (
+      <script is:inline type="application/ld+json" set:html={JSON.stringify(data)} />
+    ))}
+  </head>
+  <body>
+    <a class="skip-link" href="#main">
+      Skip to content
+    </a>
+    <Nav anchorBase={anchorBase} />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer anchorBase={anchorBase} />
+    <WhatsAppFab />
+    <script>
+      import '../scripts/main';
+    </script>
+  </body>
+</html>

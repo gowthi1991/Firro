@@ -1,0 +1,440 @@
+---
+import { nutrition } from '../content/site';
+import SectionHead from './SectionHead.astro';
+import IconCheck from './icons/IconCheck.astro';
+import NutritionBowl from './illustrations/NutritionBowl.astro';
+
+const { card } = nutrition;
+---
+
+<section id="nutrition" class="section bt gridbg" aria-labelledby="nutrition-title">
+  <div class="container grid">
+    <div class="nseq" data-seq="nutrition">
+      <div class="glass rv meal">
+        <div class="pic">
+          <NutritionBowl width="150" height="150" aria-hidden="true" class="bowl" />
+        </div>
+        <div class="body">
+          <div class="top">
+            <div>
+              <span class="micro m10">{card.label}</span>
+              <p class="disp dish">{card.dish}</p>
+            </div>
+            <span class="diet" role="img" aria-label={card.dietLabel}>
+              <span></span>
+            </span>
+          </div>
+          <p class="num kcal">
+            <span class="sr-only">{card.kcal}</span>
+            <span class="kc" aria-hidden="true">
+              <span class="kc-static">{card.kcal}</span>
+            </span>{' '}
+            <span class="unit">{card.kcalUnit}</span>
+          </p>
+          {card.macros.map((m) => (
+            <div class="macro">
+              <div class="mrow">
+                <span class="mname">{m.name}</span>
+                <span class="num nval">{m.value}</span>
+              </div>
+              <div class="track">
+                <div
+                  class="nbar"
+                  style={`--d:${m.delay}ms;width:${m.width}%;background:${m.color}`}
+                />
+              </div>
+            </div>
+          ))}
+          <div class="allergens">
+            {card.allergens.map((a) => (
+              <span class="chip nchip" style={`--d:${a.delay}ms`}>
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="9" />
+                  <line x1="12" y1="8" x2="12" y2="12.5" />
+                  <line x1="12" y1="16" x2="12" y2="16" />
+                </svg>
+                {a.label}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div class="glass nlink">
+        <span class="check big">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.75"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="6" cy="6" r="2.5" />
+            <circle cx="18" cy="6" r="2.5" />
+            <circle cx="12" cy="18" r="2.5" />
+            <line x1="7.5" y1="8" x2="10.8" y2="15.8" />
+            <line x1="16.5" y1="8" x2="13.2" y2="15.8" />
+          </svg>
+        </span>
+        <div>
+          <p class="disp ltitle">{nutrition.link.title}</p>
+          <p class="lbody">{nutrition.link.body}</p>
+        </div>
+      </div>
+      <p class="sample nsample">{nutrition.sample}</p>
+    </div>
+
+    <div class="copy">
+      <div class="rv">
+        <SectionHead
+          id="nutrition-title"
+          label={nutrition.label}
+          heading={nutrition.heading}
+          gold
+          md
+        />
+      </div>
+      <p class="lead rv">{nutrition.lead}</p>
+      <ul class="checks">
+        {nutrition.checks.map((c, i) => (
+          <li class={`rv s${i + 2}`}>
+            <span class="check">
+              <IconCheck />
+            </span>
+            <div>
+              <h3 class="disp">{c.title}</h3>
+              <p class="soft">{c.body}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 24px;
+    align-items: center;
+  }
+  .nseq {
+    grid-column: span 6;
+    position: relative;
+    height: 580px;
+  }
+  .meal {
+    position: absolute;
+    top: 0;
+    left: 40px;
+    width: 410px;
+    padding: 12px 12px 24px;
+    box-shadow: 0 30px 80px rgba(31, 28, 22, 0.14);
+  }
+  .pic {
+    height: 170px;
+    border-radius: var(--r-lg);
+    background-color: var(--surface-sage);
+    background-image: radial-gradient(#d6e0d0 1.3px, transparent 1.3px);
+    background-size: 20px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .pic :global(.bowl) {
+    filter: drop-shadow(0 10px 18px rgba(31, 28, 22, 0.14));
+  }
+  .body {
+    padding: 16px 10px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .m10 {
+    font-size: 10px;
+  }
+  .dish {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-top: 4px;
+  }
+  .diet {
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid #8b4513;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    margin-top: 4px;
+  }
+  .diet span {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 8px solid #8b4513;
+    display: block;
+  }
+  .kcal {
+    font-size: 44px;
+    line-height: 1;
+  }
+  .unit {
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 0;
+  }
+  /* kcal counter: counts 0→520 via @property --kc; static "520" where @property is unsupported. */
+  @property --kc {
+    syntax: '<integer>';
+    inherits: false;
+    initial-value: 520;
+  }
+  :global(html.prop) .kc {
+    counter-reset: kc var(--kc);
+  }
+  :global(html.prop) .kc::after {
+    content: counter(kc);
+  }
+  :global(html.prop) .kc-static {
+    display: none;
+  }
+  .macro {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .mrow {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+  }
+  .mname {
+    font-weight: 700;
+  }
+  .track {
+    height: 8px;
+    border-radius: var(--r-pill);
+    background: rgba(26, 59, 26, 0.08);
+    overflow: hidden;
+  }
+  .nbar {
+    height: 100%;
+    border-radius: var(--r-pill);
+    transform-origin: left;
+  }
+  .allergens {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .nchip {
+    background: var(--coral-bg);
+    color: var(--coral-text);
+    border: 1px solid rgba(224, 128, 128, 0.3);
+  }
+  .nlink {
+    position: absolute;
+    bottom: 40px;
+    right: 0;
+    width: 280px;
+    padding: 16px 18px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    border-radius: var(--r-xl);
+  }
+  .check.big {
+    width: 40px;
+    height: 40px;
+  }
+  .ltitle {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .lbody {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .nsample {
+    position: absolute;
+    bottom: 0;
+    left: 52px;
+  }
+
+  .copy {
+    grid-column: 8 / span 5;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .checks {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 6px;
+  }
+  .checks li {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .checks h3 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .checks p {
+    font-size: 15px;
+    line-height: 1.55;
+    margin-top: 4px;
+  }
+
+  /* sequence: bowl assembles → linked-ingredients card → kcal counts → bars fill → allergens pop */
+  .play .nlink {
+    animation: nlink 520ms var(--ease-spring) 900ms both;
+  }
+  .play .kc {
+    animation: kcount 1000ms var(--ease-out) 1200ms both;
+  }
+  .play .nbar {
+    animation: nfill 700ms var(--ease-out) var(--d) both;
+  }
+  .play .nval {
+    animation: nval 300ms var(--ease-out) 1900ms both;
+  }
+  .play .nchip {
+    animation: dishPop 360ms var(--ease-spring) var(--d) both;
+  }
+  @keyframes kcount {
+    from {
+      --kc: 0;
+    }
+    to {
+      --kc: 520;
+    }
+  }
+  @keyframes nval {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes nlink {
+    0% {
+      opacity: 0;
+      transform: translateY(14px) scale(0.94);
+    }
+    70% {
+      box-shadow:
+        0 0 0 6px rgba(201, 160, 70, 0.16),
+        0 14px 40px -12px rgba(201, 160, 70, 0.5);
+    }
+    100% {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (max-width: 1279px) {
+    .nseq {
+      grid-column: span 7;
+    }
+    .meal {
+      left: 0;
+      width: min(410px, 82%);
+    }
+    .copy {
+      grid-column: 8 / span 5;
+    }
+    .nlink {
+      width: 260px;
+    }
+  }
+  @media (max-width: 1023px) {
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 48px;
+    }
+    .nseq,
+    .copy {
+      grid-column: 1 / -1;
+    }
+    .nseq {
+      width: 100%;
+      max-width: 600px;
+      justify-self: center;
+    }
+    .meal {
+      left: 0;
+      width: 410px;
+    }
+  }
+  @media (max-width: 767px) {
+    .nseq {
+      height: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .meal,
+    .nlink {
+      position: relative;
+      inset: auto;
+      width: 100%;
+    }
+    .nlink {
+      width: auto;
+      align-self: flex-end;
+      max-width: 100%;
+    }
+    .nsample {
+      position: static;
+    }
+    .meal {
+      box-shadow: 0 20px 50px rgba(31, 28, 22, 0.12);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .play .nlink,
+    .play .kc,
+    .play .nbar,
+    .play .nval,
+    .play .nchip {
+      animation: none;
+      opacity: 1;
+    }
+  }
+</style>

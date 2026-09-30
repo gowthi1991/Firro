@@ -1,0 +1,160 @@
+---
+import { footer } from '../content/site';
+import { WHATSAPP_URL } from '../config/site';
+
+interface Props {
+  anchorBase?: string;
+}
+const { anchorBase = '/' } = Astro.props;
+const href = (h: string) => `${anchorBase}${h}`;
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="top">
+      <div class="brand">
+        <span class="wm">
+          firro<span class="dot">.</span>
+        </span>
+        <p class="tagline">{footer.tagline}</p>
+      </div>
+      <div class="cols">
+        <nav class="col" aria-labelledby="footer-product">
+          <span id="footer-product" class="micro label">
+            {footer.productLabel}
+          </span>
+          {footer.productLinks.map((l) => (
+            <a href={href(l.href)}>{l.label}</a>
+          ))}
+        </nav>
+        <div class="col">
+          <span class="micro label">{footer.talkLabel}</span>
+          <a href={href('#demo')} data-event="book_demo_click">
+            {footer.bookDemo}
+          </a>
+          <a href={WHATSAPP_URL} data-event="whatsapp_click">
+            {footer.whatsapp}
+          </a>
+          <span>{footer.location}</span>
+        </div>
+      </div>
+    </div>
+    <div class="bottom">
+      <p>{footer.copyright}</p>
+      <p class="right">
+        <a href="/privacy">{footer.privacy}</a>
+        <span aria-hidden="true" class="sep">
+          ·
+        </span>
+        {footer.dpiit}
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: #1a3b1a;
+    padding: 72px var(--gutter) 32px;
+  }
+  .top {
+    display: flex;
+    justify-content: space-between;
+    gap: 48px;
+    flex-wrap: wrap;
+    padding-bottom: 48px;
+  }
+  .brand {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 340px;
+  }
+  .wm {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 30px;
+    letter-spacing: -1px;
+    color: #f7efd9;
+  }
+  .dot {
+    color: var(--gold-soft);
+  }
+  .tagline {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-on-dark);
+  }
+  .cols {
+    display: flex;
+    gap: 64px;
+  }
+  .col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .label {
+    color: var(--gold-soft);
+    font-size: 11px;
+  }
+  .col a,
+  .col span:not(.label) {
+    font-size: 15px;
+    color: #d9cfb3;
+  }
+  .col a:hover,
+  .bottom a:hover {
+    color: #f7efd9;
+  }
+  .bottom {
+    border-top: 1px solid rgba(255, 243, 220, 0.14);
+    padding-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: #a89d80;
+  }
+  .bottom a {
+    color: #a89d80;
+  }
+  .sep {
+    margin: 0 10px;
+  }
+  @media (max-width: 767px) {
+    .footer {
+      padding: 56px var(--gutter) 96px;
+    }
+    .top {
+      gap: 36px;
+      padding-bottom: 36px;
+    }
+    .cols {
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+    .col {
+      gap: 0;
+    }
+    .label {
+      margin-bottom: 6px;
+    }
+    .col a,
+    .col span:not(.label) {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+    }
+    .bottom {
+      flex-direction: column;
+      gap: 6px;
+    }
+    .bottom a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+    }
+  }
+</style>

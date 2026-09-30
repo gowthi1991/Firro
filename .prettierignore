@@ -1,0 +1,12 @@
+handoff/
+dist/
+.astro/
+node_modules/
+package-lock.json
+public/
+docs/screenshots/
+test-results/
+playwright-report/
+tests/__snapshots__/
+src/components/illustrations/
+CLAUDE.md

@@ -1,0 +1,81 @@
+---
+import { problem } from '../content/site';
+import SectionHead from './SectionHead.astro';
+---
+
+<section class="section" aria-labelledby="problem-title">
+  <div class="container">
+    <div class="rv head">
+      <SectionHead id="problem-title" label={problem.label} heading={problem.heading} maxCh={16} />
+      <p class="lead">{problem.lead}</p>
+    </div>
+    <div class="cards">
+      {problem.cards.map((c, i) => (
+        <div class:list={['glass tile rv card', i > 0 && `s${i + 1}`]}>
+          <span class="num grad n" aria-hidden="true">
+            {c.n}
+          </span>
+          <h3 class="disp">{c.title}</h3>
+          <p class="soft">{c.body}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 48px;
+  }
+  .lead {
+    max-width: 560px;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+  }
+  .card {
+    padding: 32px;
+    gap: 16px;
+  }
+  .n {
+    font-size: 52px;
+    line-height: 1;
+    font-weight: 800;
+  }
+  .card h3 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .card p {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  @media (max-width: 1023px) {
+    .cards {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 14px;
+    }
+  }
+  @media (max-width: 767px) {
+    .head {
+      margin-bottom: 32px;
+    }
+    .card {
+      padding: 24px;
+      gap: 12px;
+    }
+    .n {
+      font-size: 44px;
+    }
+    .card h3 {
+      font-size: 23px;
+    }
+  }
+</style>
