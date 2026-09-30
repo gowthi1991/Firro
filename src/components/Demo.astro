@@ -58,6 +58,7 @@ const f = demo.fields;
               <label for="f-name">{f.name}</label>
               <input
                 id="f-name"
+                maxlength="120"
                 type="text"
                 name="name"
                 required
@@ -72,6 +73,7 @@ const f = demo.fields;
               <label for="f-phone">{f.phone}</label>
               <input
                 id="f-phone"
+                maxlength="20"
                 type="tel"
                 name="phone"
                 required
@@ -88,6 +90,7 @@ const f = demo.fields;
               <label for="f-kitchen">{f.kitchen}</label>
               <input
                 id="f-kitchen"
+                maxlength="160"
                 type="text"
                 name="kitchen"
                 required
@@ -102,6 +105,7 @@ const f = demo.fields;
               <label for="f-city">{f.city}</label>
               <input
                 id="f-city"
+                maxlength="80"
                 type="text"
                 name="city"
                 required
@@ -133,7 +137,13 @@ const f = demo.fields;
             <label for="f-tool">
               {f.tool} <span class="opt">{f.toolOptional}</span>
             </label>
-            <input id="f-tool" type="text" name="current_tool" placeholder={f.toolPlaceholder} />
+            <input
+              id="f-tool"
+              maxlength="300"
+              type="text"
+              name="current_tool"
+              placeholder={f.toolPlaceholder}
+            />
           </div>
           <div class="hp" aria-hidden="true">
             <label for="f-website">Website</label>
@@ -157,10 +167,18 @@ const f = demo.fields;
             <p class="err" id="f-consent-err" hidden></p>
           </div>
 
-          <div class="failure" data-form-error hidden>
-            <p class="ftitle">{demo.failure.title}</p>
+          <div
+            class="failure"
+            data-form-error
+            data-limit-title={demo.rateLimited.title}
+            data-limit-body={demo.rateLimited.body}
+            hidden
+          >
+            <p class="ftitle" data-failure-title>
+              {demo.failure.title}
+            </p>
             <p class="fbody">
-              {demo.failure.body}{' '}
+              <span data-failure-body>{demo.failure.body}</span>{' '}
               <a href={WHATSAPP_URL} data-event="whatsapp_click">
                 {demo.failure.whatsapp}
               </a>
