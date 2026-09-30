@@ -17,7 +17,7 @@ Nothing is deployed and nothing has been merged. `main` is untouched.
 | How it works  | Forest band with a one-time timed sequence (marker travels, nodes and cards switch on). On mobile it's a measured vertical timeline.                                                                                           |
 | Batch cooking | Checks and CTA. Tickets fold into the prep sheet; the arrow nudges, and points down on mobile.                                                                                                                                 |
 | Nutrition     | One-time sequence: bowl, linked-ingredients card, kcal 0→520 (`@property`, static 520 fallback), bars, allergen chips.                                                                                                         |
-| Platform      | Four app cards (reference SVGs) and the Under-the-hood bento: live countdown ring to 21:00 local (pauses when the tab is hidden), early-warning trend, 31% costing, GST invoice.                                               |
+| Platform      | Four app cards (reference SVGs) and the Under-the-hood bento: live countdown ring to 21:00 IST for every visitor (pauses when the tab is hidden), early-warning trend, 31% costing, GST invoice.                               |
 | Pilot band    | Forest/gold band, gold CTA, three kitchen types.                                                                                                                                                                               |
 | FAQ           | Six native `<details>`, first open. Also emitted as FAQPage JSON-LD.                                                                                                                                                           |
 | Demo form     | Inline validation on blur and submit, Indian mobile numbers (+91, spaces), honeypot, "Booking…" loading state, "Got it." success, error with retry and WhatsApp fallback, `track('form_submit')`, consent links to `/privacy`. |
@@ -49,14 +49,14 @@ The rest of the sections are in [`docs/screenshots/`](https://github.com/gowthi1
 
 ## Test & Lighthouse results
 
-`npm run lint` ✅ · `npm run check` ✅ (0 errors, 0 warnings, 0 hints) · `npm run build` ✅ (no warnings) · `npm run test` ✅ **69/69 passed**
+`npm run lint` ✅ · `npm run check` ✅ (0 errors, 0 warnings, 0 hints) · `npm run build` ✅ (no warnings) · `npm run test` ✅ **80/80 passed**
 
-| Suite              | Tests | What it covers                                                                                                                                                                                       |
-| ------------------ | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| visual.spec.ts     | 12    | Each section vs the reference at 1440×900, reduced motion, same local fonts, countdown masked, ≤3% pixels                                                                                            |
-| responsive.spec.ts | 31    | No overflow at 8 widths × 3 pages, menu sheet at 390/768, hero cards don't overlap at 360/390, tap targets, input font size                                                                          |
-| behaviour.spec.ts  | 17    | `.play` on scroll, kcal 520, countdown format + fixed-clock value, FAB collapse/hide, FAQ, form validation/success/error/honeypot, reduced-motion final states, no-JS visibility, `data-event` hooks |
-| a11y.spec.ts       | 9     | axe (WCAG 2.2 AA tags) on `/`, `/privacy`, `/404` at 1440 and 390: **0 serious/critical**; landmarks, one H1, skip link, decorative SVGs hidden, heading order                                       |
+| Suite              | Tests | What it covers                                                                                                                                                                                              |
+| ------------------ | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| visual.spec.ts     | 12    | Each section vs the reference at 1440×900, reduced motion, same local fonts, countdown masked, ≤3% pixels                                                                                                   |
+| responsive.spec.ts | 31    | No overflow at 8 widths × 3 pages, menu sheet at 390/768, hero cards don't overlap at 360/390, tap targets, input font size                                                                                 |
+| behaviour.spec.ts  | 28    | `.play` on scroll, kcal 520, countdown format + 21:00 IST in 4 timezones, FAB collapse/hide, FAQ, form validation/success/error/honeypot, reduced-motion final states, no-JS visibility, `data-event` hooks |
+| a11y.spec.ts       | 9     | axe (WCAG 2.2 AA tags) on `/`, `/privacy`, `/404` at 1440 and 390: **0 serious/critical**; landmarks, one H1, skip link, decorative SVGs hidden, heading order                                              |
 
 **Visual diff vs reference at 1440px** (pixelmatch, threshold 0.1):
 
@@ -88,7 +88,7 @@ The rest of the sections are in [`docs/screenshots/`](https://github.com/gowthi1
 
 ## Decisions
 
-The full list of 32 is in [docs/DECISIONS.md](https://github.com/gowthi1991/Firro/blob/feat/marketing-site/docs/DECISIONS.md). The top five:
+The full list of 33 is in [docs/DECISIONS.md](https://github.com/gowthi1991/Firro/blob/feat/marketing-site/docs/DECISIONS.md). The top five:
 
 1. **The tickets-fold animation is implemented even though it never ran in the reference.** A stray `}` there made browsers drop the `.fold` rule, and brief §3.6 asks for the fold.
 2. **Timeline nodes stay gold under reduced motion.** In the reference's cascade they turn green on the forest band once the sequence plays; gold is the sequence's real final state.
@@ -102,7 +102,6 @@ These are in [docs/KNOWN_ISSUES.md](https://github.com/gowthi1991/Firro/blob/fea
 
 - The placeholders below are live.
 - The privacy notice is a draft.
-- The countdown uses the visitor's local clock, as in the reference, not IST.
 - Two overlaps from the approved design are kept: the hero prep card over "Carbs", and the nutrition link card over "9g".
 - Tests run in Chromium only; Firefox and WebKit were checked once by hand.
 - Lighthouse numbers come from localhost.

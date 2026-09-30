@@ -1,13 +1,18 @@
-// Live countdown to the next 21:00 local time. The ring's --p is the elapsed fraction of 24h.
+// Live countdown to the next 21:00 in Asia/Kolkata (the kitchens' cut-off), whatever the
+// visitor's timezone. The ring's --p is the elapsed fraction of 24h.
 // The interval pauses while the tab is hidden.
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
+const DAY_MS = 86_400_000;
+const LOCK_MS = 21 * 3_600_000; // 21:00
+const IST_OFFSET_MS = 5.5 * 3_600_000; // Asia/Kolkata is UTC+05:30 all year (no DST)
+
 export function secondsUntilLock(now: Date = new Date()): number {
-  const lock = new Date(now);
-  lock.setHours(21, 0, 0, 0);
-  if (lock <= now) lock.setDate(lock.getDate() + 1);
-  return Math.floor((lock.getTime() - now.getTime()) / 1000);
+  const istMsOfDay = (((now.getTime() + IST_OFFSET_MS) % DAY_MS) + DAY_MS) % DAY_MS;
+  // exactly 21:00 counts as "passed", so the next lock is a full day away
+  const ms = (LOCK_MS - istMsOfDay + DAY_MS) % DAY_MS || DAY_MS;
+  return Math.floor(ms / 1000);
 }
 
 export function formatHMS(s: number): string {

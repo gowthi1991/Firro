@@ -43,13 +43,37 @@ test.describe('countdown', () => {
     expect(p).toBeGreaterThanOrEqual(0);
     expect(p).toBeLessThanOrEqual(100);
   });
-
-  test('matches a fixed clock', async ({ page }) => {
-    await page.clock.setFixedTime(new Date(2026, 8, 30, 18, 30, 5));
-    await page.goto('/');
-    await expect(page.locator('[data-countdown]')).toHaveText('02:29:55');
-  });
 });
+
+// The cut-off is 21:00 in Asia/Kolkata (UTC+05:30) for every visitor, whatever their timezone.
+for (const timezoneId of [
+  'Asia/Kolkata',
+  'America/New_York',
+  'Europe/London',
+  'Pacific/Auckland',
+]) {
+  test.describe(`countdown in ${timezoneId}`, () => {
+    test.use({ timezoneId });
+
+    test('counts to 21:00 IST before the cut-off', async ({ page }) => {
+      await page.clock.setFixedTime(new Date('2026-09-30T13:00:05Z')); // 18:30:05 IST
+      await page.goto('/');
+      await expect(page.locator('[data-countdown]')).toHaveText('02:29:55');
+    });
+
+    test("rolls over to tomorrow's 21:00 IST after the cut-off", async ({ page }) => {
+      await page.clock.setFixedTime(new Date('2026-09-30T15:45:00Z')); // 21:15:00 IST
+      await page.goto('/');
+      await expect(page.locator('[data-countdown]')).toHaveText('23:45:00');
+    });
+
+    test('exactly 21:00 IST shows a full day', async ({ page }) => {
+      await page.clock.setFixedTime(new Date('2026-09-30T15:30:00Z')); // 21:00:00 IST
+      await page.goto('/');
+      await expect(page.locator('[data-countdown]')).toHaveText('24:00:00');
+    });
+  });
+}
 
 test.describe('WhatsApp FAB', () => {
   test('collapses after 480px of scroll and hides over the form', async ({ page }) => {

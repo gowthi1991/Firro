@@ -38,13 +38,14 @@ One line each: **what** — why — how to change.
 23. **Form copy not in the reference was written for errors, loading and failure** ("Please enter your name.", "Booking…", "That didn't go through…"). Labels stay verbatim (no asterisks — required state is announced via `aria-required`). — `demo.errors` / `demo.failure` in `src/content/site.ts`.
 24. **Phone is normalised to `+91XXXXXXXXXX`** before `submitLead`; payload also carries `page` and `submitted_at`. — `form.ts`, `lib/phone.ts`, `lib/lead.ts`.
 25. **Honeypot hits get the success screen but nothing is sent.** — `form.ts`.
-26. **Error-state test forces a failure by making the stub's `console.info` throw** — avoids adding a test-only hook to production code. — `tests/behaviour.spec.ts`.
+26. **The Under-the-hood countdown counts to 21:00 in Asia/Kolkata (IST) for every visitor**, not the visitor's local 21:00 as in the reference and brief §4 — owner's call: the cut-off is the kitchens' time in Coimbatore. Uses a fixed UTC+05:30 offset (India has no DST); the "AT 21:00" label is unchanged. Tested in four timezones. — `secondsUntilLock()` in `src/scripts/countdown.ts`.
+27. **Error-state test forces a failure by making the stub's `console.info` throw** — avoids adding a test-only hook to production code. — `tests/behaviour.spec.ts`.
 
 ## SEO, assets, tooling
 
-27. **Meta description is the hero line + a condensed sub-copy (153 chars)** — brief limit is 155. — `SEO.description` in `src/config/site.ts`.
-28. **OG image is laid out in HTML and captured with Playwright, then compressed with sharp** — sharp/librsvg can't render the brand fonts for the headline; the wordmark is the brand SVG. — `scripts/generate-assets.mjs` (`npm run gen:assets`).
-29. **Fonts self-hosted as Latin-only subsets**; Bricolage uses the `opsz` variable file to match the reference's Google Fonts request. JetBrains Mono ships 500/700 only, so `font-weight:600` renders as 700 — same as the reference. — `Base.astro`.
-30. **404 has its own copy ("This dish isn't on the menu.") and no canonical (`noindex`).** — `src/pages/404.astro`.
-31. **Visual tests serve the reference's Google Fonts from the local @fontsource files** — hermetic in CI, identical binaries on both sides. — `tests/helpers.ts`.
-32. **CI also runs `npm run lint`** in addition to the brief's steps. — `.github/workflows/ci.yml`.
+28. **Meta description is the hero line + a condensed sub-copy (153 chars)** — brief limit is 155. — `SEO.description` in `src/config/site.ts`.
+29. **OG image is laid out in HTML and captured with Playwright, then compressed with sharp** — sharp/librsvg can't render the brand fonts for the headline; the wordmark is the brand SVG. — `scripts/generate-assets.mjs` (`npm run gen:assets`).
+30. **Fonts self-hosted as Latin-only subsets**; Bricolage uses the `opsz` variable file to match the reference's Google Fonts request. JetBrains Mono ships 500/700 only, so `font-weight:600` renders as 700 — same as the reference. — `Base.astro`.
+31. **404 has its own copy ("This dish isn't on the menu.") and no canonical (`noindex`).** — `src/pages/404.astro`.
+32. **Visual tests serve the reference's Google Fonts from the local @fontsource files** — hermetic in CI, identical binaries on both sides. — `tests/helpers.ts`.
+33. **CI also runs `npm run lint`** in addition to the brief's steps. — `.github/workflows/ci.yml`.
