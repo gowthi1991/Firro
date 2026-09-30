@@ -2,8 +2,8 @@
 
 export const SITE_URL = 'https://getfirro.com';
 
-/** TODO(launch): replace with the real WhatsApp Business number (country code, digits only). */
-export const WHATSAPP_NUMBER = '911234567890';
+/** WhatsApp Business number: country code, digits only. */
+export const WHATSAPP_NUMBER = '917845551223';
 export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`;
 
 export const CONTACT = {

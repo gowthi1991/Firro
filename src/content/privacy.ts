@@ -2,7 +2,6 @@
 // Contact email is a placeholder (see src/config/site.ts).
 
 export const privacy = {
-  banner: 'Draft — pending review. This notice is not yet final.',
   label: 'Privacy',
   title: 'Privacy notice',
   updated: 'Draft prepared September 2026',

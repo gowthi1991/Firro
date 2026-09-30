@@ -13,9 +13,6 @@ const withEmail = (s: string) =>
 >
   <section class="page gridbg" aria-labelledby="privacy-title">
     <div class="wrap">
-      <p class="banner" role="note">
-        {privacy.banner}
-      </p>
       <span class="micro gold">{privacy.label}</span>
       <h1 id="privacy-title" class="disp title">
         {privacy.title}
@@ -45,17 +42,6 @@ const withEmail = (s: string) =>
   .wrap {
     max-width: 720px;
     margin: 0 auto;
-  }
-  .banner {
-    display: inline-flex;
-    padding: 10px 16px;
-    margin-bottom: 28px;
-    border-radius: var(--r-md);
-    background: var(--amber-bg);
-    border: 1px solid rgba(245, 158, 11, 0.35);
-    color: var(--amber-text);
-    font-size: 14px;
-    font-weight: 700;
   }
   .gold {
     display: block;

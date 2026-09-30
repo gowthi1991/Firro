@@ -108,10 +108,10 @@ These are in [docs/KNOWN_ISSUES.md](https://github.com/gowthi1991/Firro/blob/fea
 
 ## Placeholders to fill before launch
 
-- [ ] `WHATSAPP_NUMBER` in `src/config/site.ts` is `911234567890`. Every WhatsApp link reads from it.
+- [x] `WHATSAPP_NUMBER` in `src/config/site.ts` is `917845551223`. Every WhatsApp link reads from it.
 - [ ] `CONTACT.email` in `src/config/site.ts` is `hello@getfirro.com` (TODO confirm). It's used on the privacy page and in JSON-LD.
 - [ ] `PUBLIC_LEAD_ENDPOINT` env var is unset, so the form uses the console stub. See `.env.example`.
-- [ ] The privacy notice in `src/content/privacy.ts` needs legal review, then remove the draft banner.
+- [ ] The privacy notice in `src/content/privacy.ts` needs legal review. (Draft banner removed for launch.)
 - [ ] Analytics: pick a provider and wire `track()` in `src/lib/analytics.ts`. The `data-event` attributes are already on the CTAs.
 
 ## How to review locally
