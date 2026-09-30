@@ -12,3 +12,4 @@ src/components/illustrations/
 CLAUDE.md
 tests/__snapshots__/
 .claude/
+.vercel/

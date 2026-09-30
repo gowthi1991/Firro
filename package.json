@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "http-server .vercel/output/static -p 4321 -c-1",
     "check": "astro check",
     "test": "playwright test",
     "lint": "prettier --check .",
@@ -19,10 +19,13 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
+    "@astrojs/vercel": "^11.0.11",
     "@fontsource-variable/bricolage-grotesque": "^5.3.0",
     "@fontsource-variable/manrope": "^5.3.0",
     "@fontsource/jetbrains-mono": "^5.3.0",
-    "astro": "^7.3.5"
+    "@neondatabase/serverless": "^1.1.0",
+    "astro": "^7.3.5",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",

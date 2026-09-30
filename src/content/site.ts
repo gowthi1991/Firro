@@ -395,6 +395,13 @@ export const demo = {
     retry: 'Try again',
     whatsapp: 'Chat on WhatsApp',
   },
+  // Server replies (src/pages/api/lead.ts)
+  rateLimited: {
+    title: 'We already have your request.',
+    body: 'You’ve sent a few today, so we’ll call you soon. Need us sooner? Message us on WhatsApp.',
+  },
+  tooLarge: 'That was too much text to send. Please shorten your answers and try again.',
+  badRequest: 'We couldn’t read that request. Please try again.',
 };
 
 export const footer = {
