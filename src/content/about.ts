@@ -10,6 +10,10 @@ export const about = {
     heading: 'Founder',
     bio: 'Gowtham founded Uyir AI Labs to build Firro. He has 11+ years of experience in project management, business analysis and professional-services operations, and is PMP certified. He leads product, strategy and the company’s day-to-day direction.',
   },
+  team: {
+    heading: 'Team',
+    intro: 'The people who build Firro with the founder.',
+  },
   company: {
     heading: 'Company details',
     rows: {

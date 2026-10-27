@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import { about } from '../content/about';
-import { COMPANY, CONTACT, FOUNDER, SITE_URL } from '../config/site';
+import { COMPANY, CONTACT, FOUNDER, SITE_URL, TEAM } from '../config/site';
 
 const incorporated = new Date(`${COMPANY.incorporated}T00:00:00Z`).toLocaleDateString('en-IN', {
   day: 'numeric',
@@ -12,7 +12,7 @@ const incorporated = new Date(`${COMPANY.incorporated}T00:00:00Z`).toLocaleDateS
 
 const title = 'About Firro — Uyir AI Labs Private Limited';
 const description =
-  'Firro is built in Coimbatore by Uyir AI Labs Private Limited, a DPIIT-recognised startup. Meet the founder and see the company’s registration details.';
+  'Firro is built in Coimbatore by Uyir AI Labs Private Limited, a DPIIT-recognised startup. Meet the founder and team, and see the company’s registration details.';
 
 const jsonLd = [
   {
@@ -63,6 +63,21 @@ const jsonLd = [
           <p class="role micro gold">{FOUNDER.role}</p>
           <p class="bio">{about.founder.bio}</p>
         </article>
+      </section>
+
+      <section class="block" aria-labelledby="team-heading">
+        <h2 id="team-heading" class="disp">
+          {about.team.heading}
+        </h2>
+        <p class="team-intro">{about.team.intro}</p>
+        <ul class="team">
+          {TEAM.map((p) => (
+            <li class="member">
+              <h3 class="disp mname">{p.name}</h3>
+              <p class="role micro gold">{p.role}</p>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <section class="block" aria-labelledby="company-heading">
@@ -179,6 +194,34 @@ const jsonLd = [
     line-height: 1.7;
     color: var(--text);
   }
+  .team-intro {
+    margin-top: 10px;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+  .team {
+    list-style: none;
+    margin: 18px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .member {
+    padding: 22px 22px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow-card);
+  }
+  .mname {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+  }
   .facts {
     margin-top: 18px;
     background: var(--surface);
@@ -243,6 +286,13 @@ const jsonLd = [
     }
     .person {
       padding: 22px 20px;
+    }
+    .team {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .member {
+      padding: 18px 20px;
     }
     .name {
       font-size: 26px;
