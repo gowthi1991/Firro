@@ -22,7 +22,7 @@ test('vercel.json CSP allows the inline boot script by its current hash', () => 
   expect(configured['content-security-policy']).not.toContain("script-src 'self' 'unsafe-inline'");
 });
 
-for (const path of ['/', '/privacy', '/404', '/og.png']) {
+for (const path of ['/', '/privacy', '/about', '/404', '/og.png']) {
   test(`${path} is served with the security headers`, async ({ request }) => {
     const res = await request.get(path);
     const h = res.headers();
@@ -47,7 +47,7 @@ async function collectViolations(page: Page): Promise<string[]> {
   return violations;
 }
 
-for (const path of ['/', '/privacy', '/404']) {
+for (const path of ['/', '/privacy', '/about', '/404']) {
   test(`${path}: no CSP violations, scripts and fonts load`, async ({ page }) => {
     const violations = await collectViolations(page);
     await page.goto(path);

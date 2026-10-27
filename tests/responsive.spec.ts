@@ -32,7 +32,7 @@ async function overflowing(page: Page): Promise<string[]> {
 }
 
 for (const width of WIDTHS) {
-  for (const path of ['/', '/privacy', '/404']) {
+  for (const path of ['/', '/privacy', '/about', '/404']) {
     test(`${path} has no horizontal overflow at ${width}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 900 });
       await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -62,7 +62,8 @@ for (const width of [390, 768]) {
     // the sheet overlays the page; it must not push content down
     expect((await page.locator('h1').boundingBox())!.y).toBe(h1Before);
     await expect(sheet).toBeVisible();
-    await expect(sheet.getByRole('link')).toHaveCount(5);
+    // five section links + About
+    await expect(sheet.getByRole('link')).toHaveCount(6);
     await expect(sheet.getByRole('link').first()).toBeFocused();
 
     await page.keyboard.press('Escape');

@@ -352,7 +352,7 @@ test('analytics hooks are present', async ({ page }) => {
 
 test('every WhatsApp link carries the prefilled message', async ({ page }) => {
   const expected = "Hi Firro, I'd like to know more about Firro for my kitchen.";
-  for (const path of ['/', '/privacy', '/404']) {
+  for (const path of ['/', '/privacy', '/about', '/404']) {
     await page.goto(path);
     const hrefs = await page.$$eval('a[href*="wa.me"]', (as) =>
       as.map((a) => a.getAttribute('href')!),

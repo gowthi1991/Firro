@@ -21,6 +21,22 @@ export const COMPANY = {
   locality: 'Coimbatore',
   region: 'Tamil Nadu',
   country: 'IN',
+  /** Name exactly as on the certificate of incorporation (used on /about). */
+  registeredName: 'Uyir AI Labs Private Limited',
+  /** ISO date of incorporation (certificate of incorporation, 18 September 2025). */
+  incorporated: '2025-09-18',
+  /** Corporate Identity Number, MCA. Public record. */
+  cin: 'U62011TZ2025PTC036108',
+  /** DPIIT startup recognition certificate number (issued 21 Jan 2026, valid to 17 Sep 2035). */
+  dpiitCertificate: 'DIPP240204',
+  /** Udyam registration number (micro enterprise). */
+  udyam: 'UDYAM-TN-03-0340943',
+};
+
+/** The founder shown on /about. No photo or social links by the owner's choice. */
+export const FOUNDER = {
+  name: 'Gowtham Venkatesh R',
+  role: 'Founder & CEO',
 };
 
 /** No social profiles yet — add URLs here and they flow into JSON-LD `sameAs`. */

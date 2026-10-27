@@ -1,4 +1,4 @@
-// Tablet/mobile menu: a sheet with the five section links.
+// Tablet/mobile menu: a sheet with the section and page links.
 // Opens from the menu button, closes on Esc, outside click, link tap or when resized to desktop.
 
 export function initNav(): void {

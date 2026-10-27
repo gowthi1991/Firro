@@ -15,6 +15,8 @@ export const nav = {
     { href: '#platform', label: 'Platform' },
     { href: '#faq', label: 'FAQ' },
   ],
+  // Separate pages, linked by absolute path (the anchor links above are prefixed per page).
+  pageLinks: [{ href: '/about', label: 'About' }],
   cta: 'Book a demo',
   homeLabel: 'Firro home',
   menuLabel: 'Menu',
@@ -420,6 +422,7 @@ export const footer = {
   location: 'Coimbatore, India',
   copyright: '© 2026 Uyir AI Labs Pvt Ltd',
   dpiit: 'DPIIT-recognised startup',
+  about: 'About',
   privacy: 'Privacy',
 };
 
