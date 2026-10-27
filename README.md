@@ -42,8 +42,9 @@ src/
   config/site.ts        # site URL, WhatsApp number, contact email, SEO defaults (placeholders marked TODO)
   content/site.ts       # all home-page copy, verbatim from the reference
   content/privacy.ts    # draft privacy notice text
+  content/about.ts      # /about copy (founder bio; registration numbers live in config/site.ts)
   layouts/Base.astro    # <head>, SEO, fonts, JSON-LD, skip link, nav, footer, FAB
-  pages/                # index, privacy, 404
+  pages/                # index, about, privacy, 404
   pages/api/lead.ts     # POST /api/lead — the only server-rendered route (Vercel function)
   server/               # lead handler, Neon store + Resend email (lead-deps.ts), email template
   components/           # one component per section + icons/ + illustrations/ (reference SVGs, unchanged)
@@ -59,14 +60,15 @@ docs/                   # PLAN, DECISIONS, KNOWN_ISSUES, PR_BODY, screenshots/
 
 ## Placeholders to fill before launch
 
-| What            | Where                                     | Now                                            |
-| --------------- | ----------------------------------------- | ---------------------------------------------- |
-| WhatsApp number | `WHATSAPP_NUMBER` in `src/config/site.ts` | `917845551223` (used by every WhatsApp link)   |
-| Contact email   | `CONTACT.email` in `src/config/site.ts`   | `hello@getfirro.com` (privacy page + JSON-LD)  |
-| Lead capture    | Vercel env vars (see below)               | `/api/lead` built; needs `DATABASE_URL` etc.   |
-| Privacy notice  | `src/content/privacy.ts`                  | draft text, banner removed for launch          |
-| Analytics       | `track()` in `src/lib/analytics.ts`       | no-op; `data-event` attributes already on CTAs |
-| Social profiles | `SOCIAL` in `src/config/site.ts`          | none (feeds JSON-LD `sameAs`)                  |
+| What            | Where                                        | Now                                                 |
+| --------------- | -------------------------------------------- | --------------------------------------------------- |
+| WhatsApp number | `WHATSAPP_NUMBER` in `src/config/site.ts`    | `917845551223` (used by every WhatsApp link)        |
+| Contact email   | `CONTACT.email` in `src/config/site.ts`      | `gowtham@getfirro.com` (privacy, about, JSON-LD)    |
+| Lead capture    | Vercel env vars (see below)                  | `/api/lead` built; needs `DATABASE_URL` etc.        |
+| Privacy notice  | `src/content/privacy.ts`                     | draft text, banner removed for launch               |
+| Analytics       | `track()` in `src/lib/analytics.ts`          | no-op; `data-event` attributes already on CTAs      |
+| Social profiles | `SOCIAL` in `src/config/site.ts`             | none (feeds JSON-LD `sameAs`)                       |
+| About page      | `COMPANY`, `FOUNDER` in `src/config/site.ts` | CIN, DPIIT and Udyam numbers; founder name and role |
 
 Everything labelled "Sample data" on the page is illustrative and stays labelled.
 

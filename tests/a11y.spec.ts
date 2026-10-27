@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { scrollThrough, settle } from './helpers';
 
-const PAGES = ['/', '/privacy', '/404'];
+const PAGES = ['/', '/privacy', '/about', '/404'];
 
 for (const path of PAGES) {
   for (const width of [1440, 390]) {

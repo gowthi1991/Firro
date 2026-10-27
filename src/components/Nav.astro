@@ -21,6 +21,11 @@ const href = (h: string) => `${anchorBase}${h}`;
           {l.label}
         </a>
       ))}
+      {nav.pageLinks.map((l) => (
+        <a href={l.href} class="nl">
+          {l.label}
+        </a>
+      ))}
     </div>
     <a href={href('#demo')} class="btn btn-glow cta" data-event="book_demo_click">
       {nav.cta}
@@ -53,6 +58,11 @@ const href = (h: string) => `${anchorBase}${h}`;
       {nav.links.map((l) => (
         <li>
           <a href={href(l.href)}>{l.label}</a>
+        </li>
+      ))}
+      {nav.pageLinks.map((l) => (
+        <li>
+          <a href={l.href}>{l.label}</a>
         </li>
       ))}
     </ul>

@@ -1,0 +1,256 @@
+---
+import Base from '../layouts/Base.astro';
+import { about } from '../content/about';
+import { COMPANY, CONTACT, FOUNDER, SITE_URL } from '../config/site';
+
+const incorporated = new Date(`${COMPANY.incorporated}T00:00:00Z`).toLocaleDateString('en-IN', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
+
+const title = 'About Firro — Uyir AI Labs Private Limited';
+const description =
+  'Firro is built in Coimbatore by Uyir AI Labs Private Limited, a DPIIT-recognised startup. Meet the founder and see the company’s registration details.';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    '@id': `${SITE_URL}/about#webpage`,
+    url: `${SITE_URL}/about`,
+    name: title,
+    about: { '@id': `${SITE_URL}/#organization` },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: COMPANY.legalName,
+    legalName: COMPANY.registeredName,
+    brand: { '@type': 'Brand', name: COMPANY.brand },
+    url: SITE_URL,
+    foundingDate: COMPANY.incorporated,
+    email: CONTACT.email,
+    identifier: { '@type': 'PropertyValue', propertyID: 'CIN', value: COMPANY.cin },
+    founder: { '@type': 'Person', name: FOUNDER.name, jobTitle: FOUNDER.role },
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: COMPANY.locality,
+      addressRegion: COMPANY.region,
+      addressCountry: COMPANY.country,
+    },
+  },
+];
+---
+
+<Base title={title} description={description} jsonLd={jsonLd}>
+  <section class="page gridbg" aria-labelledby="about-title">
+    <div class="wrap">
+      <span class="micro gold">{about.label}</span>
+      <h1 id="about-title" class="disp title">
+        {about.title}
+      </h1>
+      <p class="lead intro">{about.intro}</p>
+
+      <section class="block" aria-labelledby="founder-heading">
+        <h2 id="founder-heading" class="disp">
+          {about.founder.heading}
+        </h2>
+        <article class="person">
+          <h3 class="disp name">{FOUNDER.name}</h3>
+          <p class="role micro gold">{FOUNDER.role}</p>
+          <p class="bio">{about.founder.bio}</p>
+        </article>
+      </section>
+
+      <section class="block" aria-labelledby="company-heading">
+        <h2 id="company-heading" class="disp">
+          {about.company.heading}
+        </h2>
+        <dl class="facts">
+          <div class="row">
+            <dt>{about.company.rows.legalName}</dt>
+            <dd>{COMPANY.registeredName}</dd>
+          </div>
+          <div class="row">
+            <dt>{about.company.rows.basedIn}</dt>
+            <dd>{about.company.rows.basedInValue}</dd>
+          </div>
+          <div class="row">
+            <dt>{about.company.rows.incorporated}</dt>
+            <dd>{incorporated}</dd>
+          </div>
+          <div class="row">
+            <dt>{about.company.rows.cin}</dt>
+            <dd class="mono">{COMPANY.cin}</dd>
+          </div>
+          <div class="row">
+            <dt>{about.company.rows.dpiit}</dt>
+            <dd>
+              {about.company.rows.dpiitPrefix} <span class="mono">{COMPANY.dpiitCertificate}</span>
+            </dd>
+          </div>
+          <div class="row">
+            <dt>{about.company.rows.udyam}</dt>
+            <dd class="mono">{COMPANY.udyam}</dd>
+          </div>
+          <div class="row">
+            <dt>{about.company.rows.contact}</dt>
+            <dd>
+              <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+            </dd>
+          </div>
+        </dl>
+        <p class="verify">
+          {about.company.verifyBefore}{' '}
+          <a href="https://www.mca.gov.in" rel="noopener noreferrer">
+            {about.company.verifyMca}
+          </a>{' '}
+          {about.company.verifyJoin}{' '}
+          <a href="https://www.startupindia.gov.in" rel="noopener noreferrer">
+            {about.company.verifyStartup}
+          </a>{' '}
+          {about.company.verifyAfter}
+        </p>
+      </section>
+
+      <div class="actions">
+        <a href="/#demo" class="btn btn-glow" data-event="book_demo_click">
+          {about.cta}
+        </a>
+        <a href="/" class="btn btn-glass">
+          {about.back}
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .page {
+    margin-top: -76px;
+    padding: 150px var(--gutter) var(--section-y);
+  }
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .gold {
+    display: block;
+  }
+  .title {
+    font-size: var(--h2-md);
+    line-height: 0.96;
+    margin-top: 14px;
+  }
+  .intro {
+    margin-top: 28px;
+  }
+  .block {
+    margin-top: 48px;
+  }
+  .block h2 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .person {
+    margin-top: 18px;
+    padding: 28px 30px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow-card);
+  }
+  .name {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .role {
+    margin-top: 8px;
+  }
+  .bio {
+    margin-top: 16px;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+  .facts {
+    margin-top: 18px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 16px;
+    padding: 16px 24px;
+  }
+  .row + .row {
+    border-top: 1px solid var(--line);
+  }
+  dt {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  dt,
+  dd {
+    margin: 0;
+  }
+  dd {
+    font-size: 16px;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+  .mono {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: 0.01em;
+  }
+  dd a {
+    font-weight: 800;
+  }
+  .verify {
+    margin-top: 16px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+  .verify a {
+    font-weight: 800;
+  }
+  .actions {
+    margin-top: 56px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  @media (max-width: 767px) {
+    .page {
+      padding-top: 120px;
+    }
+    .block h2 {
+      font-size: 22px;
+    }
+    .person {
+      padding: 22px 20px;
+    }
+    .name {
+      font-size: 26px;
+    }
+    .row {
+      grid-template-columns: 1fr;
+      gap: 2px;
+      padding: 14px 20px;
+    }
+  }
+</style>
