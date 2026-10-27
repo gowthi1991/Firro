@@ -21,6 +21,29 @@ test.describe('about page', () => {
     );
   });
 
+  test('lists the team with their roles, and no personal contact details', async ({ page }) => {
+    await page.goto('/about');
+    await expect(page.getByRole('heading', { level: 2, name: 'Team' })).toBeVisible();
+    const members = page.locator('ul.team > li');
+    await expect(members).toHaveCount(3);
+    const expected = [
+      ['Aadhav', 'CTO'],
+      ['Manikandan', 'React Developer'],
+      ['Imran', 'Flutter Developer'],
+    ];
+    for (const [i, [name, role]] of expected.entries()) {
+      const member = members.nth(i);
+      await expect(member.getByRole('heading', { level: 3, name })).toBeVisible();
+      await expect(member).toContainText(role!);
+    }
+    // the only address on the page is the company inbox; team emails are never published
+    const mailtos = await page.$$eval('main a[href^="mailto:"]', (as) =>
+      as.map((a) => a.getAttribute('href')),
+    );
+    expect(mailtos).toEqual(['mailto:gowtham@getfirro.com']);
+    await expect(page.locator('main img')).toHaveCount(0);
+  });
+
   test('keeps words apart around inline links', async ({ page }) => {
     await page.goto('/about');
     await expect(page.locator('main')).toContainText('Certificate no. DIPP240204');

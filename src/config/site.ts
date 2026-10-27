@@ -39,6 +39,16 @@ export const FOUNDER = {
   role: 'Founder & CEO',
 };
 
+/**
+ * The team shown on /about, in display order. Name and title only: no photos, bios, emails or
+ * social links. Names are first names as supplied by the owner; add surnames here once confirmed.
+ */
+export const TEAM: readonly { name: string; role: string }[] = [
+  { name: 'Aadhav', role: 'CTO' },
+  { name: 'Manikandan', role: 'React Developer' },
+  { name: 'Imran', role: 'Flutter Developer' },
+];
+
 /** No social profiles yet — add URLs here and they flow into JSON-LD `sameAs`. */
 export const SOCIAL: string[] = [];
 

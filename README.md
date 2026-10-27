@@ -42,7 +42,7 @@ src/
   config/site.ts        # site URL, WhatsApp number, contact email, SEO defaults (placeholders marked TODO)
   content/site.ts       # all home-page copy, verbatim from the reference
   content/privacy.ts    # draft privacy notice text
-  content/about.ts      # /about copy (founder bio; registration numbers live in config/site.ts)
+  content/about.ts      # /about copy (founder bio; registration numbers and the TEAM list live in config/site.ts)
   layouts/Base.astro    # <head>, SEO, fonts, JSON-LD, skip link, nav, footer, FAB
   pages/                # index, about, privacy, 404
   pages/api/lead.ts     # POST /api/lead — the only server-rendered route (Vercel function)
