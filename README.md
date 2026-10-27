@@ -63,7 +63,7 @@ docs/                   # PLAN, DECISIONS, KNOWN_ISSUES, PR_BODY, screenshots/
 | What            | Where                                        | Now                                                 |
 | --------------- | -------------------------------------------- | --------------------------------------------------- |
 | WhatsApp number | `WHATSAPP_NUMBER` in `src/config/site.ts`    | `917845551223` (used by every WhatsApp link)        |
-| Contact email   | `CONTACT.email` in `src/config/site.ts`      | `hello@getfirro.com` (privacy, about, JSON-LD)      |
+| Contact email   | `CONTACT.email` in `src/config/site.ts`      | `gowtham@getfirro.com` (privacy, about, JSON-LD)    |
 | Lead capture    | Vercel env vars (see below)                  | `/api/lead` built; needs `DATABASE_URL` etc.        |
 | Privacy notice  | `src/content/privacy.ts`                     | draft text, banner removed for launch               |
 | Analytics       | `track()` in `src/lib/analytics.ts`          | no-op; `data-event` attributes already on CTAs      |

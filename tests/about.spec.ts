@@ -15,9 +15,9 @@ test.describe('about page', () => {
     await expect(main).toContainText('U62011TZ2025PTC036108');
     await expect(main).toContainText('DIPP240204');
     await expect(main).toContainText('UDYAM-TN-03-0340943');
-    await expect(main.getByRole('link', { name: 'hello@getfirro.com' })).toHaveAttribute(
+    await expect(main.getByRole('link', { name: 'gowtham@getfirro.com' })).toHaveAttribute(
       'href',
-      'mailto:hello@getfirro.com',
+      'mailto:gowtham@getfirro.com',
     );
   });
 
